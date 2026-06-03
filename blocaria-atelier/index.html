@@ -332,9 +332,7 @@ body.light header{background:rgba(240,242,248,.9);}
         <div id="sell-price-inputs"></div>
         <button class="apply-btn" onclick="applyPrices()">✔ Appliquer & Calculer</button>
         <div class="export-row">
-          <button class="io-btn" onclick="exportPrices()">⬇ Exporter JSON</button>
-          <button class="io-btn" onclick="document.getElementById('import-file').click()">⬆ Importer JSON</button>
-          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPrices(event)">
+          <button class="io-btn io-btn-export" onclick="exportPrices()">☁ Exporter vers GitHub</button>
         </div>
         <button class="reset-btn" onclick="resetPrices()">✕ Réinitialiser tous les prix</button>
       </div>
@@ -443,28 +441,48 @@ const CRAFTS = [
 ];
 
 // ════════════════════════════════════════════════
+//  CONFIG GITHUB
+// ════════════════════════════════════════════════
+const GH_USER  = 'azurseven';
+const GH_REPO  = 'azurseven.github.io';
+const GH_BRANCH = 'main';
+const GH_FILE  = 'blocaria-atelier/blocaria-atelier.json';
+const GH_RAW   = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/${GH_BRANCH}/${GH_FILE}`;
+const GH_API   = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
+
+// ════════════════════════════════════════════════
 //  STATE
 // ════════════════════════════════════════════════
 let prices = {}, sellPrices = {}, favorites = new Set(), history = [];
 let currentFilter = 'all', currentSort = 'profit', sortAsc = false;
 
-function loadState() {
-  try {
-    const p = localStorage.getItem('blo_prices'); if(p) prices = JSON.parse(p);
-    const s = localStorage.getItem('blo_sell'); if(s) sellPrices = JSON.parse(s);
-    const f = localStorage.getItem('blo_favs'); if(f) favorites = new Set(JSON.parse(f));
-    const h = localStorage.getItem('blo_history'); if(h) history = JSON.parse(h);
-  } catch(e){}
+function applyStateFromData(d) {
+  if(d.prices)    prices    = d.prices;
+  if(d.sellPrices) sellPrices = d.sellPrices;
+  if(d.favorites) favorites  = new Set(d.favorites);
+  if(d.history)   history    = d.history;
 }
+
 function saveState() {
-  try {
-    localStorage.setItem('blo_prices', JSON.stringify(prices));
-    localStorage.setItem('blo_sell', JSON.stringify(sellPrices));
-    localStorage.setItem('blo_favs', JSON.stringify([...favorites]));
-    localStorage.setItem('blo_history', JSON.stringify(history));
-  } catch(e){}
+  // no-op : la sauvegarde passe par l'API GitHub (bouton Exporter)
 }
-loadState();
+
+async function loadFromGitHub() {
+  try {
+    const res = await fetch(GH_RAW + '?t=' + Date.now());
+    if(!res.ok) throw new Error('Fichier introuvable');
+    const d = await res.json();
+    applyStateFromData(d);
+  } catch(e) {
+    console.warn('Impossible de charger blocaria-atelier.json depuis GitHub :', e.message);
+  }
+}
+
+// Charge les données puis initialise l'UI
+loadFromGitHub().then(() => {
+  renderCrafts();
+  renderHistoryCraftSelect();
+});
 
 // ════════════════════════════════════════════════
 //  HELPERS
@@ -839,25 +857,47 @@ function applyPrices() {
   setTimeout(()=>{btn.textContent='✔ Appliquer & Calculer';btn.style.background='';},1800);
 }
 
-function exportPrices() {
-  const data = JSON.stringify({prices,sellPrices},null,2);
-  const a=document.createElement('a');
-  a.href='data:application/json,'+encodeURIComponent(data);
-  a.download='blocaria-prix.json'; a.click();
-}
-function importPrices(e) {
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try {
-      const d=JSON.parse(ev.target.result);
-      if(d.prices) prices=d.prices;
-      if(d.sellPrices) sellPrices=d.sellPrices;
-      saveState(); renderPricesPage(); renderCrafts();
-      alert('Prix importés avec succès !');
-    } catch(err){ alert('Fichier JSON invalide.'); }
-  };
-  reader.readAsText(file);
+async function exportPrices() {
+  const token = prompt('🔑 Token GitHub (PAT avec accès "Contents: Read & Write") :');
+  if(!token) return;
+
+  const payload = { prices, sellPrices, favorites: [...favorites], history };
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+
+  const btn = document.querySelector('.io-btn-export');
+  btn.textContent = '⏳ Envoi en cours…';
+  btn.disabled = true;
+
+  try {
+    // Récupère le SHA actuel (requis par l'API GitHub pour mettre à jour)
+    let sha = null;
+    const getRes = await fetch(GH_API, {
+      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github+json' }
+    });
+    if(getRes.ok) { const gd = await getRes.json(); sha = gd.sha; }
+
+    const body = { message: 'chore: mise à jour blocaria-atelier.json', content, branch: GH_BRANCH };
+    if(sha) body.sha = sha;
+
+    const putRes = await fetch(GH_API, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if(putRes.ok) {
+      btn.textContent = '✔ Sauvegardé sur GitHub !';
+      btn.style.borderColor = 'var(--green)'; btn.style.color = 'var(--green)';
+      setTimeout(() => { btn.textContent = '☁ Exporter vers GitHub'; btn.style.borderColor = ''; btn.style.color = ''; btn.disabled = false; }, 2500);
+    } else {
+      const err = await putRes.json();
+      alert('Erreur GitHub : ' + (err.message || putRes.status));
+      btn.textContent = '☁ Exporter vers GitHub'; btn.disabled = false;
+    }
+  } catch(e) {
+    alert('Erreur réseau : ' + e.message);
+    btn.textContent = '☁ Exporter vers GitHub'; btn.disabled = false;
+  }
 }
 function resetPrices() {
   if(!confirm('Réinitialiser tous les prix ?')) return;
@@ -895,9 +935,7 @@ function toggleTheme() {
   document.querySelector('.theme-btn').textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
 }
 
-// Init
-renderCrafts();
-renderHistoryCraftSelect();
+// Init : lancé par loadFromGitHub().then(...) défini plus haut
 </script>
 </body>
 </html>
