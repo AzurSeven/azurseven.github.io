@@ -1,7 +1,7 @@
 {
   "prices": {
     "diamant": 150,
-    "emeraude": null,
+    "emeraude": 60000,
     "netherite": null,
     "lingot_argent": null,
     "lingot_cobalt": null,
