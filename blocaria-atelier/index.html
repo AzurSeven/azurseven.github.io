@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blocaria — Atelier</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0c10; --surface:#111420; --surface2:#181c2a; --border:#2a2f45;
+  --accent:#f0a030; --accent2:#5b8ef0; --green:#3ecf74; --red:#e05555;
+  --yellow:#f0c040; --text:#d4daf0; --muted:#6b7299;
+  --rare:#a78bfa; --epic:#f472b6;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;min-height:100vh;}
+
+/* HEADER */
+header{background:linear-gradient(180deg,#0d101a 0%,transparent 100%);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(12px);}
+.logo{font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:var(--accent);letter-spacing:2px;text-shadow:0 0 18px #f0a03066;}
+.logo span{color:var(--accent2);}
+nav{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.8px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.nav-btn:hover,.nav-btn.active{border-color:var(--accent);color:var(--accent);background:#f0a03010;}
+
+/* PAGES */
+.page{display:none;padding:22px 24px;max-width:1500px;margin:0 auto;}
+.page.active{display:block;}
+
+/* SECTION TITLE */
+.section-title{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--accent);letter-spacing:2px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;}
+.toolbar-label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;padding:4px 12px;border-radius:5px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.filter-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+.filter-btn.active{background:#5b8ef022;border-color:var(--accent2);color:var(--accent2);}
+.filter-sep{width:1px;height:20px;background:var(--border);}
+select.filter-select{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;padding:4px 10px;border-radius:5px;cursor:pointer;}
+.target-margin-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.target-margin-wrap label{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap;}
+.target-margin-input{width:70px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;padding:4px 8px;text-align:right;}
+.target-margin-input:focus{outline:none;border-color:var(--accent);}
+
+/* CRAFTS GRID */
+.crafts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;}
+.craft-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .2s,box-shadow .2s;position:relative;overflow:hidden;}
+.craft-card.is-favorite{border-color:#f0a03066;}
+.craft-card.hidden{display:none;}
+.craft-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#f0a03005 0%,transparent 60%);pointer-events:none;}
+.craft-card:hover{border-color:var(--accent2);box-shadow:0 0 16px #5b8ef015;}
+
+.craft-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px;}
+.craft-name{font-weight:700;font-size:.95rem;color:#e8ecff;line-height:1.3;flex:1;}
+.craft-badges{display:flex;gap:5px;flex-shrink:0;align-items:center;}
+.craft-variant{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.4px;white-space:nowrap;}
+.variant-commun{background:#3ecf7422;color:var(--green);border:1px solid #3ecf7444;}
+.variant-rare{background:#a78bfa22;color:var(--rare);border:1px solid #a78bfa44;}
+.variant-epic{background:#f472b622;color:var(--epic);border:1px solid #f472b644;}
+.variant-unique{background:#f0a03022;color:var(--accent);border:1px solid #f0a03044;}
+
+.fav-btn{background:none;border:none;cursor:pointer;font-size:14px;opacity:.4;transition:opacity .15s,transform .15s;padding:0 2px;}
+.fav-btn:hover{opacity:1;}
+.fav-btn.active{opacity:1;}
+
+.craft-meta{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.craft-time{font-size:12px;color:var(--muted);}
+.craft-time span{color:var(--accent2);font-weight:600;}
+.craft-tph{font-size:12px;color:var(--muted);}
+.craft-tph span{color:var(--yellow);font-weight:600;}
+
+.ingredients{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
+.ingredient{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--text);white-space:nowrap;}
+.ingredient .qty{color:var(--accent);font-weight:700;margin-right:2px;}
+
+/* PROFIT */
+.profit-badge{display:flex;align-items:center;gap:7px;background:var(--surface2);border-radius:6px;padding:7px 10px;margin-top:6px;border:1px solid var(--border);flex-wrap:wrap;}
+.profit-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;flex-shrink:0;}
+.profit-value{font-size:12px;font-weight:700;flex:1;}
+.profit-status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
+.status-ok{background:#3ecf7422;color:var(--green);border:1px solid #3ecf7444;}
+.status-warn{background:#f0c04022;color:var(--yellow);border:1px solid #f0c04044;}
+.status-no{background:#e0555522;color:var(--red);border:1px solid #e0555544;}
+.status-target{background:#5b8ef022;color:var(--accent2);border:1px solid #5b8ef044;}
+.status-na{background:#2a2f4555;color:var(--muted);border:1px solid var(--border);}
+.cost-total{font-size:11px;color:var(--muted);margin-top:3px;}
+.cost-total b{color:var(--text);}
+.max-price-tip{font-size:11px;color:var(--muted);margin-top:5px;padding:4px 8px;background:#1a1f32;border-radius:4px;border-left:2px solid var(--accent2);}
+.max-price-tip b{color:var(--accent2);}
+.chain-note{font-size:10px;color:var(--muted);margin-top:3px;font-style:italic;}
+
+/* GROUP TITLE */
+.craft-group{margin-bottom:26px;}
+.group-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-left:10px;border-left:3px solid var(--accent2);}
+
+/* ── RANKING PAGE ── */
+.rank-controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.rank-table{width:100%;border-collapse:collapse;}
+.rank-table th{background:var(--surface2);padding:8px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:left;cursor:pointer;user-select:none;white-space:nowrap;}
+.rank-table th:hover{color:var(--accent);}
+.rank-table td{padding:8px 12px;border-bottom:1px solid #1a1f32;font-size:13px;}
+.rank-table tr:hover td{background:#181c2a;}
+.rank-pos{font-weight:700;color:var(--muted);width:32px;}
+.rank-pos.gold{color:#fbbf24;}
+.rank-pos.silver{color:#94a3b8;}
+.rank-pos.bronze{color:#cd7c3a;}
+.rank-name{font-weight:600;color:var(--text);}
+.rank-variant{font-size:10px;padding:1px 6px;border-radius:3px;margin-left:5px;}
+.rank-cost,.rank-sell,.rank-profit,.rank-margin,.rank-tph{font-family:'Rajdhani',sans-serif;font-weight:600;}
+.rank-profit.pos{color:var(--green);}
+.rank-profit.neg{color:var(--red);}
+.rank-margin.pos{color:var(--green);}
+.rank-margin.neg{color:var(--red);}
+.rank-tph.val{color:var(--yellow);}
+.rank-fav-col{text-align:center;}
+.na-cell{color:var(--muted);font-size:11px;}
+.sort-arrow{font-size:10px;margin-left:4px;}
+
+/* ── HISTORY PAGE ── */
+.history-add{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px;}
+.history-add h3{font-family:'Cinzel Decorative',serif;font-size:.85rem;color:var(--accent2);letter-spacing:1.5px;margin-bottom:14px;}
+.history-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.hf-group{display:flex;flex-direction:column;gap:4px;}
+.hf-group label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+.hf-select,.hf-input{background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;padding:6px 10px;}
+.hf-select{min-width:200px;}
+.hf-input{width:110px;}
+.hf-btn{background:linear-gradient(135deg,var(--accent2),#3a6cd4);border:none;border-radius:6px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;padding:7px 18px;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:opacity .2s;}
+.hf-btn:hover{opacity:.85;}
+
+.history-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.stat-val{font-size:1.4rem;font-weight:700;color:var(--accent);}
+.stat-label{font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+
+.history-list{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.history-list table{width:100%;border-collapse:collapse;}
+.history-list th{background:var(--surface2);padding:8px 14px;font-size:11px;font-weight:700;color:var(--muted);text-align:left;letter-spacing:.8px;text-transform:uppercase;}
+.history-list td{padding:8px 14px;border-bottom:1px solid #1a1f32;font-size:13px;}
+.history-list tr:last-child td{border-bottom:none;}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;transition:color .15s;}
+.del-btn:hover{color:var(--red);}
+
+/* OBJECTIVE */
+.objective-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;}
+.objective-panel h3{font-family:'Cinzel Decorative',serif;font-size:.85rem;color:#fbbf24;letter-spacing:1.5px;margin-bottom:14px;}
+.obj-form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;}
+.obj-input{background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;padding:7px 12px;width:160px;}
+.obj-btn{background:linear-gradient(135deg,#fbbf24,#d97706);border:none;border-radius:6px;color:#000;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;}
+.obj-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.obj-row{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.obj-craft-name{font-size:13px;font-weight:600;color:var(--text);}
+.obj-count{font-size:1.1rem;font-weight:700;color:#fbbf24;}
+.obj-count span{font-size:11px;color:var(--muted);font-weight:400;margin-left:3px;}
+
+/* PRICES PAGE */
+.prices-layout{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+@media(max-width:900px){.prices-layout{grid-template-columns:1fr;}}
+.prices-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.prices-panel h3{font-family:'Cinzel Decorative',serif;font-size:.8rem;color:var(--accent2);letter-spacing:1.5px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.price-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.price-row label{flex:1;font-size:12px;font-weight:600;color:var(--text);}
+.price-input{width:120px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;padding:4px 8px;text-align:right;transition:border-color .2s;}
+.price-input:focus{outline:none;border-color:var(--accent);background:#1a1f32;}
+.price-unit{font-size:11px;color:var(--muted);width:14px;}
+.sell-price-row{display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:6px;border-top:1px solid var(--border);}
+.sell-price-row label{flex:1;font-size:12px;color:var(--muted);font-weight:600;}
+.sell-price-row label small{color:var(--muted);font-size:10px;display:block;}
+.sell-price-input{width:120px;background:var(--surface2);border:1px solid #3ecf7444;border-radius:5px;color:var(--green);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;padding:4px 8px;text-align:right;transition:border-color .2s;}
+.sell-price-input:focus{outline:none;border-color:var(--green);background:#1a1f32;}
+.apply-btn{margin-top:14px;width:100%;background:linear-gradient(135deg,var(--accent) 0%,#d4821a 100%);border:none;border-radius:6px;color:#0a0c10;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:9px;cursor:pointer;transition:opacity .2s;}
+.apply-btn:hover{opacity:.9;}
+.export-row{display:flex;gap:8px;margin-top:8px;}
+.io-btn{flex:1;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:7px;cursor:pointer;transition:all .2s;}
+.io-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+.reset-btn{margin-top:4px;width:100%;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:6px;cursor:pointer;transition:all .2s;}
+.reset-btn:hover{border-color:var(--red);color:var(--red);}
+.chain-toggle{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 10px;background:var(--surface2);border-radius:6px;cursor:pointer;}
+.chain-toggle input{accent-color:var(--accent2);width:14px;height:14px;cursor:pointer;}
+.chain-toggle label{font-size:12px;color:var(--text);font-weight:600;cursor:pointer;}
+.chain-toggle small{font-size:11px;color:var(--muted);}
+.tax-note{font-size:11px;color:var(--muted);margin-bottom:12px;padding:5px 10px;background:var(--surface2);border-radius:5px;border-left:2px solid var(--accent);}
+.tax-note b{color:var(--accent);}
+
+/* THEME toggle */
+.theme-btn{background:none;border:1px solid var(--border);color:var(--muted);font-size:14px;padding:5px 10px;border-radius:5px;cursor:pointer;transition:all .2s;}
+.theme-btn:hover{border-color:var(--yellow);color:var(--yellow);}
+
+/* light mode */
+body.light{--bg:#f0f2f8;--surface:#fff;--surface2:#e8ecf5;--border:#c8d0e8;--text:#1a1f38;--muted:#7888aa;}
+body.light header{background:rgba(240,242,248,.9);}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+.empty-state{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+.empty-state div{font-size:2rem;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Blocaria <span>✦</span> Atelier</div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('crafts',this)">📦 Crafts</button>
+    <button class="nav-btn" onclick="showPage('ranking',this)">📊 Classement</button>
+    <button class="nav-btn" onclick="showPage('history',this)">📈 Suivi</button>
+    <button class="nav-btn" onclick="showPage('prices',this)">💰 Prix</button>
+    <button class="theme-btn" onclick="toggleTheme()" title="Thème">☀️</button>
+  </nav>
+</header>
+
+<!-- ══ PAGE CRAFTS ══ -->
+<div class="page active" id="page-crafts">
+  <div class="section-title">📦 Crafts de l'Atelier</div>
+
+  <div class="toolbar">
+    <span class="toolbar-label">Filtres:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Tous</button>
+    <button class="filter-btn" onclick="setFilter('rentable',this)">✔ Rentables</button>
+    <button class="filter-btn" onclick="setFilter('deficit',this)">✘ Déficit</button>
+    <button class="filter-btn" onclick="setFilter('favorite',this)">⭐ Favoris</button>
+    <div class="filter-sep"></div>
+    <span class="toolbar-label">Catégorie:</span>
+    <select class="filter-select" id="cat-filter" onchange="renderCrafts()">
+      <option value="all">Toutes</option>
+      <option value="Outils">⚒️ Outils</option>
+      <option value="Générateurs">⚡ Générateurs</option>
+      <option value="Jardinières">🌿 Jardinières</option>
+      <option value="Machines">⚙️ Machines</option>
+      <option value="Breuvages">🍶 Breuvages</option>
+    </select>
+    <div class="target-margin-wrap">
+      <label>🎯 Marge cible:</label>
+      <input class="target-margin-input" type="number" id="target-margin" value="20" min="0" max="999" onchange="renderCrafts()">
+      <span style="font-size:12px;color:var(--muted)">%</span>
+    </div>
+  </div>
+
+  <div id="crafts-container"></div>
+</div>
+
+<!-- ══ PAGE RANKING ══ -->
+<div class="page" id="page-ranking">
+  <div class="section-title">📊 Classement de Rentabilité</div>
+  <div class="rank-controls">
+    <span class="toolbar-label">Trier par:</span>
+    <button class="filter-btn active" id="sort-profit" onclick="setSort('profit',this)">Profit $</button>
+    <button class="filter-btn" id="sort-margin" onclick="setSort('margin',this)">Marge %</button>
+    <button class="filter-btn" id="sort-tph" onclick="setSort('tph',this)">Profit/h</button>
+    <button class="filter-btn" id="sort-cost" onclick="setSort('cost',this)">Coût</button>
+    <label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;">
+      <input type="checkbox" id="rank-fav-only" onchange="renderRanking()" style="accent-color:var(--accent)"> Favoris seulement
+    </label>
+  </div>
+  <div id="ranking-container"></div>
+</div>
+
+<!-- ══ PAGE HISTORY ══ -->
+<div class="page" id="page-history">
+  <div class="section-title">📈 Suivi & Objectifs</div>
+
+  <!-- OBJECTIF -->
+  <div class="objective-panel">
+    <h3>🎯 Objectif Financier</h3>
+    <div class="obj-form">
+      <div class="hf-group">
+        <label>Objectif ($)</label>
+        <input class="obj-input" type="number" id="obj-target" placeholder="5000000" min="0">
+      </div>
+      <button class="obj-btn" onclick="calcObjective()">Calculer</button>
+    </div>
+    <div id="obj-results"></div>
+  </div>
+
+  <!-- AJOUTER ENTRÉE -->
+  <div class="history-add">
+    <h3>➕ Enregistrer un craft</h3>
+    <div class="history-form">
+      <div class="hf-group">
+        <label>Craft</label>
+        <select class="hf-select" id="hf-craft"></select>
+      </div>
+      <div class="hf-group">
+        <label>Quantité craftée</label>
+        <input class="hf-input" type="number" id="hf-qty" value="1" min="1">
+      </div>
+      <div class="hf-group">
+        <label>Prix de vente réel ($)</label>
+        <input class="hf-input" type="number" id="hf-sell" placeholder="Auto">
+      </div>
+      <button class="hf-btn" onclick="addHistory()">+ Enregistrer</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="history-stats" id="history-stats"></div>
+
+  <!-- TABLE -->
+  <div class="history-list" id="history-table-wrap">
+    <div class="empty-state"><div>📋</div>Aucun craft enregistré pour le moment.</div>
+  </div>
+</div>
+
+<!-- ══ PAGE PRIX ══ -->
+<div class="page" id="page-prices">
+  <div class="section-title">💰 Prix des Ressources & Vente</div>
+  <div class="tax-note"><b>💡</b> Entrez le prix unitaire d'achat de chaque ressource. Les prix sont sauvegardés automatiquement.</div>
+  <div class="prices-layout">
+    <div>
+      <div class="prices-panel">
+        <h3>⚙️ Ressources de base</h3>
+        <div id="resource-inputs-base"></div>
+      </div>
+      <div class="prices-panel" style="margin-top:14px">
+        <h3>🐟 Poissons & Créatures</h3>
+        <div id="resource-inputs-fish"></div>
+      </div>
+    </div>
+    <div>
+      <div class="prices-panel">
+        <h3>🍶 Prix de vente des crafts</h3>
+        <label class="chain-toggle">
+          <input type="checkbox" id="chain-mode" onchange="renderCrafts()">
+          <div>
+            <label for="chain-mode">Calcul en chaîne</label><br>
+            <small>Intègre le coût de fabrication des sous-crafts (ex: breuvage commun → rare)</small>
+          </div>
+        </label>
+        <div id="sell-price-inputs"></div>
+        <button class="apply-btn" onclick="applyPrices()">✔ Appliquer & Calculer</button>
+        <div class="export-row">
+          <button class="io-btn" onclick="exportPrices()">⬇ Exporter JSON</button>
+          <button class="io-btn" onclick="document.getElementById('import-file').click()">⬆ Importer JSON</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPrices(event)">
+        </div>
+        <button class="reset-btn" onclick="resetPrices()">✕ Réinitialiser tous les prix</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  CRAFT DATA  (timeMin = minutes, null = unknown)
+// ════════════════════════════════════════════════
+const CRAFTS = [
+  {id:'pierre_evolution',name:"Pierre d'évolution",variant:'unique',variantLabel:'Unique',category:'Outils',timeMin:5,
+   description:"Améliore certains outils",
+   ingredients:[{id:'diamant',name:'Diamants',qty:64},{id:'emeraude',name:'Émeraudes',qty:64},{id:'netherite',name:'Netherite',qty:8},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:32}]},
+
+  {id:'pierre_evolution_forgee',name:"Pierre d'évolution forgée",variant:'unique',variantLabel:'Unique',category:'Outils',timeMin:15,
+   description:"Améliore certains outils (niveau sup.)",
+   ingredients:[{id:'pierre_evolution',name:"Pierres d'évolution",qty:4},{id:'rubis',name:'Rubis',qty:64},{id:'topaze',name:'Topazes',qty:48},{id:'opale',name:'Opales',qty:32}]},
+
+  {id:'poudre_organique',name:"Poudre organique",variant:'unique',variantLabel:'Unique',category:'Générateurs',timeMin:5,
+   description:"Redonne de la durabilité aux générateurs",
+   ingredients:[{id:'poudre_perlimpinpin',name:'Poudre de perlimpinpin',qty:1},{id:'ame',name:'Âme',qty:1},{id:'graine_aubergine',name:"Graines d'aubergines",qty:16}]},
+
+  {id:'jardiniere_metallique',name:"Jardinière métallique",variant:'unique',variantLabel:'Métallique',category:'Jardinières',timeMin:null,
+   ingredients:[{id:'jardiniere_bois',name:'Jardinière en bois',qty:1},{id:'sac_compost',name:'Sacs de compost',qty:16},{id:'graine_custom',name:'Graines customs',qty:16},{id:'bloc_fer',name:'Blocs de fer',qty:5},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:16},{id:'lingot_argent',name:"Lingots d'argent",qty:32}]},
+
+  {id:'jardiniere_doree',name:"Jardinière dorée",variant:'rare',variantLabel:'Dorée',category:'Jardinières',timeMin:null,
+   ingredients:[{id:'jardiniere_metallique',name:'Jardinière métallique',qty:1},{id:'sac_compost',name:'Sacs de compost',qty:32},{id:'graine_custom',name:'Graines customs',qty:16},{id:'bloc_or',name:"Blocs d'or",qty:10},{id:'diamant',name:'Diamants',qty:16},{id:'lingot_or',name:"Lingot d'or",qty:1}]},
+
+  {id:'jardiniere_precieuse',name:"Jardinière précieuse",variant:'epic',variantLabel:'Précieuse',category:'Jardinières',timeMin:null,
+   ingredients:[{id:'jardiniere_doree',name:'Jardinière dorée',qty:1},{id:'sac_compost',name:'Sacs de compost',qty:64},{id:'graine_custom',name:'Graines customs',qty:32},{id:'bloc_diamant',name:'Blocs de diamant',qty:10},{id:'topaze',name:'Topazes',qty:32},{id:'opale',name:'Opales',qty:16}]},
+
+  {id:'fabricateur',name:"Fabricateur",variant:'unique',variantLabel:'Unique',category:'Machines',timeMin:null,
+   ingredients:[{id:'bloc_redstone',name:'Blocs de redstone',qty:64},{id:'topaze',name:'Topazes',qty:64},{id:'bloc_fer',name:'Blocs de fer',qty:64},{id:'opale',name:'Opales',qty:64},{id:'pierre_evolution_forgee',name:"P. d'évol. forgée",qty:1},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'bloc_diamant',name:'Blocs de diamant',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'bloc_or',name:"Blocs d'or",qty:64}]},
+
+  // CHANCE
+  {id:'breuvage_chance_commun',name:"Breuvage de chance",variant:'commun',variantLabel:'Commun',category:'Breuvages',timeMin:null,
+   ingredients:[{id:'verre_terre',name:'Verres de terre',qty:64},{id:'escargot',name:'Escargots',qty:64},{id:'patte_lapin',name:'Pattes de lapin',qty:64},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_chance_rare',name:"Breuvage de chance",variant:'rare',variantLabel:'Rare',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_chance_commun',
+   ingredients:[{id:'breuvage_chance_commun',name:'Breuvage chance commun',qty:1},{id:'sardine_epique',name:'Sardines (épique)',qty:32},{id:'crabe_legendaire',name:'Crabes (légendaire)',qty:16},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_chance_epique',name:"Breuvage de chance",variant:'epic',variantLabel:'Épique',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_chance_rare',
+   ingredients:[{id:'breuvage_chance_rare',name:'Breuvage chance rare',qty:1},{id:'truite_arc_en_ciel_mythique',name:'Truites arc-en-ciel (mythique)',qty:16},{id:'topaze',name:'Topazes',qty:64},{id:'opale',name:'Opales',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+
+  // FORCE
+  {id:'breuvage_force_commun',name:"Breuvage de force",variant:'commun',variantLabel:'Commun',category:'Breuvages',timeMin:null,
+   ingredients:[{id:'chevaine_commun',name:'Chevaines (commun)',qty:64},{id:'huitre_rare',name:'Huîtres (rare)',qty:64},{id:'baton_blaze',name:'Bâtons de blaze',qty:64},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_force_rare',name:"Breuvage de force",variant:'rare',variantLabel:'Rare',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_force_commun',
+   ingredients:[{id:'breuvage_force_commun',name:'Breuvage force commun',qty:1},{id:'perche_epique',name:'Perches (épique)',qty:32},{id:'crevette_legendaire',name:'Crevettes (légendaire)',qty:16},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_force_epique',name:"Breuvage de force",variant:'epic',variantLabel:'Épique',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_force_rare',
+   ingredients:[{id:'breuvage_force_rare',name:'Breuvage force rare',qty:1},{id:'homard_mythique',name:'Homards (mythique)',qty:16},{id:'topaze',name:'Topazes',qty:64},{id:'opale',name:'Opales',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+
+  // SATURATION
+  {id:'breuvage_saturation_commun',name:"Breuvage de saturation",variant:'commun',variantLabel:'Commun',category:'Breuvages',timeMin:null,
+   ingredients:[{id:'coque_commun',name:'Coques (commun)',qty:64},{id:'breme_rare',name:'Brèmes (rare)',qty:64},{id:'carotte_doree',name:'Carottes dorées',qty:64},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_saturation_rare',name:"Breuvage de saturation",variant:'rare',variantLabel:'Rare',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_saturation_commun',
+   ingredients:[{id:'breuvage_saturation_commun',name:'Breuvage saturation commun',qty:1},{id:'poisson_chat_epique',name:'Poissons-chat (épique)',qty:32},{id:'carpe_legendaire',name:'Carpes (légendaire)',qty:16},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_saturation_epique',name:"Breuvage de saturation",variant:'epic',variantLabel:'Épique',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_saturation_rare',
+   ingredients:[{id:'breuvage_saturation_rare',name:'Breuvage saturation rare',qty:1},{id:'blob_mythique',name:'Blob (mythique)',qty:16},{id:'topaze',name:'Topazes',qty:64},{id:'opale',name:'Opales',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+
+  // VITESSE
+  {id:'breuvage_vitesse_commun',name:"Breuvage de vitesse",variant:'commun',variantLabel:'Commun',category:'Breuvages',timeMin:null,
+   ingredients:[{id:'poisson_meteo_commun',name:'Poissons météo (commun)',qty:64},{id:'fluke_rare',name:'Fluke (rare)',qty:64},{id:'sucre',name:'Sucres',qty:64},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_vitesse_rare',name:"Breuvage de vitesse",variant:'rare',variantLabel:'Rare',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_vitesse_commun',
+   ingredients:[{id:'breuvage_vitesse_commun',name:'Breuvage vitesse commun',qty:1},{id:'chirurgien_epique',name:'Chirurgiens bleu (épique)',qty:32},{id:'thon_legendaire',name:'Thons (légendaire)',qty:16},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_vitesse_epique',name:"Breuvage de vitesse",variant:'epic',variantLabel:'Épique',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_vitesse_rare',
+   ingredients:[{id:'breuvage_vitesse_rare',name:'Breuvage vitesse rare',qty:1},{id:'ecrevisse_mythique',name:'Écrevisses (mythique)',qty:16},{id:'topaze',name:'Topazes',qty:64},{id:'opale',name:'Opales',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+
+  // RÉSISTANCE
+  {id:'breuvage_resistance_commun',name:"Breuvage de résistance",variant:'commun',variantLabel:'Commun',category:'Breuvages',timeMin:null,
+   ingredients:[{id:'maquereau_commun',name:'Maquereaux (commun)',qty:64},{id:'moule_rare',name:'Moule (rare)',qty:64},{id:'ecaille_tortue',name:'Écailles de tortue',qty:64},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_resistance_rare',name:"Breuvage de résistance",variant:'rare',variantLabel:'Rare',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_resistance_commun',
+   ingredients:[{id:'breuvage_resistance_commun',name:'Breuvage résistance commun',qty:1},{id:'tilapia_epique',name:'Tilapias (épique)',qty:32},{id:'anguille_legendaire',name:'Anguilles (légendaire)',qty:16},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_resistance_epique',name:"Breuvage de résistance",variant:'epic',variantLabel:'Épique',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_resistance_rare',
+   ingredients:[{id:'breuvage_resistance_rare',name:'Breuvage résistance rare',qty:1},{id:'poulpe_mythique',name:'Poulpes (mythique)',qty:16},{id:'topaze',name:'Topazes',qty:64},{id:'opale',name:'Opales',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+
+  // FORTUNE
+  {id:'breuvage_fortune_commun',name:"Breuvage de fortune",variant:'commun',variantLabel:'Commun',category:'Breuvages',timeMin:null,
+   ingredients:[{id:'anchois_commun',name:'Anchois (commun)',qty:64},{id:'brochet_rare',name:'Brochets (rare)',qty:64},{id:'pepite_or',name:"Pépites d'or",qty:64},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_fortune_rare',name:"Breuvage de fortune",variant:'rare',variantLabel:'Rare',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_fortune_commun',
+   ingredients:[{id:'breuvage_fortune_commun',name:'Breuvage fortune commun',qty:1},{id:'poisson_soleil_epique',name:'Poissons soleil (épique)',qty:32},{id:'vivaneau_legendaire',name:'Vivaneaux (légendaire)',qty:16},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_fortune_epique',name:"Breuvage de fortune",variant:'epic',variantLabel:'Épique',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_fortune_rare',
+   ingredients:[{id:'breuvage_fortune_rare',name:'Breuvage fortune rare',qty:1},{id:'poulpe_mythique',name:'Poulpes (mythique)',qty:16},{id:'topaze',name:'Topazes',qty:64},{id:'opale',name:'Opales',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+
+  // FÉROCITÉ
+  {id:'breuvage_ferocite_commun',name:"Breuvage de férocité",variant:'commun',variantLabel:'Commun',category:'Breuvages',timeMin:null,
+   ingredients:[{id:'hareng_commun',name:'Harengs (commun)',qty:64},{id:'mulet_rare',name:'Mulet (rare)',qty:64},{id:'poudre_blaze',name:'Poudres de blaze',qty:64},{id:'lingot_argent',name:"Lingots d'argent",qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_ferocite_rare',name:"Breuvage de férocité",variant:'rare',variantLabel:'Rare',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_ferocite_commun',
+   ingredients:[{id:'breuvage_ferocite_commun',name:'Breuvage férocité commun',qty:1},{id:'piranha_epique',name:'Piranhas (épique)',qty:32},{id:'poisson_dore_legendaire',name:'Poissons dorés (légendaire)',qty:16},{id:'lingot_cobalt',name:'Lingots de cobalt',qty:64},{id:'rubis',name:'Rubis',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+  {id:'breuvage_ferocite_epique',name:"Breuvage de férocité",variant:'epic',variantLabel:'Épique',category:'Breuvages',timeMin:null,
+   chainFrom:'breuvage_ferocite_rare',
+   ingredients:[{id:'breuvage_ferocite_rare',name:'Breuvage férocité rare',qty:1},{id:'hippocampe_mythique',name:'Hippocampes (mythique)',qty:16},{id:'topaze',name:'Topazes',qty:64},{id:'opale',name:'Opales',qty:64},{id:'fiole_vide',name:'Fiole vide',qty:1}]},
+];
+
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+let prices = {}, sellPrices = {}, favorites = new Set(), history = [];
+let currentFilter = 'all', currentSort = 'profit', sortAsc = false;
+
+function loadState() {
+  try {
+    const p = localStorage.getItem('blo_prices'); if(p) prices = JSON.parse(p);
+    const s = localStorage.getItem('blo_sell'); if(s) sellPrices = JSON.parse(s);
+    const f = localStorage.getItem('blo_favs'); if(f) favorites = new Set(JSON.parse(f));
+    const h = localStorage.getItem('blo_history'); if(h) history = JSON.parse(h);
+  } catch(e){}
+}
+function saveState() {
+  try {
+    localStorage.setItem('blo_prices', JSON.stringify(prices));
+    localStorage.setItem('blo_sell', JSON.stringify(sellPrices));
+    localStorage.setItem('blo_favs', JSON.stringify([...favorites]));
+    localStorage.setItem('blo_history', JSON.stringify(history));
+  } catch(e){}
+}
+loadState();
+
+// ════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════
+function fmt(n) {
+  if(n==null||isNaN(n)) return '—';
+  const abs=Math.abs(n);
+  const sign=n<0?'-':'';
+  if(abs>=1e9) return sign+(abs/1e9).toFixed(2)+'G$';
+  if(abs>=1e6) return sign+(abs/1e6).toFixed(2)+'M$';
+  if(abs>=1e3) return sign+(abs/1e3).toFixed(1)+'k$';
+  return sign+Math.round(abs)+'$';
+}
+function fmtTime(min) {
+  if(min==null) return '?';
+  if(min<60) return min+'min';
+  return (min/60).toFixed(1)+'h';
+}
+
+const craftById = {};
+CRAFTS.forEach(c => craftById[c.id] = c);
+
+function calcCost(craft, chainMode=false) {
+  let total = 0, allKnown = true;
+  for(const ing of craft.ingredients) {
+    // chain mode: if ingredient is a craft, use its computed cost
+    if(chainMode && craftById[ing.id]) {
+      const sub = calcCost(craftById[ing.id], true);
+      if(!sub.allKnown) { allKnown = false; continue; }
+      total += sub.total * ing.qty;
+    } else {
+      const p = prices[ing.id];
+      if(p==null||p==='') { allKnown=false; continue; }
+      total += Number(p)*ing.qty;
+    }
+  }
+  return {total, allKnown};
+}
+
+function getCraftStats(craft) {
+  const chain = document.getElementById('chain-mode')?.checked || false;
+  const {total, allKnown} = calcCost(craft, chain);
+  const sellP = sellPrices[craft.id];
+  const hasSell = sellP!=null && sellP!=='';
+  const sellVal = hasSell ? Number(sellP) : null;
+  const profit = (allKnown && hasSell) ? sellVal - total : null;
+  const margin = (profit!=null && total>0) ? (profit/total)*100 : null;
+  const tph = (profit!=null && craft.timeMin) ? profit/(craft.timeMin/60) : null;
+  const targetMargin = Number(document.getElementById('target-margin')?.value||20);
+  let status = 'na';
+  if(profit!=null) {
+    if(profit<0) status='no';
+    else if(margin>=targetMargin) status='ok';
+    else status='target'; // profitable but below target
+  }
+  return {total, allKnown, sellVal, hasSell, profit, margin, tph, status};
+}
+
+function getAllResources() {
+  const base=new Map(), fish=new Map();
+  const fishKeys=['_commun','_rare','_epique','_legendaire','_mythique','sardine','crabe','truite','homard','perche','crevette','blob','poisson_chat','carpe','thon','chirurgien','ecrevisse','tilapia','anguille','poulpe','poisson_soleil','vivaneau','piranha','poisson_dore','hippocampe','hareng','mulet','brochet','anchois','coque','breme','fluke','maquereau','moule','chevaine','huitre','escargot','patte_lapin'];
+  CRAFTS.forEach(c => c.ingredients.forEach(ing => {
+    const isFish = fishKeys.some(k => ing.id.includes(k));
+    const map = isFish ? fish : base;
+    if(!map.has(ing.id)) map.set(ing.id, ing.name);
+  }));
+  return {base, fish};
+}
+
+// ════════════════════════════════════════════════
+//  RENDER CRAFTS
+// ════════════════════════════════════════════════
+function renderCraftCard(craft) {
+  const {total, allKnown, sellVal, hasSell, profit, margin, tph, status} = getCraftStats(craft);
+  const isFav = favorites.has(craft.id);
+  const targetM = Number(document.getElementById('target-margin')?.value||20);
+  const chain = document.getElementById('chain-mode')?.checked||false;
+
+  let profitHTML = '';
+  const statusLabels = {ok:'✔ Rentable',target:'⚠ Sous objectif',no:'✘ Déficit',na:'Prix manquants'};
+  const statusClasses = {ok:'status-ok',target:'status-target',no:'status-no',na:'status-na'};
+
+  if(profit!=null) {
+    let maxTip='';
+    if(profit<=0) {
+      const sorted=[...craft.ingredients].filter(i=>prices[i.id]>0).sort((a,b)=>prices[b.id]*b.qty - prices[a.id]*a.qty);
+      if(sorted.length>0) {
+        const top=sorted[0];
+        const other=total - prices[top.id]*top.qty;
+        const maxP = sellVal>other ? (sellVal-other)/top.qty : 0;
+        maxTip=`<div class="max-price-tip">Acheter <b>${top.name}</b> max <b>${fmt(maxP)}</b>/u pour équilibrer</div>`;
+      }
+    }
+    const tphStr = tph!=null ? ` · <span style="color:var(--yellow)">${fmt(tph)}/h</span>` : '';
+    profitHTML=`<div class="profit-badge">
+      <span class="profit-label">COÛT</span>
+      <span class="profit-value">${fmt(total)}</span>
+      <span class="profit-status ${statusClasses[status]}">${statusLabels[status]}</span>
+    </div>
+    <div class="cost-total">Vente: <b>${fmt(sellVal)}</b> · Profit: <b style="color:${profit>0?'var(--green)':'var(--red)'}">${profit>0?'+':''}${fmt(profit)}</b> (${margin!=null?margin.toFixed(1):'?'}%)${tphStr}</div>
+    ${chain&&craft.chainFrom?'<div class="chain-note">🔗 Calcul en chaîne activé</div>':''}
+    ${maxTip}`;
+  } else {
+    profitHTML=`<div class="profit-badge">
+      <span class="profit-label">COÛT</span>
+      <span class="profit-value" style="color:var(--muted)">${allKnown?fmt(total):'—'}</span>
+      <span class="profit-status status-na">Prix manquants</span>
+    </div>`;
+  }
+
+  const timeStr = craft.timeMin!=null ? `<div class="craft-time">⏱ <span>${fmtTime(craft.timeMin)}</span></div>` : '<div class="craft-time" style="color:#3a3f5a">⏱ <span>temps inconnu</span></div>';
+  const tphDisp = (craft.timeMin&&profit!=null) ? `<div class="craft-tph">📈 <span>${fmt(tph)}/h</span></div>` : '';
+
+  return `<div class="craft-card ${isFav?'is-favorite':''}" id="card-${craft.id}" data-status="${status}" data-fav="${isFav?1:0}">
+    <div class="craft-header">
+      <div class="craft-name">${craft.name}</div>
+      <div class="craft-badges">
+        <span class="craft-variant variant-${craft.variant}">${craft.variantLabel}</span>
+        <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('${craft.id}')" title="Favori">${isFav?'⭐':'☆'}</button>
+      </div>
+    </div>
+    <div class="craft-meta">${timeStr}${tphDisp}</div>
+    <div class="ingredients">${craft.ingredients.map(i=>`<span class="ingredient"><span class="qty">x${i.qty}</span>${i.name}</span>`).join('')}</div>
+    ${profitHTML}
+  </div>`;
+}
+
+function renderCrafts() {
+  const container = document.getElementById('crafts-container');
+  const catFilter = document.getElementById('cat-filter')?.value||'all';
+
+  const groups = {};
+  CRAFTS.forEach(c => {
+    if(catFilter!=='all' && c.category!==catFilter) return;
+    if(currentFilter==='favorite' && !favorites.has(c.id)) return;
+    if(currentFilter==='rentable') {
+      const {status}=getCraftStats(c);
+      if(status!=='ok'&&status!=='target') return;
+    }
+    if(currentFilter==='deficit') {
+      const {status}=getCraftStats(c);
+      if(status!=='no') return;
+    }
+    if(!groups[c.category]) groups[c.category]=[];
+    groups[c.category].push(c);
+  });
+
+  const catIcons={Outils:'⚒️',Générateurs:'⚡',Jardinières:'🌿',Machines:'⚙️',Breuvages:'🍶'};
+  const html = Object.entries(groups).map(([cat,crafts])=>`
+    <div class="craft-group">
+      <div class="group-title">${catIcons[cat]||'📦'} ${cat} <span style="color:var(--border);font-weight:400">(${crafts.length})</span></div>
+      <div class="crafts-grid">${crafts.map(renderCraftCard).join('')}</div>
+    </div>`).join('');
+
+  container.innerHTML = html || '<div class="empty-state"><div>🔍</div>Aucun craft ne correspond aux filtres sélectionnés.</div>';
+}
+
+// ════════════════════════════════════════════════
+//  RANKING
+// ════════════════════════════════════════════════
+function renderRanking() {
+  const favOnly = document.getElementById('rank-fav-only')?.checked||false;
+  let data = CRAFTS.map(c => {
+    const s = getCraftStats(c);
+    return {...c, ...s};
+  }).filter(c => {
+    if(favOnly && !favorites.has(c.id)) return false;
+    return c.profit!=null;
+  });
+
+  data.sort((a,b) => {
+    let va,vb;
+    if(currentSort==='profit')  {va=a.profit??-Infinity; vb=b.profit??-Infinity;}
+    else if(currentSort==='margin') {va=a.margin??-Infinity; vb=b.margin??-Infinity;}
+    else if(currentSort==='tph') {va=a.tph??-Infinity; vb=b.tph??-Infinity;}
+    else if(currentSort==='cost') {va=a.total??Infinity; vb=b.total??Infinity;}
+    return sortAsc ? va-vb : vb-va;
+  });
+
+  if(!data.length) {
+    document.getElementById('ranking-container').innerHTML='<div class="empty-state"><div>💰</div>Entrez les prix des ressources et prix de vente pour voir le classement.</div>';
+    return;
+  }
+
+  const rows = data.map((c,i)=>{
+    const pos=i+1;
+    const posClass = pos===1?'gold':pos===2?'silver':pos===3?'bronze':'';
+    const isFav=favorites.has(c.id);
+    const tphStr = c.tph!=null ? `<span class="rank-tph val">${fmt(c.tph)}</span>` : '<span class="na-cell">—</span>';
+    return `<tr>
+      <td class="rank-pos ${posClass}">${pos}</td>
+      <td class="rank-name">${c.name}<span class="rank-variant variant-${c.variant}">${c.variantLabel}</span></td>
+      <td class="rank-cost">${fmt(c.total)}</td>
+      <td class="rank-sell">${fmt(c.sellVal)}</td>
+      <td class="rank-profit ${c.profit>=0?'pos':'neg'}">${c.profit>=0?'+':''}${fmt(c.profit)}</td>
+      <td class="rank-margin ${c.margin>=0?'pos':'neg'}">${c.margin!=null?c.margin.toFixed(1)+'%':'—'}</td>
+      <td>${tphStr}</td>
+      <td class="rank-fav-col"><button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('${c.id}');renderRanking();">${isFav?'⭐':'☆'}</button></td>
+    </tr>`;
+  }).join('');
+
+  const arrows = {profit:'',margin:'',tph:'',cost:''};
+  arrows[currentSort] = sortAsc ? ' ↑' : ' ↓';
+
+  document.getElementById('ranking-container').innerHTML=`
+    <table class="rank-table">
+      <thead><tr>
+        <th class="rank-pos">#</th>
+        <th>Craft</th>
+        <th onclick="setSort('cost',null)">Coût${arrows.cost}</th>
+        <th>Vente</th>
+        <th onclick="setSort('profit',null)">Profit${arrows.profit}</th>
+        <th onclick="setSort('margin',null)">Marge${arrows.margin}</th>
+        <th onclick="setSort('tph',null)">Profit/h${arrows.tph}</th>
+        <th>⭐</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function setSort(key, btn) {
+  if(currentSort===key) sortAsc=!sortAsc; else { currentSort=key; sortAsc=false; }
+  document.querySelectorAll('.rank-controls .filter-btn').forEach(b=>b.classList.remove('active'));
+  const target = document.getElementById('sort-'+key);
+  if(target) target.classList.add('active');
+  renderRanking();
+}
+
+// ════════════════════════════════════════════════
+//  HISTORY
+// ════════════════════════════════════════════════
+function renderHistoryCraftSelect() {
+  const sel = document.getElementById('hf-craft');
+  if(!sel) return;
+  sel.innerHTML = CRAFTS.map(c=>`<option value="${c.id}">${c.name} (${c.variantLabel})</option>`).join('');
+}
+
+function addHistory() {
+  const craftId = document.getElementById('hf-craft').value;
+  const qty = parseInt(document.getElementById('hf-qty').value)||1;
+  const sellRaw = document.getElementById('hf-sell').value;
+  const craft = craftById[craftId];
+  if(!craft) return;
+  const {total,allKnown,sellVal} = getCraftStats(craft);
+  const actualSell = sellRaw!=='' ? Number(sellRaw) : sellVal;
+  const cost = allKnown ? total*qty : null;
+  const income = actualSell!=null ? actualSell*qty : null;
+  const profit = (cost!=null&&income!=null) ? income-cost : null;
+  history.unshift({id:Date.now(), craftId, craftName:craft.name, variantLabel:craft.variantLabel, qty, cost, income, profit, date:new Date().toLocaleDateString('fr-FR')});
+  saveState();
+  renderHistory();
+  document.getElementById('hf-qty').value='1';
+  document.getElementById('hf-sell').value='';
+}
+
+function deleteHistory(id) {
+  history = history.filter(h=>h.id!==id);
+  saveState();
+  renderHistory();
+}
+
+function renderHistory() {
+  renderHistoryCraftSelect();
+  // Stats
+  const totalIncome = history.reduce((s,h)=>s+(h.income||0),0);
+  const totalProfit = history.reduce((s,h)=>s+(h.profit||0),0);
+  const totalCrafts = history.reduce((s,h)=>s+h.qty,0);
+  const bestEntry = [...history].filter(h=>h.profit!=null).sort((a,b)=>b.profit-a.profit)[0];
+  document.getElementById('history-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-val">${history.length}</div><div class="stat-label">Entrées</div></div>
+    <div class="stat-card"><div class="stat-val">${totalCrafts}</div><div class="stat-label">Crafts totaux</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--green)">${fmt(totalIncome)}</div><div class="stat-label">Revenus totaux</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:${totalProfit>=0?'var(--green)':'var(--red)'}">${totalProfit>=0?'+':''}${fmt(totalProfit)}</div><div class="stat-label">Profit net</div></div>
+    ${bestEntry?`<div class="stat-card"><div class="stat-val" style="color:var(--yellow);font-size:1rem">${bestEntry.craftName}</div><div class="stat-label">Meilleur craft</div></div>`:''}
+  `;
+  // Table
+  if(!history.length) {
+    document.getElementById('history-table-wrap').innerHTML='<div class="empty-state"><div>📋</div>Aucun craft enregistré.</div>';
+    return;
+  }
+  document.getElementById('history-table-wrap').innerHTML=`
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="background:var(--surface2);padding:8px 14px;font-size:11px;color:var(--muted);text-align:left;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border)">Date</th>
+        <th style="background:var(--surface2);padding:8px 14px;font-size:11px;color:var(--muted);text-align:left;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border)">Craft</th>
+        <th style="background:var(--surface2);padding:8px 14px;font-size:11px;color:var(--muted);text-align:left;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border)">Qté</th>
+        <th style="background:var(--surface2);padding:8px 14px;font-size:11px;color:var(--muted);text-align:left;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border)">Coût</th>
+        <th style="background:var(--surface2);padding:8px 14px;font-size:11px;color:var(--muted);text-align:left;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border)">Revenu</th>
+        <th style="background:var(--surface2);padding:8px 14px;font-size:11px;color:var(--muted);text-align:left;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border)">Profit</th>
+        <th style="background:var(--surface2);padding:8px 14px;border-bottom:1px solid var(--border)"></th>
+      </tr></thead>
+      <tbody>${history.map(h=>`<tr>
+        <td style="padding:8px 14px;border-bottom:1px solid #1a1f32;font-size:12px;color:var(--muted)">${h.date}</td>
+        <td style="padding:8px 14px;border-bottom:1px solid #1a1f32;font-size:13px;font-weight:600">${h.craftName} <span style="font-size:10px;color:var(--muted)">(${h.variantLabel})</span></td>
+        <td style="padding:8px 14px;border-bottom:1px solid #1a1f32;font-size:13px">${h.qty}</td>
+        <td style="padding:8px 14px;border-bottom:1px solid #1a1f32;font-size:13px">${h.cost!=null?fmt(h.cost):'—'}</td>
+        <td style="padding:8px 14px;border-bottom:1px solid #1a1f32;font-size:13px;color:var(--green)">${h.income!=null?fmt(h.income):'—'}</td>
+        <td style="padding:8px 14px;border-bottom:1px solid #1a1f32;font-size:13px;font-weight:700;color:${h.profit==null?'var(--muted)':h.profit>=0?'var(--green)':'var(--red)'}">${h.profit!=null?(h.profit>=0?'+':'')+fmt(h.profit):'—'}</td>
+        <td style="padding:8px 14px;border-bottom:1px solid #1a1f32"><button class="del-btn" onclick="deleteHistory(${h.id})">🗑</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+// ════════════════════════════════════════════════
+//  OBJECTIVE
+// ════════════════════════════════════════════════
+function calcObjective() {
+  const target = Number(document.getElementById('obj-target').value);
+  if(!target||target<=0) return;
+  const viable = CRAFTS.map(c=>{
+    const {profit}=getCraftStats(c);
+    return {c,profit};
+  }).filter(x=>x.profit!=null&&x.profit>0).sort((a,b)=>b.profit-a.profit);
+
+  if(!viable.length) {
+    document.getElementById('obj-results').innerHTML='<div style="color:var(--muted);font-size:13px">Aucun craft rentable avec les prix actuels.</div>';
+    return;
+  }
+
+  document.getElementById('obj-results').innerHTML=`<div class="obj-results">${viable.slice(0,12).map(({c,profit})=>{
+    const needed = Math.ceil(target/profit);
+    return `<div class="obj-row">
+      <div><div class="obj-craft-name">${c.name} <span style="font-size:10px;color:var(--muted)">(${c.variantLabel})</span></div><div style="font-size:11px;color:var(--green);margin-top:2px">${fmt(profit)}/craft</div></div>
+      <div class="obj-count">${needed}<span>crafts</span></div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ════════════════════════════════════════════════
+//  PRICES PAGE
+// ════════════════════════════════════════════════
+function renderPricesPage() {
+  const {base, fish} = getAllResources();
+
+  document.getElementById('sell-price-inputs').innerHTML = CRAFTS.map(c=>`
+    <div class="sell-price-row">
+      <label>${c.name}<small>(${c.variantLabel}${c.timeMin?` · ${fmtTime(c.timeMin)}`:''})</small></label>
+      <input class="sell-price-input" type="number" min="0" id="sell-${c.id}" value="${sellPrices[c.id]||''}" placeholder="0">
+      <span class="price-unit">$</span>
+    </div>`).join('');
+
+  document.getElementById('resource-inputs-base').innerHTML = [...base.entries()].map(([id,name])=>`
+    <div class="price-row">
+      <label>${name}</label>
+      <input class="price-input" type="number" min="0" id="res-${id}" value="${prices[id]||''}" placeholder="0">
+      <span class="price-unit">$</span>
+    </div>`).join('');
+
+  document.getElementById('resource-inputs-fish').innerHTML = [...fish.entries()].map(([id,name])=>`
+    <div class="price-row">
+      <label>${name}</label>
+      <input class="price-input" type="number" min="0" id="res-${id}" value="${prices[id]||''}" placeholder="0">
+      <span class="price-unit">$</span>
+    </div>`).join('');
+}
+
+function applyPrices() {
+  const {base, fish} = getAllResources();
+  [...base.keys(),...fish.keys()].forEach(id=>{
+    const el=document.getElementById('res-'+id);
+    if(el) prices[id]=el.value!==''?Number(el.value):null;
+  });
+  CRAFTS.forEach(c=>{
+    const el=document.getElementById('sell-'+c.id);
+    if(el) sellPrices[c.id]=el.value!==''?Number(el.value):null;
+  });
+  saveState();
+  renderCrafts();
+  const btn=document.querySelector('.apply-btn');
+  btn.textContent='✔ Appliqué !';
+  btn.style.background='linear-gradient(135deg,var(--green),#2ea356)';
+  setTimeout(()=>{btn.textContent='✔ Appliquer & Calculer';btn.style.background='';},1800);
+}
+
+function exportPrices() {
+  const data = JSON.stringify({prices,sellPrices},null,2);
+  const a=document.createElement('a');
+  a.href='data:application/json,'+encodeURIComponent(data);
+  a.download='blocaria-prix.json'; a.click();
+}
+function importPrices(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try {
+      const d=JSON.parse(ev.target.result);
+      if(d.prices) prices=d.prices;
+      if(d.sellPrices) sellPrices=d.sellPrices;
+      saveState(); renderPricesPage(); renderCrafts();
+      alert('Prix importés avec succès !');
+    } catch(err){ alert('Fichier JSON invalide.'); }
+  };
+  reader.readAsText(file);
+}
+function resetPrices() {
+  if(!confirm('Réinitialiser tous les prix ?')) return;
+  prices={}; sellPrices={};
+  saveState(); renderPricesPage(); renderCrafts();
+}
+
+// ════════════════════════════════════════════════
+//  FILTERS / NAV / MISC
+// ════════════════════════════════════════════════
+function setFilter(f, btn) {
+  currentFilter=f;
+  document.querySelectorAll('.toolbar .filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderCrafts();
+}
+
+function toggleFav(id) {
+  if(favorites.has(id)) favorites.delete(id); else favorites.add(id);
+  saveState(); renderCrafts();
+}
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='prices') renderPricesPage();
+  if(name==='ranking') renderRanking();
+  if(name==='history') renderHistory();
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  document.querySelector('.theme-btn').textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+}
+
+// Init
+renderCrafts();
+renderHistoryCraftSelect();
+</script>
+</body>
+</html>
