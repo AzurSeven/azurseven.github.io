@@ -1,1 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sway — Street Lifting · by ClaudeAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f12;--bg2:#13161b;--bg3:#1a1d24;--bg4:#21252e;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.18);
+  --text:#e5e3dd;--muted:#6a6e78;--muted2:#9098a4;
+  --pull:#4a9eff;--pull-bg:rgba(74,158,255,0.09);--pull-border:rgba(74,158,255,0.22);
+  --push:#ff6b4a;--push-bg:rgba(255,107,74,0.09);--push-border:rgba(255,107,74,0.22);
+  --legs:#f0b429;--legs-bg:rgba(240,180,41,0.09);--legs-border:rgba(240,180,41,0.22);
+  --rehab:#4ade80;--rehab-bg:rgba(74,222,128,0.09);--rehab-border:rgba(74,222,128,0.22);
+  --green:#4ade80;
+}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 5rem}
 
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(13,15,18,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-brand{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;color:var(--text)}
+.nav-brand span{color:var(--pull)}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{font-size:12px;font-weight:500;padding:5px 11px;border-radius:6px;border:none;background:transparent;color:var(--muted2);cursor:pointer;transition:all .15s}
+.nav-tab:hover{background:var(--bg3);color:var(--text)}
+.nav-tab.active{background:var(--bg3);color:var(--text);border:0.5px solid var(--border2)}
+
+/* HEADER */
+.hero{padding:2.5rem 1.5rem 2rem;border-bottom:1px solid var(--border);max-width:900px;margin:0 auto}
+.hero-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:800;text-transform:uppercase;line-height:.95;margin-bottom:.8rem}
+.hero-title span{color:var(--pull)}
+.hero-subtitle{font-size:13px;color:var(--muted2);background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;display:inline-block;padding:4px 12px;margin-bottom:1rem}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;background:var(--bg3);border:0.5px solid var(--border2);color:var(--muted2)}
+
+/* SYSTEM BOX */
+.system-box{max-width:900px;margin:1.5rem auto;padding:0 1.5rem}
+.sys-inner{background:var(--bg2);border:0.5px solid var(--pull-border);border-left:3px solid var(--pull);border-radius:10px;padding:1.2rem 1.5rem}
+.sys-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pull);margin-bottom:12px}
+.sys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.sys-item{background:var(--bg3);border-radius:8px;padding:10px 13px}
+.sys-item-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px}
+.sys-item-val{font-size:13px;color:var(--text);line-height:1.5}
+
+/* VIEWS */
+.view{display:none;max-width:900px;margin:0 auto;padding:1.5rem}
+.view.active{display:block}
+
+/* SEANCE CARD */
+.seance{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+.seance-header{padding:14px 18px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px}
+.s-num{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;line-height:1;min-width:40px}
+.s-info{flex:1}
+.s-title{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;line-height:1;margin-bottom:3px}
+.s-sub{font-size:12px;color:var(--muted2)}
+.s-day{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase}
+
+/* TABLE */
+.exo-table{width:100%;border-collapse:collapse;font-size:13px}
+.exo-table th{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 18px;text-align:left;border-bottom:0.5px solid var(--border);background:var(--bg3)}
+.exo-table td{padding:9px 18px;border-bottom:0.5px solid var(--border);vertical-align:middle;color:var(--text)}
+.exo-table tr:last-child td{border-bottom:none}
+.exo-table tr:hover td{background:rgba(255,255,255,0.02)}
+.exo-type{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:.04em;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+.type-primary{background:rgba(74,158,255,0.12);color:#7dbfff}
+.type-renfo{background:rgba(255,255,255,0.07);color:var(--muted2)}
+.type-rehab{background:rgba(74,222,128,0.12);color:#7eeeab}
+.note-cell{font-size:11px;color:var(--muted2);font-style:italic;max-width:200px;line-height:1.4}
+.charge-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.rir-badge{font-size:11px;padding:2px 6px;border-radius:4px;background:var(--bg4);color:var(--muted2);border:0.5px solid var(--border)}
+
+/* CALCULATEURS */
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:1.5rem}
+.calc-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;overflow:hidden}
+.calc-card-head{padding:11px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.calc-exo-name{font-size:14px;font-weight:500;color:var(--text)}
+.calc-scheme{font-size:11px;color:var(--muted2)}
+.calc-body{padding:12px 16px}
+.calc-input-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.calc-input-row label{font-size:12px;color:var(--muted2);flex:1}
+.calc-input-row input{width:80px;font-size:14px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 8px;outline:none}
+.calc-input-row input:focus{border-color:var(--pull)}
+.calc-unit{font-size:12px;color:var(--muted);min-width:18px}
+.calc-results{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.calc-result-box{background:var(--bg3);border-radius:8px;padding:8px 10px}
+.calc-result-label{font-size:10px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em}
+.calc-result-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700}
+.val-ts{color:var(--pull)}
+.val-bo{color:var(--green)}
+.calc-note{font-size:11px;color:var(--muted2);background:var(--bg3);border-radius:0 6px 6px 0;border-left:2px solid var(--border3);padding:7px 10px;margin-top:10px;line-height:1.5}
+.calc-note.rehab-note{border-left-color:var(--rehab)}
+
+/* REHAB */
+.rehab-section{background:var(--bg2);border:0.5px solid var(--rehab-border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+.rehab-head{padding:12px 18px;background:var(--rehab-bg);border-bottom:0.5px solid var(--rehab-border);display:flex;align-items:center;gap:10px}
+.rehab-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--rehab)}
+.rehab-row{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:0.5px solid var(--border);font-size:13px}
+.rehab-row:last-child{border-bottom:none}
+.rehab-exo-name{color:var(--text);margin-bottom:2px;font-weight:500}
+.rehab-exo-detail{font-size:11px;color:var(--muted2)}
+.pain-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;flex-shrink:0;margin-left:10px}
+.pain-0{background:rgba(74,222,128,0.12);color:#7eeeab}
+.pain-1{background:rgba(240,180,41,0.12);color:#f0c060}
+.pain-2{background:rgba(255,107,74,0.12);color:#ff9070}
+
+/* SEANCE color themes */
+.s1 .s-num,.s1 .s-title{color:var(--pull)}
+.s1 .seance-header{border-bottom-color:var(--pull-border)}
+.s1 .s-day{background:var(--pull-bg);color:var(--pull);border:0.5px solid var(--pull-border)}
+.s2 .s-num,.s2 .s-title{color:var(--legs)}
+.s2 .seance-header{border-bottom-color:var(--legs-border)}
+.s2 .s-day{background:var(--legs-bg);color:var(--legs);border:0.5px solid var(--legs-border)}
+.s3 .s-num,.s3 .s-title{color:var(--push)}
+.s3 .seance-header{border-bottom-color:var(--push-border)}
+.s3 .s-day{background:var(--push-bg);color:var(--push);border:0.5px solid var(--push-border)}
+.s4 .s-num,.s4 .s-title{color:var(--legs)}
+.s4 .seance-header{border-bottom-color:var(--legs-border)}
+.s4 .s-day{background:var(--legs-bg);color:var(--legs);border:0.5px solid var(--legs-border)}
+
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:8px}
+
+@media(max-width:600px){
+  .nav-tabs .nav-tab{font-size:11px;padding:4px 8px}
+  .exo-table th:nth-child(5),.exo-table td:nth-child(5){display:none}
+  .note-cell{display:none}
+  .hero-title{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Sway<span> · Street Lifting</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('prog')">Prog</button>
+    <button class="nav-tab" onclick="showView('calc')">Calculateurs</button>
+    <button class="nav-tab" onclick="showView('rehab')">Rehab genou</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Bloc 1 · Semaine 1 · by ClaudeAI</div>
+  <h1 class="hero-title">Sway —<br><span>Street Lifting</span></h1>
+  <div class="hero-subtitle">Semaine 1</div>
+  <div class="hero-pills">
+    <span class="pill">4 séances</span>
+    <span class="pill">Lun · Mar · Jeu · Ven</span>
+    <span class="pill">Top set + Back off -15%</span>
+    <span class="pill">Rehab genou actif</span>
+  </div>
+</div>
+
+<div class="system-box">
+  <div class="sys-inner">
+    <div class="sys-title">Système top set / back off</div>
+    <div class="sys-grid">
+      <div class="sys-item"><div class="sys-item-label">Top Set</div><div class="sys-item-val">1 série RPE 8-9. Effort max propre, pas forcément un PR.</div></div>
+      <div class="sys-item"><div class="sys-item-label">Back Off</div><div class="sys-item-val">3 séries à -15% du top set. Plus de reps, exécution technique.</div></div>
+      <div class="sys-item"><div class="sys-item-label">Repos primaires</div><div class="sys-item-val">4-5 min entre top sets. 2-3 min entre back off.</div></div>
+      <div class="sys-item"><div class="sys-item-label">Repos renfos</div><div class="sys-item-val">Repos indiqué en colonne. Focus pump et contraction.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VUE PROG ===== -->
+<div id="view-prog" class="view active">
+
+  <!-- S1 LUNDI -->
+  <div class="seance s1">
+    <div class="seance-header">
+      <div class="s-num">S1</div>
+      <div class="s-info">
+        <div class="s-title">Pull — Muscle Up + Pull Up serré + Dips</div>
+        <div class="s-sub">Haut du corps · traction + poussée · biceps + épaule</div>
+      </div>
+      <span class="s-day">Lundi</span>
+    </div>
+    <table class="exo-table">
+      <thead><tr><th>Exercice</th><th>Séries × Reps</th><th>Repos</th><th>RIR</th><th>Notes coach</th></tr></thead>
+      <tbody>
+        <tr><td>Muscle Up <span class="exo-type type-primary">primaire</span></td><td>1 × 1</td><td>Libre</td><td><span class="rir-badge">2</span></td><td class="note-cell">Top set lourd</td></tr>
+        <tr><td>Muscle Up no dips <span class="exo-type type-primary">primaire</span></td><td>3 × 1</td><td>Libre</td><td><span class="rir-badge">3+</span></td><td class="note-cell">Back off technique</td></tr>
+        <tr><td>Pull Up prise serrée <span class="exo-type type-primary">primaire</span></td><td>1 × 1</td><td>Libre</td><td><span class="rir-badge">2</span></td><td class="note-cell">Top set — prise neutre ou overhand serré</td></tr>
+        <tr><td>Pull Up prise serrée <span class="exo-type type-primary">primaire</span></td><td>3 × 5</td><td>Libre</td><td><span class="rir-badge">5+</span></td><td class="note-cell">Back off volume, excentrique contrôlé</td></tr>
+        <tr><td>Dips DS <span class="exo-type type-primary">primaire</span></td><td>3 × 8</td><td>Libre</td><td>—</td><td class="note-cell">Drop set</td></tr>
+        <tr><td>Curl pronation barre EZ <span class="exo-type type-renfo">renfo</span></td><td>3 × 12</td><td>2/3</td><td><span class="rir-badge">3</span></td><td class="note-cell">Pouce au-dessus de la barre, ROM complet</td></tr>
+        <tr><td>Face pull poulie haute <span class="exo-type type-renfo">renfo</span></td><td>3 × 15</td><td>2/3</td><td><span class="rir-badge">3</span></td><td class="note-cell">Équilibre épaule, rear delt + rotateurs externes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- S2 MARDI -->
+  <div class="seance s2">
+    <div class="seance-header">
+      <div class="s-num">S2</div>
+      <div class="s-info">
+        <div class="s-title">Pull + Lower — Squat + Hip Thrust</div>
+        <div class="s-sub">Corps entier · force jambes + tirage · chaîne post</div>
+      </div>
+      <span class="s-day">Mardi</span>
+    </div>
+    <table class="exo-table">
+      <thead><tr><th>Exercice</th><th>Séries × Reps</th><th>Repos</th><th>RIR</th><th>Notes coach</th></tr></thead>
+      <tbody>
+        <tr><td>Pull Up <span class="exo-type type-primary">primaire</span></td><td>3 × 8</td><td>Libre</td><td>Top</td><td class="note-cell">Top set du jour</td></tr>
+        <tr><td>Squat Low Bar <span class="exo-type type-primary">primaire</span></td><td>4 × 8</td><td>Libre</td><td>Top</td><td class="note-cell">Rehab S1 : ROM conservateur, stop douleur 3/10. Charge = secondaire.</td></tr>
+        <tr><td>Hip Thrust machine <span class="exo-type type-renfo">renfo</span></td><td>3 × 12</td><td>2/3</td><td><span class="rir-badge">3</span></td><td class="note-cell">—</td></tr>
+        <tr><td>Leg Curl machine <span class="exo-type type-renfo">renfo</span></td><td>3 × 8</td><td>2/3</td><td><span class="rir-badge">3</span></td><td class="note-cell">Selon réglage machine : pas le même RIR avec même charge</td></tr>
+        <tr><td>Leg Extension uni <span class="exo-type type-rehab">rehab</span></td><td>3 × 12</td><td>2/3</td><td><span class="rir-badge">3</span></td><td class="note-cell">Léger, douleur 0/10, renfo tendon rotulien</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- S3 JEUDI -->
+  <div class="seance s3">
+    <div class="seance-header">
+      <div class="s-num">S3</div>
+      <div class="s-info">
+        <div class="s-title">Push — Dips + Muscle Up EMOM + Bench</div>
+        <div class="s-sub">Poussée · volume + intensité · triceps · pec fly · gainage</div>
+      </div>
+      <span class="s-day">Jeudi</span>
+    </div>
+    <table class="exo-table">
+      <thead><tr><th>Exercice</th><th>Séries × Reps</th><th>Repos</th><th>RIR</th><th>Notes coach</th></tr></thead>
+      <tbody>
+        <tr><td>Muscle Up EMOM <span class="exo-type type-primary">primaire</span></td><td>8 × 1</td><td>Mes coulles</td><td>—</td><td class="note-cell">Élastique vert — augmentation fréq/ease, encaisser du volume</td></tr>
+        <tr><td>Dips <span class="exo-type type-primary">primaire</span></td><td>1 × 1</td><td>Libre</td><td><span class="rir-badge">3-4</span></td><td class="note-cell">Top set</td></tr>
+        <tr><td>Dips <span class="exo-type type-primary">primaire</span></td><td>3 × 6</td><td>Libre</td><td><span class="rir-badge">100</span></td><td class="note-cell">Back off -15%</td></tr>
+        <tr><td>Bench haltère prise neutre <span class="exo-type type-renfo">renfo</span></td><td>3 × 6</td><td>2/4</td><td><span class="rir-badge">3</span></td><td class="note-cell">—</td></tr>
+        <tr><td>Triceps overhead haltère <span class="exo-type type-renfo">renfo</span></td><td>3 × 12</td><td>2/4</td><td><span class="rir-badge">3</span></td><td class="note-cell">Long chef, coudes fixes, étirement max en bas</td></tr>
+        <tr><td>Pec fly <span class="exo-type type-renfo">renfo</span></td><td>2 × 12</td><td>2/4</td><td><span class="rir-badge">3</span></td><td class="note-cell">Chercher l'étirement max, pas besoin de mettre très lourd</td></tr>
+        <tr><td>Ab Wheel debout (élastique) <span class="exo-type type-renfo">renfo</span></td><td>3 × RIR1</td><td>2/4</td><td><span class="rir-badge">1</span></td><td class="note-cell">1 ou des élastiques pour faire au moins 5 reps</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- S4 VENDREDI -->
+  <div class="seance s4">
+    <div class="seance-header">
+      <div class="s-num">S4</div>
+      <div class="s-info">
+        <div class="s-title">Pull + Lower — Squat High Bar + Front Lever</div>
+        <div class="s-sub">Force jambes · pull up lesté · gainage · chaîne post</div>
+      </div>
+      <span class="s-day">Vendredi</span>
+    </div>
+    <table class="exo-table">
+      <thead><tr><th>Exercice</th><th>Séries × Reps</th><th>Repos</th><th>RIR</th><th>Notes coach</th></tr></thead>
+      <tbody>
+        <tr><td>Pull Up <span class="exo-type type-primary">primaire</span></td><td>4 × 4</td><td>Libre</td><td><span class="rir-badge">3-4</span></td><td class="note-cell">Top set progressif</td></tr>
+        <tr><td>Squat High Barre <span class="exo-type type-primary">primaire</span></td><td>5 × 3</td><td>—</td><td><span class="rir-badge">3+</span></td><td class="note-cell">S1 : charge modérée, établir la baseline. Si jambes lourdes après S2, réduire volume.</td></tr>
+        <tr><td>Good Morning <span class="exo-type type-renfo">renfo</span></td><td>3 × 10</td><td>2/4</td><td><span class="rir-badge">1</span></td><td class="note-cell">—</td></tr>
+        <tr><td>RDL B-stance haltère <span class="exo-type type-renfo">renfo</span></td><td>3 × 12</td><td>2/4</td><td><span class="rir-badge">1</span></td><td class="note-cell">Avec sangle, haltère dans la main opposé à la jambe avant</td></tr>
+        <tr><td>Front Lever Hold (élastique) <span class="exo-type type-renfo">renfo</span></td><td>3 × max</td><td>2/4</td><td><span class="rir-badge">0</span></td><td class="note-cell">Objectif : tenir ~10s dans le dur. Difficulté dégressive.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ===== VUE CALCULATEURS ===== -->
+<div id="view-calc" class="view">
+  <div class="section-title">Calculateurs top set / back off (-15%)</div>
+  <div class="calc-grid">
+
+    <div class="calc-card">
+      <div class="calc-card-head"><span class="calc-exo-name">Muscle Up</span><span class="calc-scheme">1 TS · 3×1 BO</span></div>
+      <div class="calc-body">
+        <div class="calc-input-row"><label>Top set (kg lest)</label><input type="number" id="c-mu" value="0" min="0" step="1.25" oninput="calc('mu','c-mu')"><span class="calc-unit">kg</span></div>
+        <div class="calc-results">
+          <div class="calc-result-box"><div class="calc-result-label">Top set</div><div class="calc-result-val val-ts" id="r-mu-ts">7.5 kg</div></div>
+          <div class="calc-result-box"><div class="calc-result-label">Back off −15%</div><div class="calc-result-val val-bo" id="r-mu-bo">6.25 kg</div></div>
+        </div>
+        <div class="calc-note">RPE 9, transition propre. Back off : technique pure.</div>
+      </div>
+    </div>
+
+    <div class="calc-card">
+      <div class="calc-card-head"><span class="calc-exo-name">Pull Up prise serrée</span><span class="calc-scheme">1 TS · 3×5 BO</span></div>
+      <div class="calc-body">
+        <div class="calc-input-row"><label>Top set (kg lest)</label><input type="number" id="c-cu" value="0" min="0" step="1.25" oninput="calc('cu','c-cu')"><span class="calc-unit">kg</span></div>
+        <div class="calc-results">
+          <div class="calc-result-box"><div class="calc-result-label">Top set</div><div class="calc-result-val val-ts" id="r-cu-ts">— kg</div></div>
+          <div class="calc-result-box"><div class="calc-result-label">Back off −15%</div><div class="calc-result-val val-bo" id="r-cu-bo">— kg</div></div>
+        </div>
+        <div class="calc-note">Prise neutre ou overhand serré. Excentrique contrôlé en back off.</div>
+      </div>
+    </div>
+
+    <div class="calc-card">
+      <div class="calc-card-head"><span class="calc-exo-name">Dips lesté</span><span class="calc-scheme">1 TS · 3×6 BO</span></div>
+      <div class="calc-body">
+        <div class="calc-input-row"><label>Top set (kg lest)</label><input type="number" id="c-di" value="0" min="0" step="1.25" oninput="calc('di','c-di')"><span class="calc-unit">kg</span></div>
+        <div class="calc-results">
+          <div class="calc-result-box"><div class="calc-result-label">Top set</div><div class="calc-result-val val-ts" id="r-di-ts">85 kg</div></div>
+          <div class="calc-result-box"><div class="calc-result-label">Back off −15%</div><div class="calc-result-val val-bo" id="r-di-bo">72.5 kg</div></div>
+        </div>
+        <div class="calc-note">TS : 70-75-78-75-82.5 (historique). BO : amplitude complète.</div>
+      </div>
+    </div>
+
+    <div class="calc-card">
+      <div class="calc-card-head"><span class="calc-exo-name">Pull Up lesté</span><span class="calc-scheme">4×4 BO progressif</span></div>
+      <div class="calc-body">
+        <div class="calc-input-row"><label>Top set (kg lest)</label><input type="number" id="c-pu" value="0" min="0" step="1.25" oninput="calc('pu','c-pu')"><span class="calc-unit">kg</span></div>
+        <div class="calc-results">
+          <div class="calc-result-box"><div class="calc-result-label">Top set</div><div class="calc-result-val val-ts" id="r-pu-ts">16.25 kg</div></div>
+          <div class="calc-result-box"><div class="calc-result-label">Back off −15%</div><div class="calc-result-val val-bo" id="r-pu-bo">13.75 kg</div></div>
+        </div>
+        <div class="calc-note">Progression historique : 16.25-20-23.75-27.5</div>
+      </div>
+    </div>
+
+    <div class="calc-card" style="border-color:var(--rehab-border)">
+      <div class="calc-card-head" style="background:var(--rehab-bg);border-bottom-color:var(--rehab-border)">
+        <span class="calc-exo-name" style="color:var(--rehab)">Squat Low Bar — rehab</span>
+        <span class="calc-scheme" style="color:#4ade8099">ROM contrôlé</span>
+      </div>
+      <div class="calc-body">
+        <div class="calc-input-row"><label>Top set (kg barre)</label><input type="number" id="c-sql" value="0" min="0" step="2.5" oninput="calc('sql','c-sql')"><span class="calc-unit">kg</span></div>
+        <div class="calc-results">
+          <div class="calc-result-box"><div class="calc-result-label">Top set</div><div class="calc-result-val val-ts" id="r-sql-ts">95 kg</div></div>
+          <div class="calc-result-box"><div class="calc-result-label">Back off −15%</div><div class="calc-result-val val-bo" id="r-sql-bo">81.25 kg</div></div>
+        </div>
+        <div class="calc-note rehab-note">Stop avant douleur 3/10. Priorité ROM → charge. 4×8.</div>
+      </div>
+    </div>
+
+    <div class="calc-card" style="border-color:var(--rehab-border)">
+      <div class="calc-card-head" style="background:var(--rehab-bg);border-bottom-color:var(--rehab-border)">
+        <span class="calc-exo-name" style="color:var(--rehab)">Squat High Bar — rehab</span>
+        <span class="calc-scheme" style="color:#4ade8099">5×3 force</span>
+      </div>
+      <div class="calc-body">
+        <div class="calc-input-row"><label>Top set (kg barre)</label><input type="number" id="c-sqh" value="0" min="0" step="2.5" oninput="calc('sqh','c-sqh')"><span class="calc-unit">kg</span></div>
+        <div class="calc-results">
+          <div class="calc-result-box"><div class="calc-result-label">Top set</div><div class="calc-result-val val-ts" id="r-sqh-ts">142.5 kg</div></div>
+          <div class="calc-result-box"><div class="calc-result-label">Back off −15%</div><div class="calc-result-val val-bo" id="r-sqh-bo">121.25 kg</div></div>
+        </div>
+        <div class="calc-note rehab-note">Progression : 142.5-150-157.5-165. Stop si douleur.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== VUE REHAB ===== -->
+<div id="view-rehab" class="view">
+
+  <div class="rehab-section">
+    <div class="rehab-head">
+      <span class="rehab-title">Protocole rehab genou actif</span>
+      <span style="font-size:12px;color:var(--rehab);margin-left:auto">Séances 2 &amp; 4</span>
+    </div>
+    <div class="rehab-row">
+      <div><div class="rehab-exo-name">Leg Extension unilatéral (léger)</div><div class="rehab-exo-detail">3×15-20 · charge très légère · renforcement tendon rotulien progressif</div></div>
+      <span class="pain-tag pain-0">0/10</span>
+    </div>
+    <div class="rehab-row">
+      <div><div class="rehab-exo-name">Wall sit isométrique</div><div class="rehab-exo-detail">3×30-45s · angle sans douleur · faire aussi en échauffement</div></div>
+      <span class="pain-tag pain-0">0/10</span>
+    </div>
+    <div class="rehab-row">
+      <div><div class="rehab-exo-name">Step up unilatéral (box basse)</div><div class="rehab-exo-detail">3×10 / jambe · excentrique 3s en descente · contrôle genou</div></div>
+      <span class="pain-tag pain-1">≤3/10</span>
+    </div>
+    <div class="rehab-row">
+      <div><div class="rehab-exo-name">RDL unilatéral haltère</div><div class="rehab-exo-detail">3×10 / jambe · renforce ischio sans stress rotulien direct</div></div>
+      <span class="pain-tag pain-0">0/10</span>
+    </div>
+    <div class="rehab-row">
+      <div><div class="rehab-exo-name">Hip thrust machine</div><div class="rehab-exo-detail">3×12 · chaîne post sans compression du genou · charge modérée</div></div>
+      <span class="pain-tag pain-0">0/10</span>
+    </div>
+    <div class="rehab-row">
+      <div><div class="rehab-exo-name">Nordic hamstring curl</div><div class="rehab-exo-detail">3×6-8 excentrique · prévention déchirure ischio · faible volume dense</div></div>
+      <span class="pain-tag pain-0">0/10</span>
+    </div>
+  </div>
+
+  <div class="sys-inner" style="margin-bottom:1.5rem">
+    <div class="sys-title" style="color:var(--rehab)">Règles squat pendant la rehab</div>
+    <div class="sys-grid">
+      <div class="sys-item"><div class="sys-item-label">Profondeur</div><div class="sys-item-val">Amplitude = seuil sans douleur. ROM d'abord, charge ensuite.</div></div>
+      <div class="sys-item"><div class="sys-item-label">Seuil stop</div><div class="sys-item-val">Douleur ≥ 3/10 → arrêt immédiat. Note l'angle et la charge.</div></div>
+      <div class="sys-item"><div class="sys-item-label">Progression</div><div class="sys-item-val">Augmente ROM semaine après semaine. Charge = stable tant que ROM augmente.</div></div>
+      <div class="sys-item"><div class="sys-item-label">Si plateau</div><div class="sys-item-val">3-4 sem sans amélioration → consulte un kiné pour identifier la structure.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  event.target.classList.add('active');
+}
+function r125(v){return Math.round(v/1.25)*1.25}
+function fmt(v){return (Math.round(v*100)/100).toLocaleString('fr-FR',{minimumFractionDigits:0,maximumFractionDigits:2})+' kg'}
+function calc(id,inputId){
+  const ts=parseFloat(document.getElementById(inputId).value)||0;
+  const bo=r125(ts*0.85);
+  document.getElementById('r-'+id+'-ts').textContent=fmt(ts);
+  document.getElementById('r-'+id+'-bo').textContent=fmt(bo);
+}
+['mu','cu','di','pu','sql','sqh'].forEach(id=>{
+  const el=document.getElementById('c-'+id);
+  if(el && parseFloat(el.value)===0){
+    document.getElementById('r-'+id+'-ts').textContent='— kg';
+    document.getElementById('r-'+id+'-bo').textContent='— kg';
+  } else { calc(id,'c-'+id); }
+});
+</script>
+</body>
+</html>
