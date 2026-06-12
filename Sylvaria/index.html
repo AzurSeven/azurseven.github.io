@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — Royaume Animalier</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f5f4f0;
+    color: #1a1a18;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: #1a1a18;
+    color: #f5f4f0;
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+  header p  { font-size: 13px; color: #888780; margin-top: 4px; }
+  .header-stats { display: flex; gap: 24px; }
+  .stat { text-align: right; }
+  .stat-val { font-size: 22px; font-weight: 600; color: #f5f4f0; }
+  .stat-lbl { font-size: 11px; color: #888780; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* ─── LEGEND ─── */
+  .legend-bar {
+    background: #fff;
+    border-bottom: 0.5px solid #ddd;
+    padding: 10px 40px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .legend-bar span { font-size: 12px; color: #5f5e5a; }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    vertical-align: middle;
+  }
+  .b-core    { background: #e6f1fb; color: #185fa5; }
+  .b-eco     { background: #eaf3de; color: #3b6d11; }
+  .b-content { background: #faeeda; color: #854f0b; }
+  .b-end     { background: #fcebeb; color: #a32d2d; }
+
+  /* ─── LAYOUT ─── */
+  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 18px; }
+
+  /* ─── PHASE CARD ─── */
+  .phase {
+    background: #fff;
+    border-radius: 10px;
+    border: 0.5px solid #d3d1c7;
+    overflow: hidden;
+  }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 0.5px solid #e8e6df;
+    transition: background .12s;
+  }
+  .phase-header:hover { background: #fafaf7; }
+  .phase-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .phase-name { font-size: 15px; font-weight: 600; flex: 1; }
+  .phase-duration {
+    font-size: 12px; color: #888780;
+    background: #f5f4f0;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 0.5px solid #d3d1c7;
+  }
+  .phase-progress {
+    font-size: 12px; color: #888780;
+    min-width: 60px;
+    text-align: right;
+  }
+  .chevron {
+    font-size: 11px; color: #b4b2a9;
+    transition: transform .2s;
+    flex-shrink: 0;
+  }
+  .open > .chevron, .chevron.open { transform: rotate(90deg); }
+
+  /* ─── TASK TABLE ─── */
+  .phase-body { display: none; }
+  .phase-body.open { display: block; }
+
+  table.tasks {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table.tasks thead th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: #888780;
+    background: #fafaf7;
+    padding: 8px 16px;
+    text-align: left;
+    border-bottom: 0.5px solid #e8e6df;
+  }
+  table.tasks thead th:last-child { text-align: center; }
+
+  table.tasks tbody tr {
+    border-bottom: 0.5px solid #f1efe8;
+    transition: background .1s;
+  }
+  table.tasks tbody tr:last-child { border-bottom: none; }
+  table.tasks tbody tr:hover { background: #fafaf7; }
+  table.tasks tbody tr.done { opacity: .5; }
+  table.tasks tbody tr.done .task-name { text-decoration: line-through; }
+
+  table.tasks td { padding: 11px 16px; vertical-align: top; }
+
+  td.td-icon { width: 36px; padding-right: 0; font-size: 18px; }
+  td.td-task { width: 240px; }
+  td.td-task .task-name { font-weight: 500; font-size: 14px; }
+  td.td-task .task-detail { font-size: 12px; color: #5f5e5a; margin-top: 3px; }
+  td.td-task .task-dep { font-size: 11px; color: #b4b2a9; margin-top: 2px; }
+
+  td.td-plugins { vertical-align: top; }
+  .plugin-list { display: flex; flex-direction: column; gap: 5px; }
+  .plugin-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .plugin-item input[type=checkbox] {
+    width: 14px; height: 14px;
+    accent-color: #185fa5;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+  }
+  .plugin-name { font-weight: 500; color: #1a1a18; }
+  .plugin-desc { font-size: 11px; color: #888780; margin-top: 1px; }
+  .plugin-link {
+    font-size: 10px;
+    color: #378add;
+    text-decoration: none;
+    background: #e6f1fb;
+    padding: 1px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .plugin-link:hover { background: #b5d4f4; }
+
+  td.td-check { width: 70px; text-align: center; vertical-align: middle; }
+  td.td-check input[type=checkbox] {
+    width: 16px; height: 16px;
+    accent-color: #3b6d11;
+    cursor: pointer;
+  }
+
+  /* ─── PROGRESS BAR ─── */
+  .prog-wrap { height: 3px; background: #f1efe8; border-radius: 2px; margin-top: 4px; overflow: hidden; }
+  .prog-bar  { height: 100%; border-radius: 2px; transition: width .3s; }
+
+  /* ─── PRINT ─── */
+  @media print {
+    body { background: #fff; }
+    .phase-body { display: block !important; }
+    .chevron { display: none; }
+    header { background: #1a1a18 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🐾 Royaume Animalier — Roadmap de développement</h1>
+    <p>7 phases · ~42 semaines · Serveur Prison nouvelle génération</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat">
+      <div class="stat-val" id="total-done">0</div>
+      <div class="stat-lbl">Tâches faites</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="total-tasks">0</div>
+      <div class="stat-lbl">Total tâches</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="total-plugins">0</div>
+      <div class="stat-lbl">Plugins installés</div>
+    </div>
+  </div>
+</header>
+
+<div class="legend-bar">
+  <span><span class="badge b-core">Core</span> Mécanique principale</span>
+  <span><span class="badge b-eco">Éco</span> Économie & marché</span>
+  <span><span class="badge b-content">Contenu</span> Contenu & systèmes</span>
+  <span><span class="badge b-end">End-game</span> End-game</span>
+</div>
+
+<div class="main" id="main"></div>
+
+<script>
+const phases = [
+  {
+    id: 1, label: "Phase 1 — Fondations", duration: "Semaines 1–4", color: "#378ADD",
+    tasks: [
+      {
+        icon: "🏗️", name: "Royaumes joueurs", badge: "b-core",
+        detail: "Génération du royaume, parcelle personnelle, build libre",
+        dep: null,
+        plugins: [
+          { name: "PlotSquared", desc: "Gestion des parcelles/terrains joueurs", link: "https://www.spigotmc.org/resources/plotsquared.77506/" },
+          { name: "WorldEdit", desc: "Édition de terrain, manipulation de blocs", link: "https://dev.bukkit.org/projects/worldedit" },
+          { name: "WorldGuard", desc: "Protection des zones et royaumes", link: "https://dev.bukkit.org/projects/worldguard" },
+        ]
+      },
+      {
+        icon: "⛏️", name: "Métier Mineur (v1)", badge: "b-core",
+        detail: "Niveaux 1–100, ressources de base (Pierre, Fer, Or), XP",
+        dep: null,
+        plugins: [
+          { name: "mcMMO", desc: "Système de métiers et niveaux éprouvé", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
+          { name: "EcoSkills", desc: "Compétences modernes, compatible API", link: "https://www.spigotmc.org/resources/ecoskills.103069/" },
+          { name: "TokenEnchant", desc: "Enchantements personnalisés pour pioches", link: "https://www.spigotmc.org/resources/tokenenchant.2287/" },
+        ]
+      },
+      {
+        icon: "🌾", name: "Métier Farmier (v1)", badge: "b-core",
+        detail: "Blé, Maïs, Tomates — récoltes manuelles",
+        dep: null,
+        plugins: [
+          { name: "mcMMO", desc: "Compétence Herboristerie intégrée", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
+          { name: "Jobs Reborn", desc: "Paiement XP/gold sur récoltes", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
+          { name: "ExcellentCrates", desc: "Récompenses aléatoires graines rares", link: "https://www.spigotmc.org/resources/excellentcrates.90278/" },
+        ]
+      },
+      {
+        icon: "🪓", name: "Métier Bûcheron (v1)", badge: "b-core",
+        detail: "Chêne, Acacia, progression niveau",
+        dep: null,
+        plugins: [
+          { name: "mcMMO", desc: "Compétence Bûcheronnage intégrée", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
+          { name: "TreeAssist", desc: "Abattre un arbre coupe tout l'arbre", link: "https://www.spigotmc.org/resources/treeassist.67436/" },
+          { name: "Jobs Reborn", desc: "Salaires bûcheron, XP par bloc coupé", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
+        ]
+      },
+      {
+        icon: "💰", name: "Monnaie Gold", badge: "b-eco",
+        detail: "Émission de base, achats NPC simples",
+        dep: null,
+        plugins: [
+          { name: "Vault", desc: "API économie universelle (obligatoire)", link: "https://www.spigotmc.org/resources/vault.34315/" },
+          { name: "EssentialsX", desc: "Économie de base, commandes /bal, /pay", link: "https://www.spigotmc.org/resources/essentialsx.9089/" },
+          { name: "CMI", desc: "Alternative tout-en-un à EssentialsX", link: "https://www.spigotmc.org/resources/cmi.3742/" },
+        ]
+      },
+      {
+        icon: "🎒", name: "Inventaire & stockage", badge: "b-core",
+        detail: "Coffres personnels, limites par niveau",
+        dep: null,
+        plugins: [
+          { name: "PlayerVaults", desc: "Coffres virtuels personnels (/pv)", link: "https://www.spigotmc.org/resources/playervaults.17922/" },
+          { name: "ChestSort", desc: "Auto-tri des coffres et inventaires", link: "https://www.spigotmc.org/resources/chestsort.59773/" },
+          { name: "BetterChests", desc: "Coffres améliorés, limites de slots", link: "https://www.spigotmc.org/resources/betterchests.68831/" },
+        ]
+      },
+    ]
+  },
+  {
+    id: 2, label: "Phase 2 — Métiers complets & Tour Royale", duration: "Semaines 5–9", color: "#1D9E75",
+    tasks: [
+      {
+        icon: "🏰", name: "Tour Royale", badge: "b-core",
+        detail: "Bâtiment central, accès aux installations privées",
+        dep: "Royaumes Phase 1",
+        plugins: [
+          { name: "Interactions", desc: "NPC interactifs, menus custom sur blocs", link: "https://www.spigotmc.org/resources/interactions.77804/" },
+          { name: "HolographicDisplays", desc: "Affichages holographiques sur la tour", link: "https://www.spigotmc.org/resources/holographic-displays.75097/" },
+          { name: "DeluxeMenus", desc: "Menus GUI pour navigation tour royale", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
+        ]
+      },
+      {
+        icon: "🎣", name: "Métier Pêcheur", badge: "b-core",
+        detail: "Zones de pêche, poissons, perles, trésors",
+        dep: null,
+        plugins: [
+          { name: "AureliumSkills / AuraSkills", desc: "Pêche avec XP et loot custom", link: "https://www.spigotmc.org/resources/auraskills.81069/" },
+          { name: "CustomFishing", desc: "Pêche entièrement personnalisable", link: "https://www.spigotmc.org/resources/customfishing.110772/" },
+          { name: "Jobs Reborn", desc: "Salaire pêcheur, bonus poissons rares", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
+        ]
+      },
+      {
+        icon: "🏹", name: "Métier Chasseur", badge: "b-core",
+        detail: "Zones de chasse, trophées, griffes, crocs",
+        dep: null,
+        plugins: [
+          { name: "MythicMobs", desc: "Mobs custom avec drops configurables", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
+          { name: "mcMMO", desc: "Compétence Combat/Archerie intégrée", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
+          { name: "LootBag", desc: "Sacs de butin drops mobs rares", link: "https://www.spigotmc.org/resources/lootbag.99521/" },
+        ]
+      },
+      {
+        icon: "🐄", name: "Métier Éleveur (v1)", badge: "b-core",
+        detail: "Enclos, slots animaux, soins de base",
+        dep: "Système Pets (Phase 3)",
+        plugins: [
+          { name: "EcoMobs", desc: "Mobs élevage custom avec stats", link: "https://www.spigotmc.org/resources/ecomobs.107018/" },
+          { name: "AdvancedPets", desc: "Pets avec niveaux, XP, évolution", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
+          { name: "FancyNpcs", desc: "NPC éleveur avec dialogues", link: "https://www.spigotmc.org/resources/fancynpcs.107521/" },
+        ]
+      },
+      {
+        icon: "🧩", name: "Système de Modules (v1)", badge: "b-core",
+        detail: "Fragments T1, craft de modules, installation Tour",
+        dep: "Tour Royale",
+        plugins: [
+          { name: "ItemsAdder", desc: "Items custom (fragments, modules) avec textures", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+          { name: "Oraxen", desc: "Alternative ItemsAdder open-source", link: "https://www.spigotmc.org/resources/oraxen.72448/" },
+          { name: "CustomCrafting", desc: "Recettes de craft entièrement custom", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
+        ]
+      },
+      {
+        icon: "🏭", name: "Installations Privées T1–T2", badge: "b-core",
+        detail: "Mine T1, Ferme T1, Forêt T1 — ressources supplémentaires",
+        dep: "Modules",
+        plugins: [
+          { name: "SuperiorSkyblock2 (API)", desc: "Logique d'installations upgradables", link: "https://www.spigotmc.org/resources/superiorskyblock2.87411/" },
+          { name: "SlimefunAddon / ExoticGarden", desc: "Machines de production custom", link: "https://www.spigotmc.org/resources/exoticgarden.19921/" },
+          { name: "AutoSell", desc: "Vente auto ressources installations", link: "https://www.spigotmc.org/resources/autosell.40325/" },
+        ]
+      },
+    ]
+  },
+  {
+    id: 3, label: "Phase 3 — Œufs & Pets", duration: "Semaines 10–15", color: "#BA7517",
+    tasks: [
+      {
+        icon: "🥚", name: "Système d'œufs", badge: "b-content",
+        detail: "5 catégories, drops via métiers, chances configurables",
+        dep: "Métiers Phase 1–2",
+        plugins: [
+          { name: "ItemsAdder", desc: "Œufs custom avec textures 3D", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+          { name: "ExcellentCrates", desc: "Logique d'ouverture d'œufs avec raretés", link: "https://www.spigotmc.org/resources/excellentcrates.90278/" },
+          { name: "CratesPlus", desc: "Système de crates/œufs alternatif", link: "https://www.spigotmc.org/resources/cratesplus.5018/" },
+        ]
+      },
+      {
+        icon: "⭐", name: "Raretés (Commun → Ancestral)", badge: "b-content",
+        detail: "7 niveaux, taux de drop configurables par source",
+        dep: "Œufs",
+        plugins: [
+          { name: "EcoItems", desc: "Items avec raretés et lore dynamique", link: "https://www.spigotmc.org/resources/ecoitems.101760/" },
+          { name: "LoreAttributesRecoded", desc: "Attributs de rareté sur lore items", link: "https://www.spigotmc.org/resources/lore-attributes-recoded.89441/" },
+          { name: "MMOItems", desc: "Système de rareté RPG complet", link: "https://www.spigotmc.org/resources/mmoitems-premium.39267/" },
+        ]
+      },
+      {
+        icon: "🐾", name: "Pets — stats & bonus", badge: "b-content",
+        detail: "Niveau, XP, bonus métier lié (Renard→Vente, Castor→Bûcheron…)",
+        dep: "Œufs",
+        plugins: [
+          { name: "AdvancedPets", desc: "Pets avec stats, niveaux, bonus custom", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
+          { name: "MythicMobs", desc: "Base mobs pour pets custom complexes", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
+          { name: "EcoPets", desc: "Pets economy-friendly avec boosts", link: "https://www.spigotmc.org/resources/ecopets.67698/" },
+        ]
+      },
+      {
+        icon: "🧬", name: "Évolution de pets", badge: "b-content",
+        detail: "Chaînes d'évolution (Lapin→Lièvre Royal→Esprit…)",
+        dep: "Pets",
+        plugins: [
+          { name: "AdvancedPets", desc: "Système d'évolution intégré", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
+          { name: "ItemsAdder", desc: "Modèles 3D pour chaque stade d'évolution", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+          { name: "ModelEngine", desc: "Animations 3D pour évolutions spectaculaires", link: "https://www.spigotmc.org/resources/modelengine.79477/" },
+        ]
+      },
+      {
+        icon: "⭐", name: "Fusion de pets", badge: "b-content",
+        detail: "5×Lapin = Lapin★, système d'étoiles progressif",
+        dep: "Pets",
+        plugins: [
+          { name: "CustomCrafting", desc: "Recettes de fusion dans établi custom", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
+          { name: "ItemsAdder", desc: "Gestion items fusionnés avec star level", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+          { name: "DeluxeMenus", desc: "Interface GUI de fusion conviviale", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
+        ]
+      },
+      {
+        icon: "📖", name: "Bestiaire Royal (v1)", badge: "b-content",
+        detail: "Collection 250 animaux, compteur de progression",
+        dep: "Pets",
+        plugins: [
+          { name: "BattlePass / QuestCreator", desc: "Suivi de collection et objectifs", link: "https://www.spigotmc.org/resources/battlepass.73630/" },
+          { name: "DeluxeMenus", desc: "Interface bestiaire en GUI", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
+          { name: "PlaceholderAPI", desc: "Affichage compteur bestiaire partout", link: "https://www.spigotmc.org/resources/placeholderapi.6245/" },
+        ]
+      },
+    ]
+  },
+  {
+    id: 4, label: "Phase 4 — Économie joueurs", duration: "Semaines 16–20", color: "#D85A30",
+    tasks: [
+      {
+        icon: "📈", name: "Marché Ressources dynamique", badge: "b-eco",
+        detail: "Offre/demande, prix fluctuants, historique 24h/7j/30j",
+        dep: "Gold Phase 1",
+        plugins: [
+          { name: "DynamicShop", desc: "Boutique prix dynamiques offre/demande", link: "https://www.spigotmc.org/resources/dynamicshop.103373/" },
+          { name: "zAuctionHouse", desc: "Hôtel des ventes avec historique prix", link: "https://www.spigotmc.org/resources/zauctionhouse.108679/" },
+          { name: "ShopGUIPlus", desc: "Shop GUI professionnel prix configurables", link: "https://www.spigotmc.org/resources/shopgui.6515/" },
+        ]
+      },
+      {
+        icon: "💎", name: "Cristaux Royaux", badge: "b-eco",
+        detail: "Seconde monnaie pour le marché animalier",
+        dep: null,
+        plugins: [
+          { name: "PlayerPoints", desc: "Seconde monnaie indépendante de Vault", link: "https://www.spigotmc.org/resources/playerpoints.80745/" },
+          { name: "TokenManager", desc: "Tokens/cristaux custom multi-usages", link: "https://www.spigotmc.org/resources/tokenmanager.8610/" },
+          { name: "EcoTokens", desc: "Tokens intégré écosystème Eco", link: "https://www.spigotmc.org/resources/ecotokens.84667/" },
+        ]
+      },
+      {
+        icon: "🐾", name: "Marché Animalier", badge: "b-eco",
+        detail: "Vente œufs, pets, serviteurs vs Cristaux",
+        dep: "Pets Phase 3",
+        plugins: [
+          { name: "zAuctionHouse", desc: "Hôtel des ventes multi-monnaies", link: "https://www.spigotmc.org/resources/zauctionhouse.108679/" },
+          { name: "GUIShop", desc: "Boutique dédiée animaux en GUI", link: "https://www.spigotmc.org/resources/guishop.109378/" },
+          { name: "ItemsAdder", desc: "Icônes custom pour items du marché", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+        ]
+      },
+      {
+        icon: "📋", name: "Ordres d'achat", badge: "b-eco",
+        detail: "Joueurs publient des demandes, vendeurs remplissent directement",
+        dep: "Marchés",
+        plugins: [
+          { name: "zAuctionHouse", desc: "Fonctionnalité ordres d'achat intégrée", link: "https://www.spigotmc.org/resources/zauctionhouse.108679/" },
+          { name: "AuctionHouse", desc: "Alternative légère avec buy orders", link: "https://www.spigotmc.org/resources/auctionhouse.87732/" },
+          { name: "TradeSystem", desc: "Échanges directs joueur-à-joueur sécurisés", link: "https://www.spigotmc.org/resources/tradesystem.78999/" },
+        ]
+      },
+      {
+        icon: "🎉", name: "Événements économiques", badge: "b-eco",
+        detail: "Festival de Pêche, Ruée Minière — bonus 24h",
+        dep: "Marchés",
+        plugins: [
+          { name: "EpicEvents", desc: "Événements temporaires planifiés", link: "https://www.spigotmc.org/resources/epicevents.91683/" },
+          { name: "BonusDrops", desc: "Multiplicateurs drops sur événements", link: "https://www.spigotmc.org/resources/bonusdrops.111498/" },
+          { name: "Announcerplus", desc: "Annonces stylisées début/fin événement", link: "https://www.spigotmc.org/resources/announcerplus.57100/" },
+        ]
+      },
+      {
+        icon: "🏪", name: "Hôtel des ventes personnel", badge: "b-eco",
+        detail: "Stand de vente dans chaque royaume",
+        dep: "Royaumes Phase 1",
+        plugins: [
+          { name: "ShopChest", desc: "Shops dans des coffres, sur parcelle", link: "https://www.spigotmc.org/resources/shopchest.14030/" },
+          { name: "zShop", desc: "Stands de vente personnels configurables", link: "https://www.spigotmc.org/resources/zshop.97940/" },
+          { name: "PlotSquared (hooks)", desc: "Intégration stand dans parcelle joueur", link: "https://www.spigotmc.org/resources/plotsquared.77506/" },
+        ]
+      },
+    ]
+  },
+  {
+    id: 5, label: "Phase 5 — Modules avancés & Prestiges", duration: "Semaines 21–27", color: "#534AB7",
+    tasks: [
+      {
+        icon: "🏭", name: "Installations T3–T6", badge: "b-core",
+        detail: "Diamant, Mythril, Adamantium, Ressources spirituelles",
+        dep: "Modules Phase 2",
+        plugins: [
+          { name: "Slimefun4", desc: "Machines/installations upgradables", link: "https://github.com/Slimefun/Slimefun4" },
+          { name: "ItemsAdder", desc: "Blocs custom pour ressources mythiques", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+          { name: "WorldGeneratorAPI", desc: "Génération zones ressources T5-T6", link: "https://www.spigotmc.org/resources/worldgeneratorapi.77976/" },
+        ]
+      },
+      {
+        icon: "🧩", name: "Modules T2–T5 (tous métiers)", badge: "b-core",
+        detail: "Fragments rares, craft avancé, zones améliorées",
+        dep: "Modules v1",
+        plugins: [
+          { name: "CustomCrafting", desc: "Recettes upgrade modules avancés", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
+          { name: "EcoItems", desc: "Items fragments avec tier et rareté", link: "https://www.spigotmc.org/resources/ecoitems.101760/" },
+          { name: "MMOItems", desc: "Système de tiers items RPG", link: "https://www.spigotmc.org/resources/mmoitems-premium.39267/" },
+        ]
+      },
+      {
+        icon: "🎁", name: "Objets mythiques par métier", badge: "b-end",
+        detail: "Cœur de Mythril, Perle Abyssale, Croc Primordial…",
+        dep: "Métiers niv. 75+",
+        plugins: [
+          { name: "ItemsAdder", desc: "Items mythiques custom textures uniques", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+          { name: "MMOItems", desc: "Stats spéciales sur items légendaires", link: "https://www.spigotmc.org/resources/mmoitems-premium.39267/" },
+          { name: "SpecialItems", desc: "Effets visuels particules sur mythiques", link: "https://www.spigotmc.org/resources/specialitems.88212/" },
+        ]
+      },
+      {
+        icon: "👑", name: "Système de Royaumes (prestige)", badge: "b-end",
+        detail: "Royaume I→II→III, conditions multi-métiers + animaux",
+        dep: "Tous métiers + Pets",
+        plugins: [
+          { name: "PrisonRankup", desc: "Système de prestige/rankup configurable", link: "https://www.spigotmc.org/resources/prisonrankup.91584/" },
+          { name: "LuckPerms", desc: "Permissions par rang royaume", link: "https://www.spigotmc.org/resources/luckperms.28140/" },
+          { name: "Quests", desc: "Quêtes de déblocage des royaumes", link: "https://www.spigotmc.org/resources/quests.3711/" },
+        ]
+      },
+      {
+        icon: "📖", name: "Bestiaire — récompenses (jalons)", badge: "b-content",
+        detail: "25/50/75/100% : bonus permanents, pets exclusifs, titres",
+        dep: "Bestiaire Phase 3",
+        plugins: [
+          { name: "BattlePass", desc: "Jalons de progression bestiaire avec récompenses", link: "https://www.spigotmc.org/resources/battlepass.73630/" },
+          { name: "EcoEnchants", desc: "Bonus permanents via enchantements", link: "https://www.spigotmc.org/resources/ecoenchants.79573/" },
+          { name: "NameTagEdit", desc: "Titres rares affichés au-dessus joueur", link: "https://www.spigotmc.org/resources/nametageditedit.3836/" },
+        ]
+      },
+      {
+        icon: "🌿", name: "Ressources spirituelles", badge: "b-content",
+        detail: "Cristaux spirituels, Plantes spirituelles, Arbre-Monde",
+        dep: "Installations T6",
+        plugins: [
+          { name: "ItemsAdder", desc: "Blocs et items spirituels custom", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+          { name: "MythicMobs", desc: "Mobs spirituels gardiens de zones", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
+          { name: "ParticleEffect Library", desc: "Effets particules zones spirituelles", link: "https://www.spigotmc.org/resources/particle-effect-library.108998/" },
+        ]
+      },
+    ]
+  },
+  {
+    id: 6, label: "Phase 6 — Serviteurs & End-game", duration: "Semaines 28–35", color: "#993556",
+    tasks: [
+      {
+        icon: "🤖", name: "Système Serviteurs", badge: "b-end",
+        detail: "Craft via 5 objets mythiques → Œuf de Serviteur",
+        dep: "Tous objets mythiques Phase 5",
+        plugins: [
+          { name: "MythicMobs", desc: "Base pour serviteurs avec IA custom", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
+          { name: "CustomCrafting", desc: "Recette œuf serviteur 5 mythiques", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
+          { name: "Citizens2", desc: "NPC serviteurs visuellement présents", link: "https://www.spigotmc.org/resources/citizens.13811/" },
+        ]
+      },
+      {
+        icon: "🐉", name: "Types de serviteurs (Taupe, Castor, Tortue, Dragon)", badge: "b-end",
+        detail: "Chaque type produit des ressources spécifiques",
+        dep: "Serviteurs",
+        plugins: [
+          { name: "ModelEngine", desc: "Modèles 3D animés pour chaque serviteur", link: "https://www.spigotmc.org/resources/modelengine.79477/" },
+          { name: "EcoMobs", desc: "Mobs serviteurs avec stats différenciées", link: "https://www.spigotmc.org/resources/ecomobs.107018/" },
+          { name: "ItemsAdder", desc: "Icônes et textures uniques par type", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
+        ]
+      },
+      {
+        icon: "💤", name: "Production hors-ligne", badge: "b-end",
+        detail: "Serviteurs produisent même joueur déconnecté",
+        dep: "Serviteurs + Installations",
+        plugins: [
+          { name: "AutoSell / OfflineGrinder", desc: "Génération ressources offline dans coffre", link: "https://www.spigotmc.org/resources/autosell.40325/" },
+          { name: "Slimefun4", desc: "Machines autonomes fonctionnant offline", link: "https://github.com/Slimefun/Slimefun4" },
+          { name: "IridiumSkyblock (API)", desc: "Référence pour logique production offline", link: "https://www.spigotmc.org/resources/iridiumskyblock.62480/" },
+        ]
+      },
+      {
+        icon: "📊", name: "Limites par tier d'installation", badge: "b-end",
+        detail: "T1→1 serviteur, T2→2, T3→3…",
+        dep: "Production hors-ligne",
+        plugins: [
+          { name: "DeluxeMenus", desc: "GUI gestion slots serviteurs par tier", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
+          { name: "PlaceholderAPI", desc: "Affichage slots libres/occupés", link: "https://www.spigotmc.org/resources/placeholderapi.6245/" },
+          { name: "Vault", desc: "Contrôle permissions par tier", link: "https://www.spigotmc.org/resources/vault.34315/" },
+        ]
+      },
+      {
+        icon: "🐄", name: "Éleveur end-game", badge: "b-end",
+        detail: "Reproduction, évolution avancée, pets légendaires",
+        dep: "Éleveur Phase 2",
+        plugins: [
+          { name: "AdvancedPets", desc: "Reproduction et lignée pets", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
+          { name: "MythicMobs", desc: "Mobs d'élevage custom avec breeding", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
+          { name: "EcoPets", desc: "Boosts pets end-game configurables", link: "https://www.spigotmc.org/resources/ecopets.67698/" },
+        ]
+      },
+      {
+        icon: "🏆", name: "Objectifs & Achievements", badge: "b-content",
+        detail: "Quêtes longue durée, leaderboards, titres rares",
+        dep: "Tout",
+        plugins: [
+          { name: "Quests", desc: "Quêtes complexes multi-étapes", link: "https://www.spigotmc.org/resources/quests.3711/" },
+          { name: "BattlePass", desc: "Passes saisonniers et achievements", link: "https://www.spigotmc.org/resources/battlepass.73630/" },
+          { name: "Leaderheads", desc: "Têtes/trophées pour top joueurs", link: "https://www.spigotmc.org/resources/leaderheads.2079/" },
+        ]
+      },
+    ]
+  },
+  {
+    id: 7, label: "Phase 7 — Polissage & Lancement", duration: "Semaines 36–42", color: "#5F5E5A",
+    tasks: [
+      {
+        icon: "⚖️", name: "Équilibre économique", badge: "b-eco",
+        detail: "Anti-inflation, robinets Gold/Cristaux, sinks de ressources",
+        dep: "Phases 4–6",
+        plugins: [
+          { name: "EconomyShopGUI", desc: "Sinks via shop NPC absorbeur", link: "https://www.spigotmc.org/resources/economyshopgui.6506/" },
+          { name: "CoreProtect", desc: "Logs de toutes transactions économiques", link: "https://www.spigotmc.org/resources/coreprotect.8631/" },
+          { name: "LiteBans", desc: "Bannissement exploiteurs économiques", link: "https://www.spigotmc.org/resources/litebans.3864/" },
+        ]
+      },
+      {
+        icon: "🔗", name: "Vérification interdépendances métiers", badge: "b-core",
+        detail: "Mineur↔Pêcheur↔Chasseur↔Éleveur↔Mineur fonctionnels",
+        dep: "Tous métiers",
+        plugins: [
+          { name: "Jobs Reborn", desc: "Audit des dépendances craft inter-métiers", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
+          { name: "Spark", desc: "Profiler performances serveur", link: "https://www.spigotmc.org/resources/spark.57242/" },
+          { name: "Plan (Player Analytics)", desc: "Analytics économie et comportement joueurs", link: "https://www.spigotmc.org/resources/plan-player-analytics.32536/" },
+        ]
+      },
+      {
+        icon: "🎨", name: "Cosmétiques & décorations", badge: "b-content",
+        detail: "Skins royaumes, animations pets, effets visuels",
+        dep: null,
+        plugins: [
+          { name: "Cosmetica", desc: "Cosmétiques capes, chapeaux, effets", link: "https://www.spigotmc.org/resources/cosmetica.85367/" },
+          { name: "ModelEngine", desc: "Modèles 3D animés pets et mobs", link: "https://www.spigotmc.org/resources/modelengine.79477/" },
+          { name: "ParticleHats", desc: "Effets de particules cosmétiques", link: "https://www.spigotmc.org/resources/particlehats.6371/" },
+        ]
+      },
+      {
+        icon: "🐛", name: "Tests charge & anti-cheat", badge: "b-core",
+        detail: "Stress test marché, exploit duplication, logs",
+        dep: "Économie",
+        plugins: [
+          { name: "Matrix AntiCheat", desc: "Détection exploits, duplication, fly", link: "https://www.spigotmc.org/resources/matrix-anticheat.82710/" },
+          { name: "Themis AntiCheat", desc: "Alternative légère anti-cheat", link: "https://www.spigotmc.org/resources/themis-anti-cheat.84610/" },
+          { name: "CoreProtect", desc: "Rollback anti-grief et audit items", link: "https://www.spigotmc.org/resources/coreprotect.8631/" },
+        ]
+      },
+      {
+        icon: "📣", name: "Beta fermée", badge: "b-core",
+        detail: "50–100 joueurs, feedback, itérations rapides",
+        dep: "Phase 6 complète",
+        plugins: [
+          { name: "Whitelist", desc: "Whitelist native Minecraft (vanilla)", link: "#" },
+          { name: "Plan (Player Analytics)", desc: "Suivi comportement beta-testeurs", link: "https://www.spigotmc.org/resources/plan-player-analytics.32536/" },
+          { name: "FeedbackPlugin", desc: "Rapports de bugs in-game (/bug, /suggest)", link: "https://www.spigotmc.org/resources/feedback.100234/" },
+        ]
+      },
+      {
+        icon: "🚀", name: "Lancement public", badge: "b-core",
+        detail: "Renommage final, annonces Discord/Réseaux, ouverture serveur",
+        dep: "Beta",
+        plugins: [
+          { name: "DiscordSRV", desc: "Synchronisation Minecraft ↔ Discord", link: "https://www.spigotmc.org/resources/discordsrv.18494/" },
+          { name: "Votifier + NuVotifier", desc: "Récompenses de vote TopServeurs", link: "https://www.spigotmc.org/resources/nuvotifier.13449/" },
+          { name: "CMI / EssentialsX", desc: "Commandes lancement, MOTD, règles", link: "https://www.spigotmc.org/resources/cmi.3742/" },
+        ]
+      },
+    ]
+  }
+];
+
+// ─── BUILD DOM ───
+const main = document.getElementById('main');
+let totalTasks = 0;
+
+phases.forEach(phase => {
+  totalTasks += phase.tasks.length;
+
+  const section = document.createElement('div');
+  section.className = 'phase';
+  section.id = 'phase-' + phase.id;
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'phase-header';
+  header.innerHTML = `
+    <span class="phase-dot" style="background:${phase.color}"></span>
+    <span class="phase-name">${phase.label}</span>
+    <span class="phase-duration">${phase.duration}</span>
+    <span class="phase-progress" id="prog-label-${phase.id}">0 / ${phase.tasks.length}</span>
+    <span class="chevron" id="chev-${phase.id}">▶</span>
+  `;
+  header.onclick = () => togglePhase(phase.id);
+
+  // Progress bar
+  const progWrap = document.createElement('div');
+  progWrap.className = 'prog-wrap';
+  progWrap.innerHTML = `<div class="prog-bar" id="prog-bar-${phase.id}" style="width:0%;background:${phase.color}"></div>`;
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'phase-body';
+  body.id = 'body-' + phase.id;
+
+  const table = document.createElement('table');
+  table.className = 'tasks';
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th style="width:36px"></th>
+        <th style="width:260px">Fonctionnalité</th>
+        <th>Plugins recommandés</th>
+        <th style="width:80px;text-align:center">Fait</th>
+      </tr>
+    </thead>
+    <tbody id="tbody-${phase.id}"></tbody>
+  `;
+
+  const tbody = table.querySelector('tbody');
+
+  phase.tasks.forEach((task, ti) => {
+    const tr = document.createElement('tr');
+    tr.id = `tr-${phase.id}-${ti}`;
+
+    const badgeMap = { 'b-core':'Core','b-eco':'Éco','b-content':'Contenu','b-end':'End-game' };
+
+    tr.innerHTML = `
+      <td class="td-icon">${task.icon}</td>
+      <td class="td-task">
+        <div class="task-name"><span class="badge ${task.badge}">${badgeMap[task.badge]}</span> ${task.name}</div>
+        <div class="task-detail">${task.detail}</div>
+        ${task.dep ? `<div class="task-dep">⤷ ${task.dep}</div>` : ''}
+      </td>
+      <td class="td-plugins">
+        <div class="plugin-list">
+          ${task.plugins.map((p,pi) => `
+            <div class="plugin-item">
+              <input type="checkbox" id="plg-${phase.id}-${ti}-${pi}"
+                     onchange="updateCounts()"
+                     title="${p.name}">
+              <div>
+                <div class="plugin-name">
+                  ${p.link && p.link !== '#'
+                    ? `<a href="${p.link}" target="_blank" class="plugin-link">${p.name} ↗</a>`
+                    : p.name}
+                </div>
+                <div class="plugin-desc">${p.desc}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </td>
+      <td class="td-check">
+        <input type="checkbox" id="task-${phase.id}-${ti}"
+               onchange="onTaskCheck(${phase.id}, ${ti}, this.checked)">
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  section.appendChild(header);
+  section.appendChild(progWrap);
+  section.appendChild(body);
+  body.appendChild(table);
+  main.appendChild(section);
+});
+
+document.getElementById('total-tasks').textContent = totalTasks;
+updateCounts();
+
+// ─── TOGGLE ───
+function togglePhase(id) {
+  const body = document.getElementById('body-' + id);
+  const chev = document.getElementById('chev-' + id);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+// Open phase 1 by default
+togglePhase(1);
+
+// ─── TASK CHECK ───
+function onTaskCheck(phaseId, taskIdx, checked) {
+  const tr = document.getElementById(`tr-${phaseId}-${taskIdx}`);
+  if (checked) tr.classList.add('done');
+  else         tr.classList.remove('done');
+  updateCounts();
+}
+
+// ─── COUNTS ───
+function updateCounts() {
+  let totalDone = 0;
+  let totalPluginsDone = 0;
+
+  phases.forEach(phase => {
+    let phaseDone = 0;
+    phase.tasks.forEach((task, ti) => {
+      const cb = document.getElementById(`task-${phase.id}-${ti}`);
+      if (cb && cb.checked) phaseDone++;
+
+      task.plugins.forEach((_, pi) => {
+        const pcb = document.getElementById(`plg-${phase.id}-${ti}-${pi}`);
+        if (pcb && pcb.checked) totalPluginsDone++;
+      });
+    });
+
+    totalDone += phaseDone;
+
+    const label = document.getElementById(`prog-label-${phase.id}`);
+    const bar   = document.getElementById(`prog-bar-${phase.id}`);
+    if (label) label.textContent = `${phaseDone} / ${phase.tasks.length}`;
+    if (bar)   bar.style.width = `${(phaseDone / phase.tasks.length) * 100}%`;
+  });
+
+  document.getElementById('total-done').textContent = totalDone;
+  document.getElementById('total-plugins').textContent = totalPluginsDone;
+}
+
+// ─── SAVE STATE (localStorage) ───
+function saveState() {
+  const state = {};
+  phases.forEach(phase => {
+    phase.tasks.forEach((task, ti) => {
+      const cb = document.getElementById(`task-${phase.id}-${ti}`);
+      state[`task-${phase.id}-${ti}`] = cb ? cb.checked : false;
+      task.plugins.forEach((_, pi) => {
+        const pcb = document.getElementById(`plg-${phase.id}-${ti}-${pi}`);
+        state[`plg-${phase.id}-${ti}-${pi}`] = pcb ? pcb.checked : false;
+      });
+    });
+  });
+  try { localStorage.setItem('roadmap_ra_state', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  let state;
+  try { state = JSON.parse(localStorage.getItem('roadmap_ra_state') || '{}'); } catch(e) { return; }
+  phases.forEach(phase => {
+    phase.tasks.forEach((task, ti) => {
+      const cb = document.getElementById(`task-${phase.id}-${ti}`);
+      if (cb && state[`task-${phase.id}-${ti}`]) {
+        cb.checked = true;
+        document.getElementById(`tr-${phase.id}-${ti}`)?.classList.add('done');
+      }
+      task.plugins.forEach((_, pi) => {
+        const pcb = document.getElementById(`plg-${phase.id}-${ti}-${pi}`);
+        if (pcb && state[`plg-${phase.id}-${ti}-${pi}`]) pcb.checked = true;
+      });
+    });
+  });
+  updateCounts();
+}
+
+document.addEventListener('change', saveState);
+loadState();
+</script>
+</body>
+</html>
