@@ -1,872 +1,1179 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roadmap — Royaume Animalier</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sylvaria — Plan de développement</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
+  :root {
+    --bg:        #0D1A12;
+    --bg2:       #111F17;
+    --bg3:       #162B1E;
+    --gold:      #C9A84C;
+    --gold-dim:  #8A6D2A;
+    --emerald:   #2D6A4F;
+    --emerald-l: #3D8F6A;
+    --violet:    #6B3FA0;
+    --violet-l:  #9B6FD0;
+    --cream:     #F0EAD6;
+    --cream-dim: #A09070;
+    --red:       #C0392B;
+    --border:    rgba(201,168,76,0.18);
+    --nav-w:     240px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background: #f5f4f0;
-    color: #1a1a18;
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
   }
 
-  /* ─── HEADER ─── */
-  header {
-    background: #1a1a18;
-    color: #f5f4f0;
-    padding: 28px 40px 24px;
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--nav-w);
+    height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    padding: 28px 0 20px;
+    z-index: 100;
+    overflow-y: auto;
   }
-  header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
-  header p  { font-size: 13px; color: #888780; margin-top: 4px; }
-  .header-stats { display: flex; gap: 24px; }
-  .stat { text-align: right; }
-  .stat-val { font-size: 22px; font-weight: 600; color: #f5f4f0; }
-  .stat-lbl { font-size: 11px; color: #888780; text-transform: uppercase; letter-spacing: .5px; }
-
-  /* ─── LEGEND ─── */
-  .legend-bar {
-    background: #fff;
-    border-bottom: 0.5px solid #ddd;
-    padding: 10px 40px;
+  .nav-logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .nav-logo h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+  .nav-logo p {
+    font-size: 10px;
+    color: var(--cream-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .nav-section { padding: 0 14px; margin-bottom: 8px; }
+  .nav-section-title {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--cream-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 6px;
+    margin-bottom: 6px;
+  }
+  nav a {
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
     align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    text-decoration: none;
+    color: var(--cream-dim);
+    font-size: 13px;
+    font-weight: 400;
+    transition: background .15s, color .15s;
+    margin-bottom: 2px;
   }
-  .legend-bar span { font-size: 12px; color: #5f5e5a; }
-  .badge {
-    display: inline-block;
+  nav a:hover, nav a.active {
+    background: rgba(201,168,76,0.10);
+    color: var(--gold);
+  }
+  nav a .icon { font-size: 16px; width: 22px; text-align: center; }
+  .nav-divider { height: 1px; background: var(--border); margin: 14px 20px; }
+
+  /* ── MAIN ── */
+  main {
+    margin-left: var(--nav-w);
+    flex: 1;
+    padding: 0;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 40px 48px 80px; max-width: 1100px; }
+  .page.active { display: block; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .page-eyebrow {
     font-size: 10px;
     font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 4px;
+    color: var(--gold);
+    letter-spacing: 3px;
     text-transform: uppercase;
-    letter-spacing: .3px;
-    vertical-align: middle;
+    margin-bottom: 10px;
   }
-  .b-core    { background: #e6f1fb; color: #185fa5; }
-  .b-eco     { background: #eaf3de; color: #3b6d11; }
-  .b-content { background: #faeeda; color: #854f0b; }
-  .b-end     { background: #fcebeb; color: #a32d2d; }
+  .page-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .page-header p { color: var(--cream-dim); font-size: 14px; max-width: 640px; }
 
-  /* ─── LAYOUT ─── */
-  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 18px; }
-
-  /* ─── PHASE CARD ─── */
+  /* ── ROADMAP ── */
+  .roadmap { position: relative; padding-left: 32px; }
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 11px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--emerald) 40%, var(--violet) 80%, rgba(107,63,160,0.2) 100%);
+  }
   .phase {
-    background: #fff;
-    border-radius: 10px;
-    border: 0.5px solid #d3d1c7;
-    overflow: hidden;
+    position: relative;
+    margin-bottom: 48px;
   }
+  .phase-dot {
+    position: absolute;
+    left: -37px;
+    top: 4px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    border: 2px solid var(--bg2);
+    z-index: 1;
+  }
+  .phase-dot.gold   { background: var(--gold); }
+  .phase-dot.green  { background: var(--emerald); }
+  .phase-dot.blue   { background: #2980B9; }
+  .phase-dot.violet { background: var(--violet); }
+  .phase-dot.dark   { background: #1A1A2E; border-color: var(--violet-l); }
+
   .phase-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 20px;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 0.5px solid #e8e6df;
-    transition: background .12s;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
   }
-  .phase-header:hover { background: #fafaf7; }
-  .phase-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .phase-name { font-size: 15px; font-weight: 600; flex: 1; }
-  .phase-duration {
-    font-size: 12px; color: #888780;
-    background: #f5f4f0;
-    padding: 3px 10px;
-    border-radius: 20px;
-    border: 0.5px solid #d3d1c7;
-  }
-  .phase-progress {
-    font-size: 12px; color: #888780;
-    min-width: 60px;
-    text-align: right;
-  }
-  .chevron {
-    font-size: 11px; color: #b4b2a9;
-    transition: transform .2s;
-    flex-shrink: 0;
-  }
-  .open > .chevron, .chevron.open { transform: rotate(90deg); }
-
-  /* ─── TASK TABLE ─── */
-  .phase-body { display: none; }
-  .phase-body.open { display: block; }
-
-  table.tasks {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  table.tasks thead th {
+  .phase-num {
+    font-family: 'Cinzel', serif;
     font-size: 11px;
     font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 2px;
     text-transform: uppercase;
-    letter-spacing: .4px;
-    color: #888780;
-    background: #fafaf7;
-    padding: 8px 16px;
-    text-align: left;
-    border-bottom: 0.5px solid #e8e6df;
   }
-  table.tasks thead th:last-child { text-align: center; }
-
-  table.tasks tbody tr {
-    border-bottom: 0.5px solid #f1efe8;
-    transition: background .1s;
+  .phase-title {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--cream);
   }
-  table.tasks tbody tr:last-child { border-bottom: none; }
-  table.tasks tbody tr:hover { background: #fafaf7; }
-  table.tasks tbody tr.done { opacity: .5; }
-  table.tasks tbody tr.done .task-name { text-decoration: line-through; }
+  .phase-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge-fondation  { background: rgba(201,168,76,0.15); color: var(--gold); }
+  .badge-gameplay   { background: rgba(45,106,79,0.25); color: #5DBF99; }
+  .badge-economie   { background: rgba(41,128,185,0.2); color: #5DADE2; }
+  .badge-endgame    { background: rgba(107,63,160,0.25); color: var(--violet-l); }
+  .badge-polish     { background: rgba(192,57,43,0.2); color: #E74C3C; }
 
-  table.tasks td { padding: 11px 16px; vertical-align: top; }
+  .phase-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .task-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color .2s, transform .15s;
+  }
+  .task-card:hover {
+    border-color: rgba(201,168,76,0.4);
+    transform: translateY(-2px);
+  }
+  .task-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .task-card-header .emoji { font-size: 18px; }
+  .task-card-header strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cream);
+  }
+  .task-card p { font-size: 12px; color: var(--cream-dim); margin-bottom: 8px; }
+  .task-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .task-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--bg3);
+    color: var(--cream-dim);
+    border: 1px solid var(--border);
+  }
+  .task-tag.plugin  { color: #5DADE2; border-color: rgba(93,173,226,0.3); }
+  .task-tag.custom  { color: #A29BFE; border-color: rgba(162,155,254,0.3); }
+  .task-tag.config  { color: #5DBF99; border-color: rgba(93,191,153,0.3); }
 
-  td.td-icon { width: 36px; padding-right: 0; font-size: 18px; }
-  td.td-task { width: 240px; }
-  td.td-task .task-name { font-weight: 500; font-size: 14px; }
-  td.td-task .task-detail { font-size: 12px; color: #5f5e5a; margin-top: 3px; }
-  td.td-task .task-dep { font-size: 11px; color: #b4b2a9; margin-top: 2px; }
+  .phase-estimate {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--cream-dim);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
 
-  td.td-plugins { vertical-align: top; }
-  .plugin-list { display: flex; flex-direction: column; gap: 5px; }
-  .plugin-item {
+  /* ── CAHIER DES CHARGES ── */
+  .cdc-section { margin-bottom: 44px; }
+  .cdc-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cdc-section-icon { font-size: 22px; }
+  .cdc-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--cream);
+  }
+  .cdc-section-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    padding: 2px 9px;
+    border-radius: 20px;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+  }
+  .feature-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .feature-item:hover { border-color: rgba(201,168,76,0.3); }
+  .feature-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .status-todo     { background: #636e72; }
+  .status-plugin   { background: #2980B9; }
+  .status-custom   { background: var(--violet-l); }
+  .status-config   { background: var(--emerald-l); }
+  .feature-body strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 3px;
+  }
+  .feature-body span {
+    font-size: 11px;
+    color: var(--cream-dim);
+    display: block;
+    margin-bottom: 5px;
+  }
+  .feature-type {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .ft-plugin  { background: rgba(41,128,185,0.15); color: #5DADE2; }
+  .ft-custom  { background: rgba(107,63,160,0.2); color: var(--violet-l); }
+  .ft-config  { background: rgba(45,106,79,0.2); color: #5DBF99; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 28px;
+    padding: 12px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--cream-dim); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  /* Plugins table */
+  .plugins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .plugin-chip {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 9px 12px;
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 12px;
+    color: var(--cream);
   }
-  .plugin-item input[type=checkbox] {
-    width: 14px; height: 14px;
-    accent-color: #185fa5;
-    cursor: pointer;
-    flex-shrink: 0;
-    margin: 0;
-  }
-  .plugin-name { font-weight: 500; color: #1a1a18; }
-  .plugin-desc { font-size: 11px; color: #888780; margin-top: 1px; }
-  .plugin-link {
-    font-size: 10px;
-    color: #378add;
-    text-decoration: none;
-    background: #e6f1fb;
-    padding: 1px 5px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
-  .plugin-link:hover { background: #b5d4f4; }
+  .plugin-chip .role { font-size: 10px; color: var(--cream-dim); display: block; }
 
-  td.td-check { width: 70px; text-align: center; vertical-align: middle; }
-  td.td-check input[type=checkbox] {
-    width: 16px; height: 16px;
-    accent-color: #3b6d11;
-    cursor: pointer;
+  /* Scroll hint */
+  .tip-box {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--cream-dim);
+    margin-bottom: 28px;
   }
+  .tip-box strong { color: var(--gold); }
 
-  /* ─── PROGRESS BAR ─── */
-  .prog-wrap { height: 3px; background: #f1efe8; border-radius: 2px; margin-top: 4px; overflow: hidden; }
-  .prog-bar  { height: 100%; border-radius: 2px; transition: width .3s; }
-
-  /* ─── PRINT ─── */
-  @media print {
-    body { background: #fff; }
-    .phase-body { display: block !important; }
-    .chevron { display: none; }
-    header { background: #1a1a18 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media (max-width: 720px) {
+    nav { width: 200px; }
+    main { margin-left: 200px; }
+    .page { padding: 24px 20px 60px; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>🐾 Royaume Animalier — Roadmap de développement</h1>
-    <p>7 phases · ~42 semaines · Serveur Prison nouvelle génération</p>
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">
+    <h1>🌿 SYLVARIA</h1>
+    <p>Le Royaume des Gardiens</p>
   </div>
-  <div class="header-stats">
-    <div class="stat">
-      <div class="stat-val" id="total-done">0</div>
-      <div class="stat-lbl">Tâches faites</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val" id="total-tasks">0</div>
-      <div class="stat-lbl">Total tâches</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val" id="total-plugins">0</div>
-      <div class="stat-lbl">Plugins installés</div>
-    </div>
-  </div>
-</header>
 
-<div class="legend-bar">
-  <span><span class="badge b-core">Core</span> Mécanique principale</span>
-  <span><span class="badge b-eco">Éco</span> Économie & marché</span>
-  <span><span class="badge b-content">Contenu</span> Contenu & systèmes</span>
-  <span><span class="badge b-end">End-game</span> End-game</span>
+  <div class="nav-section">
+    <div class="nav-section-title">Navigation</div>
+    <a href="#" class="active" onclick="showPage('roadmap',this)" >
+      <span class="icon">🗺️</span> Roadmap
+    </a>
+    <a href="#" onclick="showPage('cdc',this)">
+      <span class="icon">📋</span> Cahier des charges
+    </a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Phases</div>
+    <a href="#" onclick="showPage('roadmap',this);scrollToPhase('phase1')">
+      <span class="icon">🏗️</span> Phase 1 — Fondations
+    </a>
+    <a href="#" onclick="showPage('roadmap',this);scrollToPhase('phase2')">
+      <span class="icon">🐾</span> Phase 2 — Animaux
+    </a>
+    <a href="#" onclick="showPage('roadmap',this);scrollToPhase('phase3')">
+      <span class="icon">💰</span> Phase 3 — Économie
+    </a>
+    <a href="#" onclick="showPage('roadmap',this);scrollToPhase('phase4')">
+      <span class="icon">⚔️</span> Phase 4 — End-game
+    </a>
+    <a href="#" onclick="showPage('roadmap',this);scrollToPhase('phase5')">
+      <span class="icon">✨</span> Phase 5 — Lancement
+    </a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Cahier des charges</div>
+    <a href="#" onclick="showPage('cdc',this);scrollToSection('cdc-royaumes')">
+      <span class="icon">🏰</span> Royaumes
+    </a>
+    <a href="#" onclick="showPage('cdc',this);scrollToSection('cdc-metiers')">
+      <span class="icon">⚒️</span> Métiers
+    </a>
+    <a href="#" onclick="showPage('cdc',this);scrollToSection('cdc-animaux')">
+      <span class="icon">🐾</span> Animaux & Œufs
+    </a>
+    <a href="#" onclick="showPage('cdc',this);scrollToSection('cdc-modules')">
+      <span class="icon">🧩</span> Modules
+    </a>
+    <a href="#" onclick="showPage('cdc',this);scrollToSection('cdc-serviteurs')">
+      <span class="icon">🤖</span> Serviteurs
+    </a>
+    <a href="#" onclick="showPage('cdc',this);scrollToSection('cdc-economie')">
+      <span class="icon">💎</span> Économie
+    </a>
+    <a href="#" onclick="showPage('cdc',this);scrollToSection('cdc-plugins')">
+      <span class="icon">🔌</span> Plugins
+    </a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE ROADMAP                                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page active" id="page-roadmap">
+  <div class="page-header">
+    <div class="page-eyebrow">🗺️ Roadmap de développement</div>
+    <h2>De la fondation au lancement</h2>
+    <p>Chaque phase est conçue pour être testable indépendamment. Ne passe à la phase suivante que lorsque la précédente est stable et fun à jouer.</p>
+  </div>
+
+  <div class="tip-box">
+    <strong>Conseil :</strong> Commence par la Phase 1 même si tu as envie de faire les animaux. Sans base solide (permissions, économie, métiers), tout le reste sera difficile à déboguer.
+  </div>
+
+  <div class="roadmap">
+
+    <!-- PHASE 1 -->
+    <div class="phase" id="phase1">
+      <div class="phase-dot gold">🏗️</div>
+      <div class="phase-header">
+        <span class="phase-num">Phase 1</span>
+        <span class="phase-title">Fondations & Infrastructure</span>
+        <span class="phase-badge badge-fondation">Priorité absolue</span>
+      </div>
+      <div class="phase-estimate">⏱️ Durée estimée : 2–3 semaines</div>
+      <div class="phase-cards">
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🔐</span>
+            <strong>Permissions & Groupes</strong>
+          </div>
+          <p>Configurer LuckPerms avec les groupes : Joueur, Gardien, Protecteur, Veilleur, Sage, Maître des Bêtes, Roi, Empereur + groupes staff.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">LuckPerms</span>
+            <span class="task-tag config">Configuration</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">💬</span>
+            <strong>Chat & Commandes de base</strong>
+          </div>
+          <p>EssentialsX configuré pour Purpur 1.21.8. TAB pour le scoreboard et la tablist avec placeholders des rangs et métiers.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">EssentialsX 2.21.2</span>
+            <span class="task-tag plugin">TAB</span>
+            <span class="task-tag plugin">PlaceholderAPI</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🪙</span>
+            <strong>Économie de base</strong>
+          </div>
+          <p>Vault + économie EssentialsX pour l'Or. Deuxième monnaie (Cristaux Royaux) via plugin custom ou PlayerPoints.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">Vault</span>
+            <span class="task-tag plugin">PlayerPoints</span>
+            <span class="task-tag config">Dual currency</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🌍</span>
+            <strong>Mondes & Régions</strong>
+          </div>
+          <p>Multiverse pour les mondes : hub, Verdelune, Solaria, Nyrjungla, Abyssia, Ignivar, Astralis. WorldGuard pour les protections de zones.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">Multiverse-Core</span>
+            <span class="task-tag plugin">WorldGuard</span>
+            <span class="task-tag plugin">WorldEdit</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🏝️</span>
+            <strong>Système de Royaumes (îles)</strong>
+          </div>
+          <p>IridiumSkyblock adapté pour les royaumes personnels. Chaque joueur reçoit une île à son arrivée avec la Tour Royale pré-construite via schéma.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">IridiumSkyblock</span>
+            <span class="task-tag plugin">FAWE</span>
+            <span class="task-tag config">Schématiques</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🎮</span>
+            <strong>Spawn & Hub</strong>
+          </div>
+          <p>Construction du spawn principal. NPCs de navigation vers les régions, le marché, le bestiaire, les métiers. MiniMOTD configuré.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">Citizens / NPC</span>
+            <span class="task-tag plugin">MiniMOTD</span>
+            <span class="task-tag config">Build</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase" id="phase2">
+      <div class="phase-dot green">⚒️</div>
+      <div class="phase-header">
+        <span class="phase-num">Phase 2</span>
+        <span class="phase-title">Métiers & Ressources</span>
+        <span class="phase-badge badge-gameplay">Cœur du gameplay</span>
+      </div>
+      <div class="phase-estimate">⏱️ Durée estimée : 3–4 semaines</div>
+      <div class="phase-cards">
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">⛏️</span>
+            <strong>Jobs Reborn — 6 Métiers</strong>
+          </div>
+          <p>Mineur, Fermier, Bûcheron, Pêcheur, Chasseur, Éleveur. Niveaux 1→100 avec multiplicateurs de gains. XP configurée par type de bloc/action.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">Jobs Reborn</span>
+            <span class="task-tag config">6 jobs</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🌿</span>
+            <strong>Ressources par Tier (T1→T6)</strong>
+          </div>
+          <p>Items custom Oraxen pour les ressources : Mythril, Adamantium, Cristaux spirituels, Éclat Primordial, etc. Textures et modèles 3D.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">Oraxen</span>
+            <span class="task-tag custom">Items custom</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🏭</span>
+            <strong>Mines & Zones privées T1–T3</strong>
+          </div>
+          <p>Création des schémas de mine privée T1 (Pierre/Fer), T2 (Or), T3 (Diamant/Cristal). Accès via Tour Royale. Reset automatique des blocs.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag plugin">FAWE</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🧩</span>
+            <strong>Système de Modules (Phase 1)</strong>
+          </div>
+          <p>Fragments de module droppables des métiers. Craft 50 fragments → Module T1. Installation dans la Tour Royale pour débloquer les installations privées.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">GUI</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🎣</span>
+            <strong>Pêche avancée</strong>
+          </div>
+          <p>CustomFishing pour les loot tables personnalisées : Perles, Coraux, Reliques abyssales, Œufs océaniques. Intégration Jobs Reborn.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">CustomFishing</span>
+            <span class="task-tag config">Loot tables</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">📋</span>
+            <strong>Quêtes quotidiennes & hebdo</strong>
+          </div>
+          <p>BetonQuest : quêtes liées aux métiers. Récompenses en Gold, fragments de modules, œufs. Interface propre avec délais de reset.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">BetonQuest</span>
+            <span class="task-tag config">15+ quêtes</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">✨</span>
+            <strong>Enchantements custom</strong>
+          </div>
+          <p>AdvancedEnchantments pour les outils de métier. Enchantemens Sylvaria exclusifs : "Touche du Gardien", "Instinct Sylvestre", "Faveur de la Forêt".</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">AdvancedEnchantments</span>
+            <span class="task-tag custom">10+ enchants</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🐗</span>
+            <strong>MythicMobs — Mobs de région</strong>
+          </div>
+          <p>Mobs custom par région : Loup de Verdelune, Sanglier de Solaria, Araignée Géante de Nyrjungla, etc. Drops spécifiques par mob.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">MythicMobs</span>
+            <span class="task-tag custom">20+ mobs</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase" id="phase3">
+      <div class="phase-dot green">🐾</div>
+      <div class="phase-header">
+        <span class="phase-num">Phase 3</span>
+        <span class="phase-title">Animaux, Œufs & Bestiaire</span>
+        <span class="phase-badge badge-gameplay">Différenciateur principal</span>
+      </div>
+      <div class="phase-estimate">⏱️ Durée estimée : 4–5 semaines</div>
+      <div class="phase-cards">
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🥚</span>
+            <strong>Système d'œufs & raretés</strong>
+          </div>
+          <p>6 types d'œufs (Forêt, Savane, Jungle, Océan, Volcanique, Spirituel) × 7 raretés. Animation d'ouverture. Probabilités configurables par type.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">42 combos</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🐺</span>
+            <strong>Pets avec bonus de métier</strong>
+          </div>
+          <p>Chaque animal donne un bonus passif : Renard +vente, Loup +mine, Castor +bûcheron, Tortue +pêche, Lion +prestige. Système de slots actifs.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag plugin">Oraxen (modèles)</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">⭐</span>
+            <strong>Évolution & Fusion</strong>
+          </div>
+          <p>4 stades d'évolution par animal (ex: Lapin → Lièvre Royal → Esprit du Printemps → Gardien Sylvestre). Fusion : 5 identiques = version étoilée.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">Arbre d'évolution</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">📖</span>
+            <strong>Bestiaire Royal (250 animaux)</strong>
+          </div>
+          <p>Interface GUI style Pokédex. 6 catégories. Récompenses palier : 25%/50%/75%/100%. Progression visible par le joueur et en leaderboard.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">250 entrées</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🔬</span>
+            <strong>Éleveur — Reproduction & Amélioration</strong>
+          </div>
+          <p>Métier Éleveur pour reproduire des animaux, améliorer leur rareté et fusionner. Système de "nurserie" sur le royaume. Cooldowns de reproduction.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag plugin">Jobs Reborn</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🎨</span>
+            <strong>Modèles 3D & Textures animaux</strong>
+          </div>
+          <p>Création des ressource packs pour les animaux custom. Modèles par rareté (aura pour Légendaire+, effets de particules pour Mythique+).</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Resource pack</span>
+            <span class="task-tag plugin">Oraxen</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase" id="phase4">
+      <div class="phase-dot blue">💰</div>
+      <div class="phase-header">
+        <span class="phase-num">Phase 4</span>
+        <span class="phase-title">Économie avancée & Prestige</span>
+        <span class="phase-badge badge-economie">Rétention long terme</span>
+      </div>
+      <div class="phase-estimate">⏱️ Durée estimée : 3–4 semaines</div>
+      <div class="phase-cards">
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">📊</span>
+            <strong>Marché dynamique offre/demande</strong>
+          </div>
+          <p>Prix qui fluctuent selon les achats/ventes. Bourse affichant variation 24h, 7j, 30j. Événements économiques (Festival de Pêche, etc.).</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">Prix dynamiques</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🛒</span>
+            <strong>Ordres d'achat</strong>
+          </div>
+          <p>Système de commandes d'achat : un joueur publie "Je cherche 1000 Mythril à 500 Gold". Les vendeurs remplissent directement la commande.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🏪</span>
+            <strong>Marché Animalier (Cristaux Royaux)</strong>
+          </div>
+          <p>Seconde place de marché dédiée aux œufs, pets et serviteurs. Monnaie séparée (Cristaux Royaux) pour éviter l'inflation croisée.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag plugin">PlayerPoints</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">👑</span>
+            <strong>Système de Prestige / Rangs de Royaume</strong>
+          </div>
+          <p>7 paliers : Gardien → Protecteur → Veilleur → Sage → Maître des Bêtes → Roi → Empereur. Conditions : métiers, animaux, serviteurs. Déblocage de régions.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag plugin">LuckPerms</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🎉</span>
+            <strong>Événements serveur</strong>
+          </div>
+          <p>Festival des Pêcheurs, Renaissance de la Forêt, Invasion Ancestrale. Scheduleur d'événements automatiques. Annonces et effets visuels.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag plugin">MythicMobs (boss)</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">📈</span>
+            <strong>Leaderboards & Classements</strong>
+          </div>
+          <p>ajLeaderboards configuré : top mineurs, top bestiaire, top richesse, top animaux. Hologrammes physiques dans le hub.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">ajLeaderboards</span>
+            <span class="task-tag plugin">PlaceholderAPI</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHASE 5 -->
+    <div class="phase" id="phase5">
+      <div class="phase-dot violet">⚔️</div>
+      <div class="phase-header">
+        <span class="phase-num">Phase 5</span>
+        <span class="phase-title">Serviteurs Ancestraux & End-game</span>
+        <span class="phase-badge badge-endgame">End-game</span>
+      </div>
+      <div class="phase-estimate">⏱️ Durée estimée : 3–4 semaines</div>
+      <div class="phase-cards">
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🤖</span>
+            <strong>Fabrication des Serviteurs</strong>
+          </div>
+          <p>Nécessite les 5 objets mythiques (Cœur de Mythril, Perle Abyssale, Essence de Vie, Croc Primordial, Essence d'Arbre-Monde). Craft via GUI custom.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">5 ingrédients rares</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">⚡</span>
+            <strong>Production hors ligne</strong>
+          </div>
+          <p>Les serviteurs produisent des ressources même quand le joueur est déconnecté. Calcul des ressources accumulées à la reconnexion. Cap par temps.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">Offline production</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🐉</span>
+            <strong>4 types de Serviteurs</strong>
+          </div>
+          <p>Taupe Ancestrale (minerais), Castor Royal (bois), Tortue Abyssale (pêche), Dragon Sylvestre (tout). Niveaux de production selon tier d'installation.</p>
+          <div class="task-tags">
+            <span class="task-tag custom">Plugin custom</span>
+            <span class="task-tag config">Slots par niveau</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🌋</span>
+            <strong>Régions T5–T6 (Ignivar, Astralis)</strong>
+          </div>
+          <p>Build et configuration des 2 dernières régions. Mobs boss exclusifs. Ressources spirituelles. Réservées aux Sages et Maîtres des Bêtes.</p>
+          <div class="task-tags">
+            <span class="task-tag config">Build</span>
+            <span class="task-tag plugin">MythicMobs</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🏟️</span>
+            <strong>Invasion Ancestrale — Boss mondiaux</strong>
+          </div>
+          <p>Événement majeur hebdomadaire. Boss MythicMobs avec phases multiples. Drops uniques et œufs Ancêstral. Participation collective.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">MythicMobs</span>
+            <span class="task-tag custom">Événement</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🚀</span>
+            <strong>Tests, équilibrage & bêta</strong>
+          </div>
+          <p>Bêta fermée avec 10–20 testeurs. Équilibrage des gains de métiers, des probabilités d'œufs, des prix dynamiques. Correction des exploits.</p>
+          <div class="task-tags">
+            <span class="task-tag config">Beta testing</span>
+            <span class="task-tag config">Balancing</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHASE 6 -->
+    <div class="phase" id="phase6">
+      <div class="phase-dot dark">✨</div>
+      <div class="phase-header">
+        <span class="phase-num">Phase 6</span>
+        <span class="phase-title">Lancement public</span>
+        <span class="phase-badge badge-polish">Lancement</span>
+      </div>
+      <div class="phase-estimate">⏱️ Durée estimée : 1–2 semaines</div>
+      <div class="phase-cards">
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🌐</span>
+            <strong>Site web Sylvaria</strong>
+          </div>
+          <p>Site vitrine avec lore, présentation des régions, classements en direct, boutique. Discord lié.</p>
+          <div class="task-tags">
+            <span class="task-tag config">Web</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">🛡️</span>
+            <strong>Anti-cheat & Sécurité</strong>
+          </div>
+          <p>Configuration d'un anti-cheat adapté (Spartan ou Matrix). Règles anti-exploit pour la production hors ligne et le marché.</p>
+          <div class="task-tags">
+            <span class="task-tag plugin">Anti-cheat</span>
+            <span class="task-tag config">Règles</span>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="emoji">💰</span>
+            <strong>Boutique (store)</strong>
+          </div>
+          <p>Cosmétiques, boosts temporaires non pay-to-win (titres, auras, trails). Packs d'Œufs Cosmétiques. Aucun avantage compétitif direct.</p>
+          <div class="task-tags">
+            <span class="task-tag config">Tebex / store</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /roadmap -->
 </div>
 
-<div class="main" id="main"></div>
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PAGE CAHIER DES CHARGES                           -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="page" id="page-cdc">
+  <div class="page-header">
+    <div class="page-eyebrow">📋 Cahier des charges</div>
+    <h2>Toutes les fonctionnalités de Sylvaria</h2>
+    <p>Chaque fonctionnalité est classée par type d'implémentation. Ce document sert de référence complète pour le développement.</p>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#5DADE2"></div> Plugin existant à configurer</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--violet-l)"></div> Plugin custom à développer</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#5DBF99"></div> Configuration / Build</div>
+  </div>
+
+  <!-- ROYAUMES -->
+  <div class="cdc-section" id="cdc-royaumes">
+    <div class="cdc-section-header">
+      <span class="cdc-section-icon">🏰</span>
+      <span class="cdc-section-title">Royaumes des joueurs</span>
+      <span class="cdc-section-count">8 fonctionnalités</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Île personnelle à l'arrivée</strong><span>Chaque joueur reçoit un royaume auto-généré via IridiumSkyblock</span><span class="feature-type ft-plugin">Plugin</span></div></div>
+      <div class="feature-item"><div class="feature-status status-config"></div><div class="feature-body"><strong>Tour Royale centrale</strong><span>Schématique pré-construite placée automatiquement sur l'île</span><span class="feature-type ft-config">Config / Build</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>GUI de la Tour Royale</strong><span>Interface d'accès à toutes les installations privées et modules</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Mine privée (T1 → T6)</strong><span>Zone instanciée avec reset auto des blocs, accessible depuis la Tour</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Ferme privée (T1 → T6)</strong><span>Zone de farm instanciée avec cultures par tier</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Forêt privée (T1 → T6)</strong><span>Zone de bûcheron avec arbres qui repoussent</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Pêche & Chasse privées</strong><span>Zones instanciées avec mobs et points de pêche dédiés</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-config"></div><div class="feature-body"><strong>Zone de construction libre</strong><span>Parcelle libre sur l'île pour décoration et enclos animaux</span><span class="feature-type ft-config">Config</span></div></div>
+    </div>
+  </div>
+
+  <!-- MÉTIERS -->
+  <div class="cdc-section" id="cdc-metiers">
+    <div class="cdc-section-header">
+      <span class="cdc-section-icon">⚒️</span>
+      <span class="cdc-section-title">Système de Métiers</span>
+      <span class="cdc-section-count">10 fonctionnalités</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>6 métiers configurés (Jobs Reborn)</strong><span>Mineur, Fermier, Bûcheron, Pêcheur, Chasseur, Éleveur</span><span class="feature-type ft-plugin">Jobs Reborn</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Niveaux 1 → 100 par métier</strong><span>Courbe d'XP équilibrée, environ 2 semaines par niveau en jeu normal</span><span class="feature-type ft-plugin">Jobs Reborn</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Bonus de chance par niveau</strong><span>x1 au niv.1, x2 au niv.25, x4 au niv.50, x8 au niv.75, x15 au niv.100</span><span class="feature-type ft-plugin">Jobs Reborn</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Drops de fragments de modules</strong><span>Les métiers droppent des fragments pour fabriquer les modules</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Objets ultra rares par métier</strong><span>Cœur de Mythril, Perle Abyssale, Essence de Vie, Croc Primordial, Essence d'Arbre-Monde</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Pêche avancée (CustomFishing)</strong><span>Loot tables custom : raretés, trésors marins, œufs océaniques</span><span class="feature-type ft-plugin">CustomFishing</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Bûcheronnage assisté (TreeAssist)</strong><span>Coupe des arbres entiers, replantation automatique</span><span class="feature-type ft-plugin">TreeAssist</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Enchantements custom (AdvancedEnch.)</strong><span>10+ enchantements exclusifs liés aux métiers Sylvaria</span><span class="feature-type ft-plugin">AdvancedEnchantments</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Items & blocs custom (Oraxen)</strong><span>Toutes les ressources T4–T6 avec textures et modèles 3D</span><span class="feature-type ft-plugin">Oraxen</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Métier Éleveur (logique reproduction)</strong><span>Reproduction d'animaux, amélioration de rareté, cooldowns</span><span class="feature-type ft-custom">Custom</span></div></div>
+    </div>
+  </div>
+
+  <!-- ANIMAUX & ŒUFS -->
+  <div class="cdc-section" id="cdc-animaux">
+    <div class="cdc-section-header">
+      <span class="cdc-section-icon">🐾</span>
+      <span class="cdc-section-title">Animaux, Œufs & Bestiaire</span>
+      <span class="cdc-section-count">12 fonctionnalités</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>6 types d'œufs</strong><span>Forêt, Savane, Jungle, Océan, Volcanique, Spirituel</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>7 niveaux de rareté</strong><span>Commun 60%, Rare 25%, Épique 10%, Légendaire 4%, Mythique 1%, Divin, Ancestral</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Animation d'ouverture d'œuf</strong><span>Écran d'ouverture avec révélation de la rareté et du nom de l'animal</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>250 animaux à collectionner</strong><span>Répartis en 6 régions et 6 catégories du bestiaire</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Bonus passifs des pets actifs</strong><span>Slot de pet actif par joueur, bonus appliqué en temps réel aux métiers</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Évolution en 4 stades</strong><span>Chaque animal a 4 formes évolutives avec effets et stats grandissants</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Fusion d'animaux (étoiles)</strong><span>5 animaux identiques → version ★ plus puissante (3 niveaux d'étoiles)</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Bestiaire Royal (GUI Pokédex)</strong><span>Interface de collection avec progression, catégories, et animaux verrouillés</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Récompenses de complétion du bestiaire</strong><span>Paliers 25% / 50% / 75% / 100% avec bonus permanents et cosmétiques</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Modèles 3D via Oraxen</strong><span>Resource pack avec modèles custom par animal et auras par rareté</span><span class="feature-type ft-plugin">Oraxen</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Mobs des régions (MythicMobs)</strong><span>20+ mobs custom par région avec loot tables exclusives et comportements</span><span class="feature-type ft-plugin">MythicMobs</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Enclos sur le royaume</strong><span>Les animaux peuvent être affichés sur l'île du joueur dans des enclos</span><span class="feature-type ft-custom">Custom</span></div></div>
+    </div>
+  </div>
+
+  <!-- MODULES -->
+  <div class="cdc-section" id="cdc-modules">
+    <div class="cdc-section-header">
+      <span class="cdc-section-icon">🧩</span>
+      <span class="cdc-section-title">Système de Modules</span>
+      <span class="cdc-section-count">6 fonctionnalités</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Fragments droppables par métier</strong><span>Chaque métier/quête peut dropper des fragments spécifiques à son type</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Craft de modules (50 fragments → 1 module)</strong><span>Interface de craft dédiée, visuellement distincte du craft Vanilla</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Installation dans la Tour Royale</strong><span>GUI d'installation, le module débloque l'installation correspondante</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>5 types de modules × 6 tiers</strong><span>Mine, Ferme, Forêt, Pêche, Chasse — T1 à T6 pour chaque type</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Progression des ressources par tier</strong><span>T1 : ressources basiques → T6 : ressources spirituelles/divines</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Slots de serviteurs par niveau</strong><span>T1 : 1 slot, T2 : 2 slots … jusqu'à T6 : 6 slots par installation</span><span class="feature-type ft-custom">Custom</span></div></div>
+    </div>
+  </div>
+
+  <!-- SERVITEURS -->
+  <div class="cdc-section" id="cdc-serviteurs">
+    <div class="cdc-section-header">
+      <span class="cdc-section-icon">🤖</span>
+      <span class="cdc-section-title">Serviteurs Ancestraux</span>
+      <span class="cdc-section-count">7 fonctionnalités</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Fabrication via 5 objets mythiques</strong><span>Craft de l'Œuf de Serviteur via interface dédiée nécessitant 1 objet par métier</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>4 types de serviteurs</strong><span>Taupe (minerais), Castor (bois), Tortue (pêche), Dragon (tout)</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Production hors ligne</strong><span>Calcul du temps écoulé à la reconnexion, accumulation bornée par un cap</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Placement dans les installations</strong><span>Drag-and-drop du serviteur dans les slots disponibles de chaque installation</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Collecte des ressources produites</strong><span>GUI de collecte, notification à la connexion si ressources accumulées</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Vente de serviteurs</strong><span>Les serviteurs sont échangeables sur le Marché Animalier (Cristaux Royaux)</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Modèles 3D des serviteurs</strong><span>Visuels distincts par type de serviteur, auras en cas de niveau avancé</span><span class="feature-type ft-plugin">Oraxen</span></div></div>
+    </div>
+  </div>
+
+  <!-- ECONOMIE -->
+  <div class="cdc-section" id="cdc-economie">
+    <div class="cdc-section-header">
+      <span class="cdc-section-icon">💎</span>
+      <span class="cdc-section-title">Économie & Marchés</span>
+      <span class="cdc-section-count">10 fonctionnalités</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Double monnaie</strong><span>Or (Gold) via Vault/Essentials + Cristaux Royaux via PlayerPoints</span><span class="feature-type ft-plugin">Vault + PlayerPoints</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Marché des ressources dynamique</strong><span>Prix fluctuant selon l'offre et la demande en temps réel</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Historique des prix (Bourse)</strong><span>Variation 24h, 7j, 30j visible pour chaque ressource</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Ordres d'achat</strong><span>Publication d'une commande "Je cherche X unité de Y à Z Gold"</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Marché Animalier (Cristaux Royaux)</strong><span>Place de marché dédiée aux œufs, pets et serviteurs uniquement</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Événements économiques</strong><span>Festival de Pêche +100%, Renaissance de la Forêt +50%, etc.</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Quêtes quotidiennes & hebdomadaires</strong><span>15+ quêtes avec récompenses Gold et fragments via BetonQuest</span><span class="feature-type ft-plugin">BetonQuest</span></div></div>
+      <div class="feature-item"><div class="feature-status status-plugin"></div><div class="feature-body"><strong>Leaderboards holographiques</strong><span>Top joueurs par richesse, bestiaire, métiers affichés dans le hub</span><span class="feature-type ft-plugin">ajLeaderboards</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Système de prestige / rangs de Royaume</strong><span>7 paliers avec conditions multi-critères (métiers + animaux + serviteurs)</span><span class="feature-type ft-custom">Custom</span></div></div>
+      <div class="feature-item"><div class="feature-status status-custom"></div><div class="feature-body"><strong>Événement Invasion Ancestrale</strong><span>Boss mondial hebdomadaire, récompenses uniques, participation collective</span><span class="feature-type ft-custom">Custom + MythicMobs</span></div></div>
+    </div>
+  </div>
+
+  <!-- PLUGINS -->
+  <div class="cdc-section" id="cdc-plugins">
+    <div class="cdc-section-header">
+      <span class="cdc-section-icon">🔌</span>
+      <span class="cdc-section-title">Stack de plugins recommandés</span>
+      <span class="cdc-section-count">18 plugins</span>
+    </div>
+    <div class="plugins-grid">
+      <div class="plugin-chip">🔐 <div><strong>LuckPerms</strong><span class="role">Permissions & groupes</span></div></div>
+      <div class="plugin-chip">🏦 <div><strong>Vault</strong><span class="role">API économie Gold</span></div></div>
+      <div class="plugin-chip">💬 <div><strong>EssentialsX 2.21.2</strong><span class="role">Commandes de base</span></div></div>
+      <div class="plugin-chip">🏷️ <div><strong>PlaceholderAPI (dev)</strong><span class="role">Variables dynamiques</span></div></div>
+      <div class="plugin-chip">📊 <div><strong>TAB</strong><span class="role">Scoreboard & tablist</span></div></div>
+      <div class="plugin-chip">🌍 <div><strong>Multiverse-Core</strong><span class="role">Gestion des mondes</span></div></div>
+      <div class="plugin-chip">🛡️ <div><strong>WorldGuard</strong><span class="role">Protection des zones</span></div></div>
+      <div class="plugin-chip">✂️ <div><strong>WorldEdit / FAWE</strong><span class="role">Construction rapide</span></div></div>
+      <div class="plugin-chip">🏝️ <div><strong>IridiumSkyblock</strong><span class="role">Îles / Royaumes</span></div></div>
+      <div class="plugin-chip">⚒️ <div><strong>Jobs Reborn</strong><span class="role">Système de métiers</span></div></div>
+      <div class="plugin-chip">📋 <div><strong>BetonQuest</strong><span class="role">Quêtes avancées</span></div></div>
+      <div class="plugin-chip">🐗 <div><strong>MythicMobs</strong><span class="role">Mobs & boss custom</span></div></div>
+      <div class="plugin-chip">🎨 <div><strong>Oraxen</strong><span class="role">Items & blocs custom</span></div></div>
+      <div class="plugin-chip">✨ <div><strong>AdvancedEnchantments</strong><span class="role">Enchants custom</span></div></div>
+      <div class="plugin-chip">🎣 <div><strong>CustomFishing</strong><span class="role">Pêche avancée</span></div></div>
+      <div class="plugin-chip">🪵 <div><strong>TreeAssist</strong><span class="role">Bûcheronnage</span></div></div>
+      <div class="plugin-chip">💎 <div><strong>PlayerPoints</strong><span class="role">Cristaux Royaux</span></div></div>
+      <div class="plugin-chip">📈 <div><strong>ajLeaderboards</strong><span class="role">Classements</span></div></div>
+    </div>
+
+    <div class="tip-box" style="margin-top:16px">
+      <strong>Note :</strong> Les fonctionnalités marquées "Custom" nécessitent le développement d'un plugin Sylvaria maison. Il est recommandé de les regrouper en 1 seul plugin modulaire plutôt que de multiplier les plugins séparés.
+    </div>
+  </div>
+
+</div><!-- /page-cdc -->
+
+</main>
 
 <script>
-const phases = [
-  {
-    id: 1, label: "Phase 1 — Fondations", duration: "Semaines 1–4", color: "#378ADD",
-    tasks: [
-      {
-        icon: "🏗️", name: "Royaumes joueurs", badge: "b-core",
-        detail: "Génération du royaume, parcelle personnelle, build libre",
-        dep: null,
-        plugins: [
-          { name: "PlotSquared", desc: "Gestion des parcelles/terrains joueurs", link: "https://www.spigotmc.org/resources/plotsquared.77506/" },
-          { name: "WorldEdit", desc: "Édition de terrain, manipulation de blocs", link: "https://dev.bukkit.org/projects/worldedit" },
-          { name: "WorldGuard", desc: "Protection des zones et royaumes", link: "https://dev.bukkit.org/projects/worldguard" },
-        ]
-      },
-      {
-        icon: "⛏️", name: "Métier Mineur (v1)", badge: "b-core",
-        detail: "Niveaux 1–100, ressources de base (Pierre, Fer, Or), XP",
-        dep: null,
-        plugins: [
-          { name: "mcMMO", desc: "Système de métiers et niveaux éprouvé", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
-          { name: "EcoSkills", desc: "Compétences modernes, compatible API", link: "https://www.spigotmc.org/resources/ecoskills.103069/" },
-          { name: "TokenEnchant", desc: "Enchantements personnalisés pour pioches", link: "https://www.spigotmc.org/resources/tokenenchant.2287/" },
-        ]
-      },
-      {
-        icon: "🌾", name: "Métier Farmier (v1)", badge: "b-core",
-        detail: "Blé, Maïs, Tomates — récoltes manuelles",
-        dep: null,
-        plugins: [
-          { name: "mcMMO", desc: "Compétence Herboristerie intégrée", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
-          { name: "Jobs Reborn", desc: "Paiement XP/gold sur récoltes", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
-          { name: "ExcellentCrates", desc: "Récompenses aléatoires graines rares", link: "https://www.spigotmc.org/resources/excellentcrates.90278/" },
-        ]
-      },
-      {
-        icon: "🪓", name: "Métier Bûcheron (v1)", badge: "b-core",
-        detail: "Chêne, Acacia, progression niveau",
-        dep: null,
-        plugins: [
-          { name: "mcMMO", desc: "Compétence Bûcheronnage intégrée", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
-          { name: "TreeAssist", desc: "Abattre un arbre coupe tout l'arbre", link: "https://www.spigotmc.org/resources/treeassist.67436/" },
-          { name: "Jobs Reborn", desc: "Salaires bûcheron, XP par bloc coupé", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
-        ]
-      },
-      {
-        icon: "💰", name: "Monnaie Gold", badge: "b-eco",
-        detail: "Émission de base, achats NPC simples",
-        dep: null,
-        plugins: [
-          { name: "Vault", desc: "API économie universelle (obligatoire)", link: "https://www.spigotmc.org/resources/vault.34315/" },
-          { name: "EssentialsX", desc: "Économie de base, commandes /bal, /pay", link: "https://www.spigotmc.org/resources/essentialsx.9089/" },
-          { name: "CMI", desc: "Alternative tout-en-un à EssentialsX", link: "https://www.spigotmc.org/resources/cmi.3742/" },
-        ]
-      },
-      {
-        icon: "🎒", name: "Inventaire & stockage", badge: "b-core",
-        detail: "Coffres personnels, limites par niveau",
-        dep: null,
-        plugins: [
-          { name: "PlayerVaults", desc: "Coffres virtuels personnels (/pv)", link: "https://www.spigotmc.org/resources/playervaults.17922/" },
-          { name: "ChestSort", desc: "Auto-tri des coffres et inventaires", link: "https://www.spigotmc.org/resources/chestsort.59773/" },
-          { name: "BetterChests", desc: "Coffres améliorés, limites de slots", link: "https://www.spigotmc.org/resources/betterchests.68831/" },
-        ]
-      },
-    ]
-  },
-  {
-    id: 2, label: "Phase 2 — Métiers complets & Tour Royale", duration: "Semaines 5–9", color: "#1D9E75",
-    tasks: [
-      {
-        icon: "🏰", name: "Tour Royale", badge: "b-core",
-        detail: "Bâtiment central, accès aux installations privées",
-        dep: "Royaumes Phase 1",
-        plugins: [
-          { name: "Interactions", desc: "NPC interactifs, menus custom sur blocs", link: "https://www.spigotmc.org/resources/interactions.77804/" },
-          { name: "HolographicDisplays", desc: "Affichages holographiques sur la tour", link: "https://www.spigotmc.org/resources/holographic-displays.75097/" },
-          { name: "DeluxeMenus", desc: "Menus GUI pour navigation tour royale", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
-        ]
-      },
-      {
-        icon: "🎣", name: "Métier Pêcheur", badge: "b-core",
-        detail: "Zones de pêche, poissons, perles, trésors",
-        dep: null,
-        plugins: [
-          { name: "AureliumSkills / AuraSkills", desc: "Pêche avec XP et loot custom", link: "https://www.spigotmc.org/resources/auraskills.81069/" },
-          { name: "CustomFishing", desc: "Pêche entièrement personnalisable", link: "https://www.spigotmc.org/resources/customfishing.110772/" },
-          { name: "Jobs Reborn", desc: "Salaire pêcheur, bonus poissons rares", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
-        ]
-      },
-      {
-        icon: "🏹", name: "Métier Chasseur", badge: "b-core",
-        detail: "Zones de chasse, trophées, griffes, crocs",
-        dep: null,
-        plugins: [
-          { name: "MythicMobs", desc: "Mobs custom avec drops configurables", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
-          { name: "mcMMO", desc: "Compétence Combat/Archerie intégrée", link: "https://www.spigotmc.org/resources/official-mcmmo.2445/" },
-          { name: "LootBag", desc: "Sacs de butin drops mobs rares", link: "https://www.spigotmc.org/resources/lootbag.99521/" },
-        ]
-      },
-      {
-        icon: "🐄", name: "Métier Éleveur (v1)", badge: "b-core",
-        detail: "Enclos, slots animaux, soins de base",
-        dep: "Système Pets (Phase 3)",
-        plugins: [
-          { name: "EcoMobs", desc: "Mobs élevage custom avec stats", link: "https://www.spigotmc.org/resources/ecomobs.107018/" },
-          { name: "AdvancedPets", desc: "Pets avec niveaux, XP, évolution", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
-          { name: "FancyNpcs", desc: "NPC éleveur avec dialogues", link: "https://www.spigotmc.org/resources/fancynpcs.107521/" },
-        ]
-      },
-      {
-        icon: "🧩", name: "Système de Modules (v1)", badge: "b-core",
-        detail: "Fragments T1, craft de modules, installation Tour",
-        dep: "Tour Royale",
-        plugins: [
-          { name: "ItemsAdder", desc: "Items custom (fragments, modules) avec textures", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-          { name: "Oraxen", desc: "Alternative ItemsAdder open-source", link: "https://www.spigotmc.org/resources/oraxen.72448/" },
-          { name: "CustomCrafting", desc: "Recettes de craft entièrement custom", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
-        ]
-      },
-      {
-        icon: "🏭", name: "Installations Privées T1–T2", badge: "b-core",
-        detail: "Mine T1, Ferme T1, Forêt T1 — ressources supplémentaires",
-        dep: "Modules",
-        plugins: [
-          { name: "SuperiorSkyblock2 (API)", desc: "Logique d'installations upgradables", link: "https://www.spigotmc.org/resources/superiorskyblock2.87411/" },
-          { name: "SlimefunAddon / ExoticGarden", desc: "Machines de production custom", link: "https://www.spigotmc.org/resources/exoticgarden.19921/" },
-          { name: "AutoSell", desc: "Vente auto ressources installations", link: "https://www.spigotmc.org/resources/autosell.40325/" },
-        ]
-      },
-    ]
-  },
-  {
-    id: 3, label: "Phase 3 — Œufs & Pets", duration: "Semaines 10–15", color: "#BA7517",
-    tasks: [
-      {
-        icon: "🥚", name: "Système d'œufs", badge: "b-content",
-        detail: "5 catégories, drops via métiers, chances configurables",
-        dep: "Métiers Phase 1–2",
-        plugins: [
-          { name: "ItemsAdder", desc: "Œufs custom avec textures 3D", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-          { name: "ExcellentCrates", desc: "Logique d'ouverture d'œufs avec raretés", link: "https://www.spigotmc.org/resources/excellentcrates.90278/" },
-          { name: "CratesPlus", desc: "Système de crates/œufs alternatif", link: "https://www.spigotmc.org/resources/cratesplus.5018/" },
-        ]
-      },
-      {
-        icon: "⭐", name: "Raretés (Commun → Ancestral)", badge: "b-content",
-        detail: "7 niveaux, taux de drop configurables par source",
-        dep: "Œufs",
-        plugins: [
-          { name: "EcoItems", desc: "Items avec raretés et lore dynamique", link: "https://www.spigotmc.org/resources/ecoitems.101760/" },
-          { name: "LoreAttributesRecoded", desc: "Attributs de rareté sur lore items", link: "https://www.spigotmc.org/resources/lore-attributes-recoded.89441/" },
-          { name: "MMOItems", desc: "Système de rareté RPG complet", link: "https://www.spigotmc.org/resources/mmoitems-premium.39267/" },
-        ]
-      },
-      {
-        icon: "🐾", name: "Pets — stats & bonus", badge: "b-content",
-        detail: "Niveau, XP, bonus métier lié (Renard→Vente, Castor→Bûcheron…)",
-        dep: "Œufs",
-        plugins: [
-          { name: "AdvancedPets", desc: "Pets avec stats, niveaux, bonus custom", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
-          { name: "MythicMobs", desc: "Base mobs pour pets custom complexes", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
-          { name: "EcoPets", desc: "Pets economy-friendly avec boosts", link: "https://www.spigotmc.org/resources/ecopets.67698/" },
-        ]
-      },
-      {
-        icon: "🧬", name: "Évolution de pets", badge: "b-content",
-        detail: "Chaînes d'évolution (Lapin→Lièvre Royal→Esprit…)",
-        dep: "Pets",
-        plugins: [
-          { name: "AdvancedPets", desc: "Système d'évolution intégré", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
-          { name: "ItemsAdder", desc: "Modèles 3D pour chaque stade d'évolution", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-          { name: "ModelEngine", desc: "Animations 3D pour évolutions spectaculaires", link: "https://www.spigotmc.org/resources/modelengine.79477/" },
-        ]
-      },
-      {
-        icon: "⭐", name: "Fusion de pets", badge: "b-content",
-        detail: "5×Lapin = Lapin★, système d'étoiles progressif",
-        dep: "Pets",
-        plugins: [
-          { name: "CustomCrafting", desc: "Recettes de fusion dans établi custom", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
-          { name: "ItemsAdder", desc: "Gestion items fusionnés avec star level", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-          { name: "DeluxeMenus", desc: "Interface GUI de fusion conviviale", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
-        ]
-      },
-      {
-        icon: "📖", name: "Bestiaire Royal (v1)", badge: "b-content",
-        detail: "Collection 250 animaux, compteur de progression",
-        dep: "Pets",
-        plugins: [
-          { name: "BattlePass / QuestCreator", desc: "Suivi de collection et objectifs", link: "https://www.spigotmc.org/resources/battlepass.73630/" },
-          { name: "DeluxeMenus", desc: "Interface bestiaire en GUI", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
-          { name: "PlaceholderAPI", desc: "Affichage compteur bestiaire partout", link: "https://www.spigotmc.org/resources/placeholderapi.6245/" },
-        ]
-      },
-    ]
-  },
-  {
-    id: 4, label: "Phase 4 — Économie joueurs", duration: "Semaines 16–20", color: "#D85A30",
-    tasks: [
-      {
-        icon: "📈", name: "Marché Ressources dynamique", badge: "b-eco",
-        detail: "Offre/demande, prix fluctuants, historique 24h/7j/30j",
-        dep: "Gold Phase 1",
-        plugins: [
-          { name: "DynamicShop", desc: "Boutique prix dynamiques offre/demande", link: "https://www.spigotmc.org/resources/dynamicshop.103373/" },
-          { name: "zAuctionHouse", desc: "Hôtel des ventes avec historique prix", link: "https://www.spigotmc.org/resources/zauctionhouse.108679/" },
-          { name: "ShopGUIPlus", desc: "Shop GUI professionnel prix configurables", link: "https://www.spigotmc.org/resources/shopgui.6515/" },
-        ]
-      },
-      {
-        icon: "💎", name: "Cristaux Royaux", badge: "b-eco",
-        detail: "Seconde monnaie pour le marché animalier",
-        dep: null,
-        plugins: [
-          { name: "PlayerPoints", desc: "Seconde monnaie indépendante de Vault", link: "https://www.spigotmc.org/resources/playerpoints.80745/" },
-          { name: "TokenManager", desc: "Tokens/cristaux custom multi-usages", link: "https://www.spigotmc.org/resources/tokenmanager.8610/" },
-          { name: "EcoTokens", desc: "Tokens intégré écosystème Eco", link: "https://www.spigotmc.org/resources/ecotokens.84667/" },
-        ]
-      },
-      {
-        icon: "🐾", name: "Marché Animalier", badge: "b-eco",
-        detail: "Vente œufs, pets, serviteurs vs Cristaux",
-        dep: "Pets Phase 3",
-        plugins: [
-          { name: "zAuctionHouse", desc: "Hôtel des ventes multi-monnaies", link: "https://www.spigotmc.org/resources/zauctionhouse.108679/" },
-          { name: "GUIShop", desc: "Boutique dédiée animaux en GUI", link: "https://www.spigotmc.org/resources/guishop.109378/" },
-          { name: "ItemsAdder", desc: "Icônes custom pour items du marché", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-        ]
-      },
-      {
-        icon: "📋", name: "Ordres d'achat", badge: "b-eco",
-        detail: "Joueurs publient des demandes, vendeurs remplissent directement",
-        dep: "Marchés",
-        plugins: [
-          { name: "zAuctionHouse", desc: "Fonctionnalité ordres d'achat intégrée", link: "https://www.spigotmc.org/resources/zauctionhouse.108679/" },
-          { name: "AuctionHouse", desc: "Alternative légère avec buy orders", link: "https://www.spigotmc.org/resources/auctionhouse.87732/" },
-          { name: "TradeSystem", desc: "Échanges directs joueur-à-joueur sécurisés", link: "https://www.spigotmc.org/resources/tradesystem.78999/" },
-        ]
-      },
-      {
-        icon: "🎉", name: "Événements économiques", badge: "b-eco",
-        detail: "Festival de Pêche, Ruée Minière — bonus 24h",
-        dep: "Marchés",
-        plugins: [
-          { name: "EpicEvents", desc: "Événements temporaires planifiés", link: "https://www.spigotmc.org/resources/epicevents.91683/" },
-          { name: "BonusDrops", desc: "Multiplicateurs drops sur événements", link: "https://www.spigotmc.org/resources/bonusdrops.111498/" },
-          { name: "Announcerplus", desc: "Annonces stylisées début/fin événement", link: "https://www.spigotmc.org/resources/announcerplus.57100/" },
-        ]
-      },
-      {
-        icon: "🏪", name: "Hôtel des ventes personnel", badge: "b-eco",
-        detail: "Stand de vente dans chaque royaume",
-        dep: "Royaumes Phase 1",
-        plugins: [
-          { name: "ShopChest", desc: "Shops dans des coffres, sur parcelle", link: "https://www.spigotmc.org/resources/shopchest.14030/" },
-          { name: "zShop", desc: "Stands de vente personnels configurables", link: "https://www.spigotmc.org/resources/zshop.97940/" },
-          { name: "PlotSquared (hooks)", desc: "Intégration stand dans parcelle joueur", link: "https://www.spigotmc.org/resources/plotsquared.77506/" },
-        ]
-      },
-    ]
-  },
-  {
-    id: 5, label: "Phase 5 — Modules avancés & Prestiges", duration: "Semaines 21–27", color: "#534AB7",
-    tasks: [
-      {
-        icon: "🏭", name: "Installations T3–T6", badge: "b-core",
-        detail: "Diamant, Mythril, Adamantium, Ressources spirituelles",
-        dep: "Modules Phase 2",
-        plugins: [
-          { name: "Slimefun4", desc: "Machines/installations upgradables", link: "https://github.com/Slimefun/Slimefun4" },
-          { name: "ItemsAdder", desc: "Blocs custom pour ressources mythiques", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-          { name: "WorldGeneratorAPI", desc: "Génération zones ressources T5-T6", link: "https://www.spigotmc.org/resources/worldgeneratorapi.77976/" },
-        ]
-      },
-      {
-        icon: "🧩", name: "Modules T2–T5 (tous métiers)", badge: "b-core",
-        detail: "Fragments rares, craft avancé, zones améliorées",
-        dep: "Modules v1",
-        plugins: [
-          { name: "CustomCrafting", desc: "Recettes upgrade modules avancés", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
-          { name: "EcoItems", desc: "Items fragments avec tier et rareté", link: "https://www.spigotmc.org/resources/ecoitems.101760/" },
-          { name: "MMOItems", desc: "Système de tiers items RPG", link: "https://www.spigotmc.org/resources/mmoitems-premium.39267/" },
-        ]
-      },
-      {
-        icon: "🎁", name: "Objets mythiques par métier", badge: "b-end",
-        detail: "Cœur de Mythril, Perle Abyssale, Croc Primordial…",
-        dep: "Métiers niv. 75+",
-        plugins: [
-          { name: "ItemsAdder", desc: "Items mythiques custom textures uniques", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-          { name: "MMOItems", desc: "Stats spéciales sur items légendaires", link: "https://www.spigotmc.org/resources/mmoitems-premium.39267/" },
-          { name: "SpecialItems", desc: "Effets visuels particules sur mythiques", link: "https://www.spigotmc.org/resources/specialitems.88212/" },
-        ]
-      },
-      {
-        icon: "👑", name: "Système de Royaumes (prestige)", badge: "b-end",
-        detail: "Royaume I→II→III, conditions multi-métiers + animaux",
-        dep: "Tous métiers + Pets",
-        plugins: [
-          { name: "PrisonRankup", desc: "Système de prestige/rankup configurable", link: "https://www.spigotmc.org/resources/prisonrankup.91584/" },
-          { name: "LuckPerms", desc: "Permissions par rang royaume", link: "https://www.spigotmc.org/resources/luckperms.28140/" },
-          { name: "Quests", desc: "Quêtes de déblocage des royaumes", link: "https://www.spigotmc.org/resources/quests.3711/" },
-        ]
-      },
-      {
-        icon: "📖", name: "Bestiaire — récompenses (jalons)", badge: "b-content",
-        detail: "25/50/75/100% : bonus permanents, pets exclusifs, titres",
-        dep: "Bestiaire Phase 3",
-        plugins: [
-          { name: "BattlePass", desc: "Jalons de progression bestiaire avec récompenses", link: "https://www.spigotmc.org/resources/battlepass.73630/" },
-          { name: "EcoEnchants", desc: "Bonus permanents via enchantements", link: "https://www.spigotmc.org/resources/ecoenchants.79573/" },
-          { name: "NameTagEdit", desc: "Titres rares affichés au-dessus joueur", link: "https://www.spigotmc.org/resources/nametageditedit.3836/" },
-        ]
-      },
-      {
-        icon: "🌿", name: "Ressources spirituelles", badge: "b-content",
-        detail: "Cristaux spirituels, Plantes spirituelles, Arbre-Monde",
-        dep: "Installations T6",
-        plugins: [
-          { name: "ItemsAdder", desc: "Blocs et items spirituels custom", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-          { name: "MythicMobs", desc: "Mobs spirituels gardiens de zones", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
-          { name: "ParticleEffect Library", desc: "Effets particules zones spirituelles", link: "https://www.spigotmc.org/resources/particle-effect-library.108998/" },
-        ]
-      },
-    ]
-  },
-  {
-    id: 6, label: "Phase 6 — Serviteurs & End-game", duration: "Semaines 28–35", color: "#993556",
-    tasks: [
-      {
-        icon: "🤖", name: "Système Serviteurs", badge: "b-end",
-        detail: "Craft via 5 objets mythiques → Œuf de Serviteur",
-        dep: "Tous objets mythiques Phase 5",
-        plugins: [
-          { name: "MythicMobs", desc: "Base pour serviteurs avec IA custom", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
-          { name: "CustomCrafting", desc: "Recette œuf serviteur 5 mythiques", link: "https://www.spigotmc.org/resources/customcrafting.55883/" },
-          { name: "Citizens2", desc: "NPC serviteurs visuellement présents", link: "https://www.spigotmc.org/resources/citizens.13811/" },
-        ]
-      },
-      {
-        icon: "🐉", name: "Types de serviteurs (Taupe, Castor, Tortue, Dragon)", badge: "b-end",
-        detail: "Chaque type produit des ressources spécifiques",
-        dep: "Serviteurs",
-        plugins: [
-          { name: "ModelEngine", desc: "Modèles 3D animés pour chaque serviteur", link: "https://www.spigotmc.org/resources/modelengine.79477/" },
-          { name: "EcoMobs", desc: "Mobs serviteurs avec stats différenciées", link: "https://www.spigotmc.org/resources/ecomobs.107018/" },
-          { name: "ItemsAdder", desc: "Icônes et textures uniques par type", link: "https://www.spigotmc.org/resources/itemsadder.73355/" },
-        ]
-      },
-      {
-        icon: "💤", name: "Production hors-ligne", badge: "b-end",
-        detail: "Serviteurs produisent même joueur déconnecté",
-        dep: "Serviteurs + Installations",
-        plugins: [
-          { name: "AutoSell / OfflineGrinder", desc: "Génération ressources offline dans coffre", link: "https://www.spigotmc.org/resources/autosell.40325/" },
-          { name: "Slimefun4", desc: "Machines autonomes fonctionnant offline", link: "https://github.com/Slimefun/Slimefun4" },
-          { name: "IridiumSkyblock (API)", desc: "Référence pour logique production offline", link: "https://www.spigotmc.org/resources/iridiumskyblock.62480/" },
-        ]
-      },
-      {
-        icon: "📊", name: "Limites par tier d'installation", badge: "b-end",
-        detail: "T1→1 serviteur, T2→2, T3→3…",
-        dep: "Production hors-ligne",
-        plugins: [
-          { name: "DeluxeMenus", desc: "GUI gestion slots serviteurs par tier", link: "https://www.spigotmc.org/resources/deluxemenus.11734/" },
-          { name: "PlaceholderAPI", desc: "Affichage slots libres/occupés", link: "https://www.spigotmc.org/resources/placeholderapi.6245/" },
-          { name: "Vault", desc: "Contrôle permissions par tier", link: "https://www.spigotmc.org/resources/vault.34315/" },
-        ]
-      },
-      {
-        icon: "🐄", name: "Éleveur end-game", badge: "b-end",
-        detail: "Reproduction, évolution avancée, pets légendaires",
-        dep: "Éleveur Phase 2",
-        plugins: [
-          { name: "AdvancedPets", desc: "Reproduction et lignée pets", link: "https://www.spigotmc.org/resources/advancedpets.17510/" },
-          { name: "MythicMobs", desc: "Mobs d'élevage custom avec breeding", link: "https://www.spigotmc.org/resources/mythicmobs-free.5702/" },
-          { name: "EcoPets", desc: "Boosts pets end-game configurables", link: "https://www.spigotmc.org/resources/ecopets.67698/" },
-        ]
-      },
-      {
-        icon: "🏆", name: "Objectifs & Achievements", badge: "b-content",
-        detail: "Quêtes longue durée, leaderboards, titres rares",
-        dep: "Tout",
-        plugins: [
-          { name: "Quests", desc: "Quêtes complexes multi-étapes", link: "https://www.spigotmc.org/resources/quests.3711/" },
-          { name: "BattlePass", desc: "Passes saisonniers et achievements", link: "https://www.spigotmc.org/resources/battlepass.73630/" },
-          { name: "Leaderheads", desc: "Têtes/trophées pour top joueurs", link: "https://www.spigotmc.org/resources/leaderheads.2079/" },
-        ]
-      },
-    ]
-  },
-  {
-    id: 7, label: "Phase 7 — Polissage & Lancement", duration: "Semaines 36–42", color: "#5F5E5A",
-    tasks: [
-      {
-        icon: "⚖️", name: "Équilibre économique", badge: "b-eco",
-        detail: "Anti-inflation, robinets Gold/Cristaux, sinks de ressources",
-        dep: "Phases 4–6",
-        plugins: [
-          { name: "EconomyShopGUI", desc: "Sinks via shop NPC absorbeur", link: "https://www.spigotmc.org/resources/economyshopgui.6506/" },
-          { name: "CoreProtect", desc: "Logs de toutes transactions économiques", link: "https://www.spigotmc.org/resources/coreprotect.8631/" },
-          { name: "LiteBans", desc: "Bannissement exploiteurs économiques", link: "https://www.spigotmc.org/resources/litebans.3864/" },
-        ]
-      },
-      {
-        icon: "🔗", name: "Vérification interdépendances métiers", badge: "b-core",
-        detail: "Mineur↔Pêcheur↔Chasseur↔Éleveur↔Mineur fonctionnels",
-        dep: "Tous métiers",
-        plugins: [
-          { name: "Jobs Reborn", desc: "Audit des dépendances craft inter-métiers", link: "https://www.spigotmc.org/resources/jobs-reborn.4216/" },
-          { name: "Spark", desc: "Profiler performances serveur", link: "https://www.spigotmc.org/resources/spark.57242/" },
-          { name: "Plan (Player Analytics)", desc: "Analytics économie et comportement joueurs", link: "https://www.spigotmc.org/resources/plan-player-analytics.32536/" },
-        ]
-      },
-      {
-        icon: "🎨", name: "Cosmétiques & décorations", badge: "b-content",
-        detail: "Skins royaumes, animations pets, effets visuels",
-        dep: null,
-        plugins: [
-          { name: "Cosmetica", desc: "Cosmétiques capes, chapeaux, effets", link: "https://www.spigotmc.org/resources/cosmetica.85367/" },
-          { name: "ModelEngine", desc: "Modèles 3D animés pets et mobs", link: "https://www.spigotmc.org/resources/modelengine.79477/" },
-          { name: "ParticleHats", desc: "Effets de particules cosmétiques", link: "https://www.spigotmc.org/resources/particlehats.6371/" },
-        ]
-      },
-      {
-        icon: "🐛", name: "Tests charge & anti-cheat", badge: "b-core",
-        detail: "Stress test marché, exploit duplication, logs",
-        dep: "Économie",
-        plugins: [
-          { name: "Matrix AntiCheat", desc: "Détection exploits, duplication, fly", link: "https://www.spigotmc.org/resources/matrix-anticheat.82710/" },
-          { name: "Themis AntiCheat", desc: "Alternative légère anti-cheat", link: "https://www.spigotmc.org/resources/themis-anti-cheat.84610/" },
-          { name: "CoreProtect", desc: "Rollback anti-grief et audit items", link: "https://www.spigotmc.org/resources/coreprotect.8631/" },
-        ]
-      },
-      {
-        icon: "📣", name: "Beta fermée", badge: "b-core",
-        detail: "50–100 joueurs, feedback, itérations rapides",
-        dep: "Phase 6 complète",
-        plugins: [
-          { name: "Whitelist", desc: "Whitelist native Minecraft (vanilla)", link: "#" },
-          { name: "Plan (Player Analytics)", desc: "Suivi comportement beta-testeurs", link: "https://www.spigotmc.org/resources/plan-player-analytics.32536/" },
-          { name: "FeedbackPlugin", desc: "Rapports de bugs in-game (/bug, /suggest)", link: "https://www.spigotmc.org/resources/feedback.100234/" },
-        ]
-      },
-      {
-        icon: "🚀", name: "Lancement public", badge: "b-core",
-        detail: "Renommage final, annonces Discord/Réseaux, ouverture serveur",
-        dep: "Beta",
-        plugins: [
-          { name: "DiscordSRV", desc: "Synchronisation Minecraft ↔ Discord", link: "https://www.spigotmc.org/resources/discordsrv.18494/" },
-          { name: "Votifier + NuVotifier", desc: "Récompenses de vote TopServeurs", link: "https://www.spigotmc.org/resources/nuvotifier.13449/" },
-          { name: "CMI / EssentialsX", desc: "Commandes lancement, MOTD, règles", link: "https://www.spigotmc.org/resources/cmi.3742/" },
-        ]
-      },
-    ]
-  }
-];
-
-// ─── BUILD DOM ───
-const main = document.getElementById('main');
-let totalTasks = 0;
-
-phases.forEach(phase => {
-  totalTasks += phase.tasks.length;
-
-  const section = document.createElement('div');
-  section.className = 'phase';
-  section.id = 'phase-' + phase.id;
-
-  // Header
-  const header = document.createElement('div');
-  header.className = 'phase-header';
-  header.innerHTML = `
-    <span class="phase-dot" style="background:${phase.color}"></span>
-    <span class="phase-name">${phase.label}</span>
-    <span class="phase-duration">${phase.duration}</span>
-    <span class="phase-progress" id="prog-label-${phase.id}">0 / ${phase.tasks.length}</span>
-    <span class="chevron" id="chev-${phase.id}">▶</span>
-  `;
-  header.onclick = () => togglePhase(phase.id);
-
-  // Progress bar
-  const progWrap = document.createElement('div');
-  progWrap.className = 'prog-wrap';
-  progWrap.innerHTML = `<div class="prog-bar" id="prog-bar-${phase.id}" style="width:0%;background:${phase.color}"></div>`;
-
-  // Body
-  const body = document.createElement('div');
-  body.className = 'phase-body';
-  body.id = 'body-' + phase.id;
-
-  const table = document.createElement('table');
-  table.className = 'tasks';
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th style="width:36px"></th>
-        <th style="width:260px">Fonctionnalité</th>
-        <th>Plugins recommandés</th>
-        <th style="width:80px;text-align:center">Fait</th>
-      </tr>
-    </thead>
-    <tbody id="tbody-${phase.id}"></tbody>
-  `;
-
-  const tbody = table.querySelector('tbody');
-
-  phase.tasks.forEach((task, ti) => {
-    const tr = document.createElement('tr');
-    tr.id = `tr-${phase.id}-${ti}`;
-
-    const badgeMap = { 'b-core':'Core','b-eco':'Éco','b-content':'Contenu','b-end':'End-game' };
-
-    tr.innerHTML = `
-      <td class="td-icon">${task.icon}</td>
-      <td class="td-task">
-        <div class="task-name"><span class="badge ${task.badge}">${badgeMap[task.badge]}</span> ${task.name}</div>
-        <div class="task-detail">${task.detail}</div>
-        ${task.dep ? `<div class="task-dep">⤷ ${task.dep}</div>` : ''}
-      </td>
-      <td class="td-plugins">
-        <div class="plugin-list">
-          ${task.plugins.map((p,pi) => `
-            <div class="plugin-item">
-              <input type="checkbox" id="plg-${phase.id}-${ti}-${pi}"
-                     onchange="updateCounts()"
-                     title="${p.name}">
-              <div>
-                <div class="plugin-name">
-                  ${p.link && p.link !== '#'
-                    ? `<a href="${p.link}" target="_blank" class="plugin-link">${p.name} ↗</a>`
-                    : p.name}
-                </div>
-                <div class="plugin-desc">${p.desc}</div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </td>
-      <td class="td-check">
-        <input type="checkbox" id="task-${phase.id}-${ti}"
-               onchange="onTaskCheck(${phase.id}, ${ti}, this.checked)">
-      </td>
-    `;
-
-    tbody.appendChild(tr);
-  });
-
-  section.appendChild(header);
-  section.appendChild(progWrap);
-  section.appendChild(body);
-  body.appendChild(table);
-  main.appendChild(section);
-});
-
-document.getElementById('total-tasks').textContent = totalTasks;
-updateCounts();
-
-// ─── TOGGLE ───
-function togglePhase(id) {
-  const body = document.getElementById('body-' + id);
-  const chev = document.getElementById('chev-' + id);
-  const open = body.classList.toggle('open');
-  chev.classList.toggle('open', open);
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-// Open phase 1 by default
-togglePhase(1);
-
-// ─── TASK CHECK ───
-function onTaskCheck(phaseId, taskIdx, checked) {
-  const tr = document.getElementById(`tr-${phaseId}-${taskIdx}`);
-  if (checked) tr.classList.add('done');
-  else         tr.classList.remove('done');
-  updateCounts();
+function scrollToPhase(id) {
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
 }
 
-// ─── COUNTS ───
-function updateCounts() {
-  let totalDone = 0;
-  let totalPluginsDone = 0;
-
-  phases.forEach(phase => {
-    let phaseDone = 0;
-    phase.tasks.forEach((task, ti) => {
-      const cb = document.getElementById(`task-${phase.id}-${ti}`);
-      if (cb && cb.checked) phaseDone++;
-
-      task.plugins.forEach((_, pi) => {
-        const pcb = document.getElementById(`plg-${phase.id}-${ti}-${pi}`);
-        if (pcb && pcb.checked) totalPluginsDone++;
-      });
-    });
-
-    totalDone += phaseDone;
-
-    const label = document.getElementById(`prog-label-${phase.id}`);
-    const bar   = document.getElementById(`prog-bar-${phase.id}`);
-    if (label) label.textContent = `${phaseDone} / ${phase.tasks.length}`;
-    if (bar)   bar.style.width = `${(phaseDone / phase.tasks.length) * 100}%`;
-  });
-
-  document.getElementById('total-done').textContent = totalDone;
-  document.getElementById('total-plugins').textContent = totalPluginsDone;
+function scrollToSection(id) {
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
 }
-
-// ─── SAVE STATE (localStorage) ───
-function saveState() {
-  const state = {};
-  phases.forEach(phase => {
-    phase.tasks.forEach((task, ti) => {
-      const cb = document.getElementById(`task-${phase.id}-${ti}`);
-      state[`task-${phase.id}-${ti}`] = cb ? cb.checked : false;
-      task.plugins.forEach((_, pi) => {
-        const pcb = document.getElementById(`plg-${phase.id}-${ti}-${pi}`);
-        state[`plg-${phase.id}-${ti}-${pi}`] = pcb ? pcb.checked : false;
-      });
-    });
-  });
-  try { localStorage.setItem('roadmap_ra_state', JSON.stringify(state)); } catch(e) {}
-}
-
-function loadState() {
-  let state;
-  try { state = JSON.parse(localStorage.getItem('roadmap_ra_state') || '{}'); } catch(e) { return; }
-  phases.forEach(phase => {
-    phase.tasks.forEach((task, ti) => {
-      const cb = document.getElementById(`task-${phase.id}-${ti}`);
-      if (cb && state[`task-${phase.id}-${ti}`]) {
-        cb.checked = true;
-        document.getElementById(`tr-${phase.id}-${ti}`)?.classList.add('done');
-      }
-      task.plugins.forEach((_, pi) => {
-        const pcb = document.getElementById(`plg-${phase.id}-${ti}-${pi}`);
-        if (pcb && state[`plg-${phase.id}-${ti}-${pi}`]) pcb.checked = true;
-      });
-    });
-  });
-  updateCounts();
-}
-
-document.addEventListener('change', saveState);
-loadState();
 </script>
 </body>
 </html>
