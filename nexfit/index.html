@@ -3,621 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Street Lifting — 4 Séances / Cycle 4 Semaines</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<title>Programme Street Lifting — Cycle RPE</title>
 <style>
-:root {
-  --bg:#0c0c0e; --bg2:#131315; --bg3:#1a1a1d; --bg4:#202024;
-  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.12);
-  --text:#edeae4; --muted:#6b6966; --muted2:#9a9794;
-  --ts:#c8f060; --bo:#60c8f0; --warn:#f0a060; --red:#f06060;
-  --a-push:#c8f060; --a-pull:#60c8f0; --a-legs:#f0a060; --a-full:#d060f0;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;}
-
-/* HEADER */
-.header{padding:52px 0 36px;border-bottom:0.5px solid var(--border2);margin-bottom:36px;}
-.wrap{max-width:1140px;margin:0 auto;padding:0 24px 80px;}
-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,8vw,100px);line-height:.88;letter-spacing:2px;}
-h1 em{color:var(--ts);font-style:normal;}
-.sub{font-size:13px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:12px;letter-spacing:.4px;}
-
-.meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
-.pill{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.6px;padding:4px 12px;border-radius:3px;text-transform:uppercase;}
-.pill-g{background:rgba(200,240,96,.1);color:var(--ts);border:.5px solid rgba(200,240,96,.25);}
-.pill-b{background:rgba(96,200,240,.1);color:var(--bo);border:.5px solid rgba(96,200,240,.25);}
-.pill-o{background:rgba(240,160,96,.1);color:var(--warn);border:.5px solid rgba(240,160,96,.25);}
-.pill-p{background:rgba(208,96,240,.1);color:var(--a-full);border:.5px solid rgba(208,96,240,.25);}
-
-/* CYCLE OVERVIEW */
-.cycle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:36px;}
-.cycle-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:6px;padding:14px 16px;cursor:pointer;transition:border-color .2s;}
-.cycle-card.sel{border-color:var(--ts);}
-.cc-num{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1;color:var(--border2);}
-.cc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:5px;}
-.cc-focus{font-size:13px;font-weight:600;}
-.cc-rpe{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted2);margin-top:3px;}
-.cc-note{font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
-
-/* RPE BAR */
-.rpe-banner{display:flex;align-items:center;gap:14px;background:var(--bg2);border:.5px solid var(--border2);border-radius:6px;padding:14px 20px;margin-bottom:28px;}
-.rpe-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;min-width:100px;}
-.rpe-track{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;}
-.rpe-fill{height:100%;border-radius:3px;transition:width .5s;}
-.rpe-num{font-family:'Bebas Neue',sans-serif;font-size:24px;min-width:56px;text-align:right;}
-
-/* WEEK TABS */
-.week-tabs{display:flex;gap:3px;margin-bottom:28px;flex-wrap:wrap;}
-.wtab{font-family:'DM Mono',monospace;font-size:11px;padding:7px 18px;cursor:pointer;border:.5px solid var(--border2);background:transparent;color:var(--muted);border-radius:4px;transition:all .15s;letter-spacing:.4px;}
-.wtab:hover{color:var(--text);background:var(--bg3);}
-.wtab.on{background:var(--ts);color:#0c0c0e;border-color:var(--ts);font-weight:600;}
-
-/* SESSIONS */
-.sessions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
-.scard{background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;overflow:hidden;}
-
-.shead{padding:13px 16px 11px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:10px;}
-.sicon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.stitle{font-size:12px;font-weight:600;line-height:1.3;}
-.ssub{font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:2px;}
-
-.col-hdr{display:grid;grid-template-columns:1fr 44px 68px 56px 50px;gap:3px;padding:6px 14px;background:var(--bg3);border-bottom:.5px solid var(--border2);}
-.ch{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-family:'DM Mono',monospace;text-align:center;}
-.ch:first-child{text-align:left;}
-
-.exrow{display:grid;grid-template-columns:1fr 44px 68px 56px 50px;gap:3px;align-items:center;padding:9px 14px;border-bottom:.5px solid var(--border);transition:background .1s;}
-.exrow:hover{background:rgba(255,255,255,.02);}
-.exrow:last-child{border-bottom:none;}
-.exrow.ts-row{background:rgba(200,240,96,.03);}
-
-.exname{font-size:12px;}
-.exdet{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px;}
-.exc{text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);}
-.exsets{font-size:12px;font-weight:500;color:var(--text);}
-
-.tag{display:inline-block;padding:2px 6px;border-radius:2px;font-size:9px;font-family:'DM Mono',monospace;font-weight:500;letter-spacing:.3px;}
-.tag-ts{background:rgba(200,240,96,.15);color:var(--ts);}
-.tag-bo{background:rgba(96,200,240,.13);color:var(--bo);}
-
-.sfoot{padding:9px 14px;background:var(--bg3);border-top:.5px solid var(--border2);font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
-
-/* WEEK PANEL */
-.wpanel{display:none;}
-.wpanel.on{display:block;}
-
-/* LEGEND */
-.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:32px;}
-.leg{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted2);}
-.ldot{width:9px;height:9px;border-radius:2px;}
-
-/* RPE TABLE */
-.rpe-section{background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;padding:24px 28px;margin-top:40px;}
-.rpe-section h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:16px;}
-table{width:100%;border-collapse:collapse;}
-th,td{padding:7px 12px;text-align:left;border-bottom:.5px solid var(--border);font-size:11px;font-family:'DM Mono',monospace;}
-th{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:400;}
-
-/* NOTES */
-.notes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:40px;}
-.note{background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;padding:20px 22px;}
-.note h4{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--ts);font-family:'DM Mono',monospace;margin-bottom:8px;}
-.note p{font-size:12px;color:var(--muted2);line-height:1.7;}
-
-@media(max-width:640px){
-  .cycle-grid{grid-template-columns:repeat(2,1fr);}
-  .sessions{grid-template-columns:1fr;}
-  .col-hdr,.exrow{grid-template-columns:1fr 36px 60px 46px 42px;}
-}
+  :root {
+    --bg: #0f1115;
+    --card: #171a21;
+    --border: #2a2e38;
+    --text: #e8e9ec;
+    --muted: #9aa0ab;
+    --accent: #ff6b35;
+    --accent-soft: rgba(255,107,53,0.12);
+    --gold: #ffb020;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    padding: 40px 16px 80px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 2rem; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .subtitle { color: var(--muted); margin-bottom: 36px; font-size: 1.05rem; }
+  h2 {
+    font-size: 1.3rem;
+    margin-top: 48px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+  h3 {
+    font-size: 1.15rem;
+    margin-top: 28px;
+    margin-bottom: 10px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  p { color: var(--text); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 6px;
+    background: var(--card);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  th, td { text-align: left; padding: 10px 14px; font-size: 0.94rem; }
+  th {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+  tr.priority-row td { background: rgba(255,176,32,0.08); font-weight: 600; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .card.priority-card { border: 1px solid var(--gold); box-shadow: 0 0 0 1px rgba(255,176,32,0.15); }
+  .rest-badge {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .priority-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,176,32,0.15);
+    color: var(--gold);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .note {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  .note.gold { background: rgba(255,176,32,0.08); border-left: 3px solid var(--gold); }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .day-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin: 4px 6px 4px 0;
+    font-size: 0.95rem;
+  }
+  .day-pill.rest { color: var(--muted); }
+  .day-pill.work { border-color: var(--accent); }
+  .day-pill b { color: var(--accent); }
+  .grid-days { display: flex; flex-wrap: wrap; margin: 14px 0 6px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  .footer-note { color: var(--muted); font-size: 0.9rem; margin-top: 50px; text-align: center; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<div class="header">
-  <h1>STREET<br><em>LIFTING</em></h1>
-  <p class="sub">4 séances · Top Set / Back-Off · RPE évolutif · Cycle 4 semaines</p>
-  <div class="meta-row">
-    <span class="pill pill-g">Séance A — Upper Push</span>
-    <span class="pill pill-b">Séance B — Lower Body</span>
-    <span class="pill pill-o">Séance C — Upper Pull + Core</span>
-    <span class="pill pill-p">Séance D — Full / Skill</span>
+  <h1>🏋️ Programme Street Lifting</h1>
+  <div class="subtitle">Cycle RPE progressif sur 4-5 semaines — 4 exercices prioritaires, un par séance</div>
+
+  <div class="note gold">
+    <b>⭐ Exercices prioritaires du cycle :</b> Muscle-up · Dips lestés · Squat lesté · Tractions lestées.<br>
+    Chaque séance est construite <b>autour d'un seul de ces mouvements</b>, placé en premier avec le plus de séries et le suivi RPE ; les accessoires viennent en soutien après.
   </div>
-</div>
 
-<!-- CYCLE OVERVIEW -->
-<div class="cycle-grid">
-  <div class="cycle-card sel" id="cc1" onclick="showWeek(1)">
-    <div class="cc-num">1</div>
-    <div class="cc-lbl">Semaine</div>
-    <div class="cc-focus">Accumulation</div>
-    <div class="cc-rpe">TS RPE 7 · BO RPE 6</div>
-    <div class="cc-note">Volume élevé — maîtrise du mouvement</div>
+  <h2>📅 Répartition hebdomadaire</h2>
+  <div class="grid-days">
+    <div class="day-pill work"><b>Lun</b> Séance 1 — Muscle-up ⭐</div>
+    <div class="day-pill rest">Mar — Repos</div>
+    <div class="day-pill work"><b>Mer</b> Séance 2 — Dips ⭐</div>
+    <div class="day-pill rest">Jeu — Repos</div>
+    <div class="day-pill work"><b>Ven</b> Séance 3 — Squat ⭐</div>
+    <div class="day-pill work"><b>Sam</b> Séance 4 — Tractions ⭐</div>
+    <div class="day-pill rest">Dim — Repos</div>
   </div>
-  <div class="cycle-card" id="cc2" onclick="showWeek(2)">
-    <div class="cc-num">2</div>
-    <div class="cc-lbl">Semaine</div>
-    <div class="cc-focus">Construction</div>
-    <div class="cc-rpe">TS RPE 8 · BO RPE 7</div>
-    <div class="cc-note">+2.5 kg sur tous les TS</div>
-  </div>
-  <div class="cycle-card" id="cc3" onclick="showWeek(3)">
-    <div class="cc-num">3</div>
-    <div class="cc-lbl">Semaine</div>
-    <div class="cc-focus">Intensification</div>
-    <div class="cc-rpe">TS RPE 9 · BO RPE 8</div>
-    <div class="cc-note">Volume –20% — charges max</div>
-  </div>
-  <div class="cycle-card" id="cc4" onclick="showWeek(4)">
-    <div class="cc-num">4</div>
-    <div class="cc-lbl">Semaine</div>
-    <div class="cc-focus">Peak / PR</div>
-    <div class="cc-rpe">TS RPE 9.5 · BO RPE 8.5</div>
-    <div class="cc-note">Tentatives PR — reset cycle S5</div>
-  </div>
-</div>
+  <p>→ Minimum <b>48h de récupération</b> entre chaque séance lourde touchant le même groupe musculaire principal.</p>
 
-<!-- WEEK TABS -->
-<div class="week-tabs">
-  <button class="wtab on" onclick="showWeek(1)">S1 — RPE 7</button>
-  <button class="wtab" onclick="showWeek(2)">S2 — RPE 8</button>
-  <button class="wtab" onclick="showWeek(3)">S3 — RPE 9</button>
-  <button class="wtab" onclick="showWeek(4)">S4 — Peak</button>
-</div>
-
-<!-- ========== SEMAINE 1 ========== -->
-<div class="wpanel on" id="w1">
-  <div class="rpe-banner">
-    <div class="rpe-lbl">Intensité semaine</div>
-    <div class="rpe-track"><div class="rpe-fill" style="width:62%;background:linear-gradient(90deg,#60c8f0,#c8f060);"></div></div>
-    <div class="rpe-num" style="color:var(--bo)">RPE 7</div>
-  </div>
-  <div class="legend">
-    <div class="leg"><div class="ldot" style="background:var(--ts)"></div>Top Set — charge RPE 7</div>
-    <div class="leg"><div class="ldot" style="background:var(--bo)"></div>Back-Off — –10/12% charge</div>
-  </div>
-  <div class="sessions">
-
-    <!-- A -->
-    <div class="scard">
-      <div class="shead">
-        <div class="sicon" style="background:rgba(200,240,96,.1)">💪</div>
-        <div>
-          <div class="stitle">Séance A — Upper Push</div>
-          <div class="ssub">Muscle Up · Dips · Tirage horiz.</div>
-        </div>
-      </div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Muscle Up</div><div class="exdet">cluster lest</div></div>
-        <div class="exc exsets">1</div><div class="exc">1+1+1</div><div class="exc">Libre</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Muscle Up</div><div class="exdet">–10% lest / BW</div></div>
-        <div class="exc exsets">4</div><div class="exc">1–2</div><div class="exc">2 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Pull up</div><div class="exdet">lest — prise large</div></div>
-        <div class="exc exsets">1</div><div class="exc">3–5</div><div class="exc">3 min</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Pull up</div><div class="exdet">–10% charge</div></div>
-        <div class="exc exsets">3</div><div class="exc">3</div><div class="exc">2 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Dips lesté</div><div class="exdet">DS / prise large</div></div>
-        <div class="exc exsets">1</div><div class="exc">6–8</div><div class="exc">3 min</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Dips lesté</div><div class="exdet">–12% charge</div></div>
-        <div class="exc exsets">3</div><div class="exc">6</div><div class="exc">Libre</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Tirage horiz. prona</div><div class="exdet">Barre EZ</div></div>
-        <div class="exc exsets">3</div><div class="exc">12</div><div class="exc">2/3 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="sfoot">Volume : ~17 séries · RIR 2 sur tous les BO</div>
-    </div>
-
-    <!-- B -->
-    <div class="scard">
-      <div class="shead">
-        <div class="sicon" style="background:rgba(240,160,96,.1)">🦵</div>
-        <div>
-          <div class="stitle">Séance B — Lower Body</div>
-          <div class="ssub">Squat · Fentes · Ischio · Core</div>
-        </div>
-      </div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Squat lesté</div><div class="exdet">low bar</div></div>
-        <div class="exc exsets">1</div><div class="exc">6–8</div><div class="exc">Libre</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Squat lesté</div><div class="exdet">–12% charge</div></div>
-        <div class="exc exsets">3</div><div class="exc">6</div><div class="exc">3/5 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Fentes bulgares</div><div class="exdet">haltères</div></div>
-        <div class="exc exsets">3</div><div class="exc">10/jambe</div><div class="exc">3/5 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Leg curl</div><div class="exdet">machine</div></div>
-        <div class="exc exsets">3</div><div class="exc">8</div><div class="exc">2/3 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Leg extension</div><div class="exdet">machine</div></div>
-        <div class="exc exsets">2</div><div class="exc">15+15</div><div class="exc">2/3 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Ext. lombaires</div><div class="exdet">GHR / barre</div></div>
-        <div class="exc exsets">3</div><div class="exc">12</div><div class="exc">2/3 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="sfoot">Volume : ~15 séries · RIR 1 sur tous les BO</div>
-    </div>
-
-    <!-- C -->
-    <div class="scard">
-      <div class="shead">
-        <div class="sicon" style="background:rgba(96,200,240,.1)">🔁</div>
-        <div>
-          <div class="stitle">Séance C — Upper Pull + Core</div>
-          <div class="ssub">Muscle Up EMOM · DC · Pompe · Ab</div>
-        </div>
-      </div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Muscle Up</div><div class="exdet">EMOM — lest léger</div></div>
-        <div class="exc exsets">8</div><div class="exc">1</div><div class="exc">EMOM</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Dips</div><div class="exdet">BW — prise large</div></div>
-        <div class="exc exsets">1</div><div class="exc">max</div><div class="exc">Libre</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Dips</div><div class="exdet">BW — 4/4/4 tempo</div></div>
-        <div class="exc exsets">3</div><div class="exc">6–8</div><div class="exc">Libre</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow ts-row">
-        <div><div class="exname">DC barre</div><div class="exdet">prise neutre</div></div>
-        <div class="exc exsets">1</div><div class="exc">8–10</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">DC barre</div><div class="exdet">–10% charge</div></div>
-        <div class="exc exsets">3</div><div class="exc">8</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Pompe</div><div class="exdet">DS / diamant</div></div>
-        <div class="exc exsets">3</div><div class="exc">15–18</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Ab wheel debout</div><div class="exdet">élastique(s)</div></div>
-        <div class="exc exsets">3</div><div class="exc">RIR 1</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="sfoot">Volume : ~21 séries · Pompe : 4/2/0 tempo</div>
-    </div>
-
-    <!-- D -->
-    <div class="scard">
-      <div class="shead">
-        <div class="sicon" style="background:rgba(208,96,240,.1)">⚡</div>
-        <div>
-          <div class="stitle">Séance D — Full / Skill</div>
-          <div class="ssub">Pull up · Squat barre haute · Front lever</div>
-        </div>
-      </div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Pull up lesté</div><div class="exdet">pronation — max lest</div></div>
-        <div class="exc exsets">1</div><div class="exc">4–6</div><div class="exc">Libre</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Pull up lesté</div><div class="exdet">–10% charge</div></div>
-        <div class="exc exsets">3</div><div class="exc">4–5</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow ts-row">
-        <div><div class="exname">Squat lesté</div><div class="exdet">HIGH barre — position skill</div></div>
-        <div class="exc exsets">1</div><div class="exc">6–8</div><div class="exc">Libre</div>
-        <div class="exc"><span class="tag tag-ts">TS</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Squat lesté</div><div class="exdet">–10% charge</div></div>
-        <div class="exc exsets">4</div><div class="exc">5</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Good morning</div><div class="exdet">barre</div></div>
-        <div class="exc exsets">3</div><div class="exc">10</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">RDL B-stance</div><div class="exdet">haltères</div></div>
-        <div class="exc exsets">3</div><div class="exc">12</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="exrow">
-        <div><div class="exname">Front lever hold</div><div class="exdet">élastique / tucked</div></div>
-        <div class="exc exsets">3</div><div class="exc">max</div><div class="exc">2/4 min</div>
-        <div class="exc"><span class="tag tag-bo">BO</span></div>
-      </div>
-      <div class="sfoot">Volume : ~18 séries · RIR 0 admis sur Front lever</div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ========== SEMAINE 2 ========== -->
-<div class="wpanel" id="w2">
-  <div class="rpe-banner">
-    <div class="rpe-lbl">Intensité semaine</div>
-    <div class="rpe-track"><div class="rpe-fill" style="width:75%;background:linear-gradient(90deg,#60c8f0,#c8f060);"></div></div>
-    <div class="rpe-num" style="color:var(--ts)">RPE 8</div>
-  </div>
-  <div class="legend">
-    <div class="leg"><div class="ldot" style="background:var(--ts)"></div>Top Set — +2.5 kg vs S1</div>
-    <div class="leg"><div class="ldot" style="background:var(--bo)"></div>Back-Off — –12% charge TS</div>
-  </div>
-  <div class="sessions">
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(200,240,96,.1)">💪</div>
-        <div><div class="stitle">Séance A — Upper Push</div><div class="ssub">+2.5 kg · –1 série BO</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Muscle Up</div><div class="exdet">cluster +lest</div></div><div class="exc exsets">1</div><div class="exc">1+1+1</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Muscle Up</div><div class="exdet">–10% lest</div></div><div class="exc exsets">3</div><div class="exc">2</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Pull up</div><div class="exdet">+2.5 kg lest</div></div><div class="exc exsets">1</div><div class="exc">3–5</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Pull up</div><div class="exdet">–10% charge</div></div><div class="exc exsets">3</div><div class="exc">3</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Dips lesté</div><div class="exdet">+2.5 kg</div></div><div class="exc exsets">1</div><div class="exc">5–7</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Dips lesté</div><div class="exdet">–12% charge</div></div><div class="exc exsets">3</div><div class="exc">6</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Tirage horiz. prona</div><div class="exdet">+charge / Barre EZ</div></div><div class="exc exsets">3</div><div class="exc">10</div><div class="exc">2/3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">Objectif : battre S1 sur chaque TS (+1 rep ou +2.5 kg)</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(240,160,96,.1)">🦵</div>
-        <div><div class="stitle">Séance B — Lower Body</div><div class="ssub">+2.5 kg Squat · Leg ext. drop</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Squat lesté</div><div class="exdet">low bar +2.5 kg</div></div><div class="exc exsets">1</div><div class="exc">5–7</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Squat lesté</div><div class="exdet">–12% charge</div></div><div class="exc exsets">3</div><div class="exc">5</div><div class="exc">3/5 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Fentes bulgares</div><div class="exdet">+charge haltères</div></div><div class="exc exsets">3</div><div class="exc">10/jambe</div><div class="exc">3/5 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Leg curl</div><div class="exdet">+charge machine</div></div><div class="exc exsets">3</div><div class="exc">8</div><div class="exc">2/3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Leg extension</div><div class="exdet">machine</div></div><div class="exc exsets">2</div><div class="exc">15+15</div><div class="exc">2/3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Ext. lombaires</div><div class="exdet">GHR / barre +charge</div></div><div class="exc exsets">3</div><div class="exc">10</div><div class="exc">2/3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">RIR 1 sur BO · Squat TS = RPE 8 strict</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(96,200,240,.1)">🔁</div>
-        <div><div class="stitle">Séance C — Upper Pull + Core</div><div class="ssub">EMOM 10 min · +charge DC</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Muscle Up</div><div class="exdet">EMOM — +lest</div></div><div class="exc exsets">10</div><div class="exc">1</div><div class="exc">EMOM</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Dips</div><div class="exdet">BW — max reps RPE 8</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Dips</div><div class="exdet">4/4/4 tempo</div></div><div class="exc exsets">3</div><div class="exc">5–6</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">DC barre</div><div class="exdet">+2.5 kg prise neutre</div></div><div class="exc exsets">1</div><div class="exc">6–8</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">DC barre</div><div class="exdet">–10% charge</div></div><div class="exc exsets">3</div><div class="exc">8</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Pompe</div><div class="exdet">DS / +lest</div></div><div class="exc exsets">3</div><div class="exc">12–15</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Ab wheel debout</div><div class="exdet">élastique(s)</div></div><div class="exc exsets">3</div><div class="exc">RIR 1</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">EMOM S2 : 10 min · pompe 4/2/0 tempo</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(208,96,240,.1)">⚡</div>
-        <div><div class="stitle">Séance D — Full / Skill</div><div class="ssub">+2.5 kg Pull up · +charge Squat HB</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Pull up lesté</div><div class="exdet">+2.5 kg pronation</div></div><div class="exc exsets">1</div><div class="exc">4–5</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Pull up lesté</div><div class="exdet">–10% charge</div></div><div class="exc exsets">3</div><div class="exc">4</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Squat lesté</div><div class="exdet">HIGH barre +2.5 kg</div></div><div class="exc exsets">1</div><div class="exc">5–7</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Squat lesté</div><div class="exdet">–10% charge</div></div><div class="exc exsets">4</div><div class="exc">5</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Good morning</div><div class="exdet">+charge barre</div></div><div class="exc exsets">3</div><div class="exc">10</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">RDL B-stance</div><div class="exdet">+charge haltères</div></div><div class="exc exsets">3</div><div class="exc">12</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Front lever hold</div><div class="exdet">progression</div></div><div class="exc exsets">3</div><div class="exc">max</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">RIR 3+ sur Good morning — qualité amplitude</div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== SEMAINE 3 ========== -->
-<div class="wpanel" id="w3">
-  <div class="rpe-banner">
-    <div class="rpe-lbl">Intensité semaine</div>
-    <div class="rpe-track"><div class="rpe-fill" style="width:88%;background:linear-gradient(90deg,#f0a060,#f06060);"></div></div>
-    <div class="rpe-num" style="color:var(--warn)">RPE 9</div>
-  </div>
-  <div class="legend">
-    <div class="leg"><div class="ldot" style="background:var(--warn)"></div>Top Set — charge max RPE 9</div>
-    <div class="leg"><div class="ldot" style="background:var(--bo)"></div>Back-Off — –15% · volume –20%</div>
-  </div>
-  <div class="sessions">
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(200,240,96,.1)">💪</div>
-        <div><div class="stitle">Séance A — Upper Push</div><div class="ssub">Volume –20% · charges max</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Muscle Up</div><div class="exdet">cluster charge max</div></div><div class="exc exsets">1</div><div class="exc">1+1</div><div class="exc">4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Muscle Up</div><div class="exdet">–15% lest</div></div><div class="exc exsets">3</div><div class="exc">1</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Pull up</div><div class="exdet">charge max RPE 9</div></div><div class="exc exsets">1</div><div class="exc">2–4</div><div class="exc">4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Pull up</div><div class="exdet">–15% charge</div></div><div class="exc exsets">2</div><div class="exc">3</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Dips lesté</div><div class="exdet">charge max RPE 9</div></div><div class="exc exsets">1</div><div class="exc">4–6</div><div class="exc">4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Dips lesté</div><div class="exdet">–15% charge</div></div><div class="exc exsets">2</div><div class="exc">5</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Tirage horiz. prona</div><div class="exdet">Barre EZ — qualité</div></div><div class="exc exsets">3</div><div class="exc">8</div><div class="exc">2/3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">Repos TS = 4 min · pas de fatigue inutile avant TS</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(240,160,96,.1)">🦵</div>
-        <div><div class="stitle">Séance B — Lower Body</div><div class="ssub">Volume réduit · pas de Leg ext.</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Squat lesté</div><div class="exdet">low bar charge max</div></div><div class="exc exsets">1</div><div class="exc">3–5</div><div class="exc">4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Squat lesté</div><div class="exdet">–15% charge</div></div><div class="exc exsets">2</div><div class="exc">4</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Fentes bulgares</div><div class="exdet">–charge légère</div></div><div class="exc exsets">2</div><div class="exc">8/jambe</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Leg curl</div><div class="exdet">machine +charge</div></div><div class="exc exsets">3</div><div class="exc">8</div><div class="exc">2/3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Ext. lombaires</div><div class="exdet">GHR qualité</div></div><div class="exc exsets">2</div><div class="exc">10</div><div class="exc">2/3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">Leg extension supprimé S3 — économie SNC</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(96,200,240,.1)">🔁</div>
-        <div><div class="stitle">Séance C — Upper Pull + Core</div><div class="ssub">EMOM court · pas d'extra</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Muscle Up</div><div class="exdet">EMOM — lest RPE 9</div></div><div class="exc exsets">6</div><div class="exc">1</div><div class="exc">EMOM</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Dips</div><div class="exdet">max RPE 9</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">Libre</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Dips</div><div class="exdet">–15% BW / tempo</div></div><div class="exc exsets">2</div><div class="exc">5–6</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">DC barre</div><div class="exdet">charge max RPE 9</div></div><div class="exc exsets">1</div><div class="exc">5–7</div><div class="exc">4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">DC barre</div><div class="exdet">–15% charge</div></div><div class="exc exsets">2</div><div class="exc">6</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Pompe</div><div class="exdet">DS flush</div></div><div class="exc exsets">3</div><div class="exc">12</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Ab wheel debout</div><div class="exdet">élastique(s)</div></div><div class="exc exsets">2</div><div class="exc">RIR 1</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">EMOM réduit S3 : 6 min — récupération SNC</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(208,96,240,.1)">⚡</div>
-        <div><div class="stitle">Séance D — Full / Skill</div><div class="ssub">Volume minimal · Front lever test</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Pull up lesté</div><div class="exdet">charge max RPE 9</div></div><div class="exc exsets">1</div><div class="exc">3–4</div><div class="exc">4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Pull up lesté</div><div class="exdet">–15% charge</div></div><div class="exc exsets">2</div><div class="exc">3</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Squat lesté</div><div class="exdet">HIGH barre max</div></div><div class="exc exsets">1</div><div class="exc">4–6</div><div class="exc">4 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Squat lesté</div><div class="exdet">–15% charge</div></div><div class="exc exsets">3</div><div class="exc">4</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Good morning</div><div class="exdet">barre</div></div><div class="exc exsets">3</div><div class="exc">10</div><div class="exc">2/4 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Front lever hold</div><div class="exdet">test max durée</div></div><div class="exc exsets">3</div><div class="exc">max</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">RDL B-stance supprimé S3 — noter temps Front lever</div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== SEMAINE 4 ========== -->
-<div class="wpanel" id="w4">
-  <div class="rpe-banner">
-    <div class="rpe-lbl">Intensité semaine</div>
-    <div class="rpe-track"><div class="rpe-fill" style="width:97%;background:linear-gradient(90deg,#f06060,#d02020);"></div></div>
-    <div class="rpe-num" style="color:var(--red)">RPE 9.5</div>
-  </div>
-  <div class="legend">
-    <div class="leg"><div class="ldot" style="background:var(--red)"></div>Top Set — tentative PR absolu</div>
-    <div class="leg"><div class="ldot" style="background:var(--bo)"></div>Back-Off — –20% · volume flush</div>
-  </div>
-  <div class="sessions">
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(240,96,96,.1)">🏆</div>
-        <div><div class="stitle">Séance A — Peak Push</div><div class="ssub">⚡ PR Muscle Up · Dips · Pull up</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Muscle Up ⚡</div><div class="exdet">PR absolu — max lest</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Muscle Up</div><div class="exdet">–20% lest / flush</div></div><div class="exc exsets">2</div><div class="exc">1</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Pull up ⚡</div><div class="exdet">PR absolu — max lest</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Pull up</div><div class="exdet">–20% charge flush</div></div><div class="exc exsets">2</div><div class="exc">2</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Dips lesté ⚡</div><div class="exdet">PR absolu — max lest</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Dips lesté</div><div class="exdet">–20% charge flush</div></div><div class="exc exsets">2</div><div class="exc">4</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Tirage horiz.</div><div class="exdet">flush — léger</div></div><div class="exc exsets">2</div><div class="exc">10</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">⚡ Noter lest + reps + RPE ressenti pour chaque PR</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(240,96,96,.1)">🏆</div>
-        <div><div class="stitle">Séance B — Peak Lower</div><div class="ssub">⚡ PR Squat LB + Squat HB</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Squat lesté ⚡</div><div class="exdet">low bar — PR absolu</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Squat lesté</div><div class="exdet">–20% charge flush</div></div><div class="exc exsets">2</div><div class="exc">3</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Fentes bulgares</div><div class="exdet">décharge</div></div><div class="exc exsets">2</div><div class="exc">8/jambe</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Leg curl</div><div class="exdet">décharge</div></div><div class="exc exsets">2</div><div class="exc">10</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Ext. lombaires</div><div class="exdet">décharge</div></div><div class="exc exsets">2</div><div class="exc">10</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="sfoot">Semaine 5 : reset RPE 7 avec charges PR S4 +2.5 kg</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(240,96,96,.1)">🏆</div>
-        <div><div class="stitle">Séance C — Peak Pull + Core</div><div class="ssub">⚡ PR DC barre · Ab test</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Muscle Up ⚡</div><div class="exdet">EMOM max lest</div></div><div class="exc exsets">5</div><div class="exc">1</div><div class="exc">EMOM</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Dips ⚡</div><div class="exdet">BW max reps absolu</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Dips</div><div class="exdet">flush léger</div></div><div class="exc exsets">2</div><div class="exc">5</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">DC barre ⚡</div><div class="exdet">PR absolu — max lest</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">DC barre</div><div class="exdet">–20% flush</div></div><div class="exc exsets">2</div><div class="exc">6</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Pompe</div><div class="exdet">flush DS</div></div><div class="exc exsets">2</div><div class="exc">15</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Ab wheel debout</div><div class="exdet">test max reps</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">—</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="sfoot">EMOM S4 : 5 min seulement — garder du SNC pour les PR</div>
-    </div>
-
-    <div class="scard">
-      <div class="shead"><div class="sicon" style="background:rgba(240,96,96,.1)">🏆</div>
-        <div><div class="stitle">Séance D — Peak Full / Skill</div><div class="ssub">⚡ PR Pull up · Squat HB · Front lever</div></div></div>
-      <div class="col-hdr"><div class="ch">Exercice / Détail</div><div class="ch">Sér.</div><div class="ch">Reps</div><div class="ch">Repos</div><div class="ch">Type</div></div>
-      <div class="exrow ts-row"><div><div class="exname">Pull up lesté ⚡</div><div class="exdet">PR absolu — max lest</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Pull up lesté</div><div class="exdet">–20% flush</div></div><div class="exc exsets">2</div><div class="exc">2</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Squat lesté ⚡</div><div class="exdet">HIGH barre — PR absolu</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">5 min</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="exrow"><div><div class="exname">Squat lesté</div><div class="exdet">–20% flush</div></div><div class="exc exsets">2</div><div class="exc">3</div><div class="exc">3 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">Good morning</div><div class="exdet">décharge</div></div><div class="exc exsets">2</div><div class="exc">10</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow"><div><div class="exname">RDL B-stance</div><div class="exdet">décharge</div></div><div class="exc exsets">2</div><div class="exc">10</div><div class="exc">2 min</div><div class="exc"><span class="tag tag-bo">BO</span></div></div>
-      <div class="exrow ts-row"><div><div class="exname">Front lever hold ⚡</div><div class="exdet">test durée max</div></div><div class="exc exsets">1</div><div class="exc">max</div><div class="exc">—</div><div class="exc"><span class="tag tag-ts">TS</span></div></div>
-      <div class="sfoot">⚡ Front lever : noter variante + durée — progression cycle suivant</div>
-    </div>
-  </div>
-</div>
-
-<!-- RPE TABLE -->
-<div class="rpe-section">
-  <h2>Récapitulatif du Cycle</h2>
+  <h2>📈 Système RPE sur le cycle</h2>
   <table>
-    <thead><tr><th>Semaine</th><th>RPE Top Set</th><th>RPE Back-Off</th><th>Back-Off %</th><th>Volume</th><th>Focus</th></tr></thead>
-    <tbody>
-      <tr><td>S1</td><td style="color:var(--bo)">7</td><td style="color:var(--bo)">6</td><td>–10 à –12%</td><td>Élevé (~17–21 séries)</td><td>Accumulation — maîtrise technique</td></tr>
-      <tr><td>S2</td><td style="color:var(--ts)">8</td><td style="color:var(--ts)">7</td><td>–12%</td><td>Modéré (+2.5 kg)</td><td>Construction — battre S1 sur chaque TS</td></tr>
-      <tr><td>S3</td><td style="color:var(--warn)">9</td><td style="color:var(--warn)">8</td><td>–15%</td><td>Réduit –20%</td><td>Intensification — charges maximales</td></tr>
-      <tr><td>S4</td><td style="color:var(--red)">9.5</td><td style="color:var(--red)">8.5</td><td>–20%</td><td>Minimal</td><td>Peak / PR — noter tout · reset S5</td></tr>
-    </tbody>
+    <tr><th>Semaine</th><th>RPE cible</th><th>Objectif</th></tr>
+    <tr><td>S1</td><td>6</td><td>Reprise, technique, sensations</td></tr>
+    <tr><td>S2</td><td>7</td><td>Montée en charge</td></tr>
+    <tr><td>S3</td><td>8</td><td>Intensification</td></tr>
+    <tr><td>S4</td><td>9</td><td>Pic d'intensité</td></tr>
+    <tr><td>S5 (optionnelle)</td><td>9.5–10</td><td>Test de force max / deload</td></tr>
   </table>
-</div>
+  <p>Puis <b>retour à S1</b> avec les nouvelles charges/reps estimées à partir du RPE 9 de S4-S5.</p>
 
-<!-- NOTES -->
-<div class="notes-grid">
-  <div class="note">
-    <h4>Top Set</h4>
-    <p>1 seul set à l'effort cible. Repos complet avant (3–5 min). Note la charge et les reps. La progression se mesure là.</p>
-  </div>
-  <div class="note">
-    <h4>Back-Off</h4>
-    <p>–10 à –20% selon la semaine. RPE toujours 1 point en dessous du TS. Volume d'accumulation sans cramer le SNC.</p>
-  </div>
-  <div class="note">
-    <h4>Planning semaine</h4>
-    <p>Ex : Lun (A) · Mar (B) · Jeu (C) · Sam (D). 48h min entre séances. S4 : +24h avant chaque PR.</p>
-  </div>
-  <div class="note">
-    <h4>Reset cycle</h4>
-    <p>S5 = retour RPE 7 avec les charges PR de S4 comme nouvelle base. Si PR réussi : +2.5 kg. Recommencer le cycle.</p>
-  </div>
-</div>
+  <h3>Correspondance RPE → % de 1RM (approximatif)</h3>
+  <table>
+    <tr><th>RPE</th><th>% 1RM estimé</th><th>Sensation</th></tr>
+    <tr><td>6</td><td>~70-75%</td><td>4-5 reps en réserve</td></tr>
+    <tr><td>7</td><td>~75-80%</td><td>3 reps en réserve</td></tr>
+    <tr><td>8</td><td>~82-87%</td><td>2 reps en réserve</td></tr>
+    <tr><td>9</td><td>~88-93%</td><td>1 rep en réserve</td></tr>
+    <tr><td>10</td><td>100%</td><td>Échec technique</td></tr>
+  </table>
 
+  <hr>
+
+  <h2>🔻 Détail des séances</h2>
+
+  <h3>Séance 1 — Muscle-up <span class="priority-tag">⭐ Prioritaire</span></h3>
+  <div class="card priority-card">
+    <table>
+      <tr><th>Exercice</th><th>Séries x Reps</th><th>RPE</th><th>Repos</th></tr>
+      <tr class="priority-row"><td>Muscle-up (strict, +lest si maîtrisé)</td><td>5 séries</td><td>Voir tableau semaine</td><td><span class="rest-badge">3-4 min</span></td></tr>
+      <tr><td>Tractions lestées pronation (renfort)</td><td>3 x 5-6</td><td>7</td><td><span class="rest-badge">2-3 min</span></td></tr>
+      <tr><td>Dips au poids du corps (transition explosive)</td><td>3 x 6-8</td><td>7</td><td><span class="rest-badge">2 min</span></td></tr>
+      <tr><td>Tirage horizontal TRX/anneaux</td><td>3 x 10-12</td><td>6-7</td><td><span class="rest-badge">90 s</span></td></tr>
+      <tr><td>Gainage (planche / hollow body)</td><td>3 x 30-45 s</td><td>—</td><td><span class="rest-badge">60 s</span></td></tr>
+    </table>
+    <p><b>Reps principales par semaine :</b> S1 5x3 / S2 5x3 / S3 4x2 / S4 3x1-2</p>
+    <p class="footer-note" style="margin-top:8px; text-align:left;">💡 Si le muscle-up lesté n'est pas encore maîtrisé en strict, garde-le au poids du corps et progresse en qualité/contrôle plutôt qu'en charge — le RPE s'applique alors à la difficulté d'exécution.</p>
+  </div>
+
+  <h3>Séance 2 — Dips lestés <span class="priority-tag">⭐ Prioritaire</span></h3>
+  <div class="card priority-card">
+    <table>
+      <tr><th>Exercice</th><th>Séries x Reps</th><th>RPE</th><th>Repos</th></tr>
+      <tr class="priority-row"><td>Dips lestés</td><td>5 séries</td><td>Voir tableau semaine</td><td><span class="rest-badge">3-4 min</span></td></tr>
+      <tr><td>Développé militaire ou pompes lestées</td><td>3 x 6-8</td><td>7</td><td><span class="rest-badge">2 min</span></td></tr>
+      <tr><td>Élévations latérales</td><td>3 x 12-15</td><td>6-7</td><td><span class="rest-badge">60-90 s</span></td></tr>
+      <tr><td>Extensions triceps (barre/anneaux)</td><td>3 x 10-12</td><td>7</td><td><span class="rest-badge">90 s</span></td></tr>
+      <tr><td>Gainage anti-rotation</td><td>3 x 12/côté</td><td>—</td><td><span class="rest-badge">60 s</span></td></tr>
+    </table>
+    <p><b>Reps principales par semaine :</b> S1 5x5 / S2 5x4 / S3 4x3 / S4 3x2</p>
+  </div>
+
+  <h3>Séance 3 — Squat lesté <span class="priority-tag">⭐ Prioritaire</span></h3>
+  <div class="card priority-card">
+    <table>
+      <tr><th>Exercice</th><th>Séries x Reps</th><th>RPE</th><th>Repos</th></tr>
+      <tr class="priority-row"><td>Squat lesté (barre/gilet)</td><td>5 séries</td><td>Voir tableau semaine</td><td><span class="rest-badge">3-4 min</span></td></tr>
+      <tr><td>Fentes bulgares ou front squat</td><td>3 x 8-10</td><td>7</td><td><span class="rest-badge">2 min</span></td></tr>
+      <tr><td>Hip thrust / soulevé de terre roumain</td><td>3 x 8-10</td><td>7</td><td><span class="rest-badge">90 s</span></td></tr>
+      <tr><td>Mollets debout</td><td>3 x 15</td><td>6-7</td><td><span class="rest-badge">60 s</span></td></tr>
+      <tr><td>Gainage lombaire (superman/bird dog)</td><td>3 x 12-15</td><td>—</td><td><span class="rest-badge">60 s</span></td></tr>
+    </table>
+    <p><b>Reps principales par semaine :</b> S1 5x5 / S2 5x4 / S3 4x3 / S4 3x2</p>
+  </div>
+
+  <h3>Séance 4 — Tractions lestées <span class="priority-tag">⭐ Prioritaire</span></h3>
+  <div class="card priority-card">
+    <table>
+      <tr><th>Exercice</th><th>Séries x Reps</th><th>RPE</th><th>Repos</th></tr>
+      <tr class="priority-row"><td>Tractions lestées (pronation)</td><td>5 séries</td><td>Voir tableau semaine</td><td><span class="rest-badge">3-4 min</span></td></tr>
+      <tr><td>Tractions supination lestées</td><td>3 x 6-8</td><td>7</td><td><span class="rest-badge">2 min</span></td></tr>
+      <tr><td>Rowing haltère/barre</td><td>3 x 8-10</td><td>7</td><td><span class="rest-badge">90 s</span></td></tr>
+      <tr><td>Squat sauté ou box jump (explosivité)</td><td>3 x 5</td><td>6</td><td><span class="rest-badge">2 min</span></td></tr>
+      <tr><td>Front lever tuck / travail statique</td><td>3 x 15-20 s</td><td>—</td><td><span class="rest-badge">90 s</span></td></tr>
+    </table>
+    <p><b>Reps principales par semaine :</b> S1 5x5 / S2 5x4 / S3 4x3 / S4 3x2</p>
+  </div>
+
+  <hr>
+
+  <h2>🔁 Progression du cycle — récapitulatif</h2>
+  <table>
+    <tr><th>Semaine</th><th>Dips / Squat / Tractions</th><th>Muscle-up</th><th>RPE</th></tr>
+    <tr><td>S1</td><td>5 x 5</td><td>5 x 3</td><td>6</td></tr>
+    <tr><td>S2</td><td>5 x 4</td><td>5 x 3</td><td>7</td></tr>
+    <tr><td>S3</td><td>4 x 3</td><td>4 x 2</td><td>8</td></tr>
+    <tr><td>S4</td><td>3 x 2</td><td>3 x 1-2</td><td>9</td></tr>
+    <tr><td>S5 (option)</td><td>1-3 x 1 (test/max)</td><td>1-2 (test qualité/lest)</td><td>9.5-10 ou 5 (deload)</td></tr>
+  </table>
+  <p>Après S4 (ou S5), <b>recalcule tes charges de référence</b> à partir des performances réalisées à RPE 9, puis redémarre à S1.</p>
+
+  <h2>🛌 Récupération</h2>
+  <ul>
+    <li><b>48-72h minimum</b> entre deux séances sollicitant le même mouvement lourd (dips et muscle-up sollicitant tous deux les triceps/épaules : bien respecter l'espacement Lundi → Mercredi).</li>
+    <li><b>Sommeil</b> : viser 7-9h, priorité absolue pour la récupération neuromusculaire.</li>
+    <li><b>Deload conseillé</b> toutes les 4-5 semaines même sans semaine de test (réduire le volume de 40% si fatigue accumulée, douleurs articulaires ou stagnation).</li>
+    <li><b>Échauffement</b> : 10-15 min (mobilité épaules/poignets/hanches + séries d'approche progressives), particulièrement important avant le muscle-up (transition = zone à risque pour les épaules/coudes).</li>
+    <li>Si une articulation tire ou qu'une série se sent 1-2 points plus dure que prévu au RPE : ne pas forcer, couper la séance et réévaluer.</li>
+  </ul>
+
+  <div class="note">
+    <b>⚠️ Notes</b><br>
+    Le RPE indiqué s'applique à <b>la dernière série</b> de l'exercice prioritaire ; les séries précédentes servent d'approche progressive.<br><br>
+    Ajuste le lestage (poids ajouté en kg) semaine après semaine pour atteindre le RPE cible, pas un chiffre figé à l'avance.<br><br>
+    Ce programme suppose une <b>base technique déjà acquise</b> sur tractions strictes, dips stricts et muscle-up (au moins en version stricte non lestée) ; si le muscle-up n'est pas encore acquis, remplace-le temporairement par du travail de transition assistée (élastique/machine) en gardant la même structure RPE.
+  </div>
+
+  <div class="footer-note">Programme Street Lifting — Cycle RPE 4-5 semaines</div>
 </div>
-<script>
-function showWeek(n){
-  for(let i=1;i<=4;i++){
-    document.getElementById('w'+i).classList.toggle('on',i===n);
-    document.getElementById('cc'+i).classList.toggle('sel',i===n);
-  }
-  document.querySelectorAll('.wtab').forEach((t,i)=>t.classList.toggle('on',i+1===n));
-}
-</script>
 </body>
 </html>
