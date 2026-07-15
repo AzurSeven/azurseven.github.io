@@ -192,19 +192,21 @@
     border-radius: 10px;
     box-shadow: 0 20px 40px -15px rgba(201,24,74,.4);
     z-index:1;
+    transition: opacity .6s ease;
   }
   .envelope-pocket{
     position:absolute; inset:0;
     background: linear-gradient(160deg, var(--rose), var(--rose-deep));
     clip-path: polygon(0 100%, 100% 100%, 50% 35%);
     z-index:2;
+    transition: opacity .6s ease;
   }
   .envelope-flap{
     position:absolute; top:0; left:0; right:0; height:55%;
     background: linear-gradient(135deg, var(--rose), var(--rose-deep));
     clip-path: polygon(0 0, 100% 0, 50% 100%);
     transform-origin: top;
-    transition: transform 1s cubic-bezier(.6,.05,.4,1);
+    transition: transform 1s cubic-bezier(.6,.05,.4,1), opacity .6s ease;
     z-index:4;
   }
   .envelope.open .envelope-flap{ transform: rotateX(180deg); }
@@ -217,22 +219,34 @@
   }
   .envelope.open .envelope-seal{ opacity:0; transform: translate(-50%,-50%) scale(0); }
 
-  /* La lettre part cachée derrière l'enveloppe (petite, transparente) puis
-     s'élève entièrement au-dessus, agrandie, avant que le texte n'apparaisse. */
+  /* La lettre part cachée derrière l'enveloppe (petite, transparente), s'élève et se
+     centre dans le cadre, texte centré. Une fois affichée, l'enveloppe s'efface
+     (classe .faded) pour ne laisser que la carte-lettre bien centrée. */
   .envelope-letter{
-    position:absolute; left:50%; bottom:6%;
+    position:absolute; left:50%; top:88%;
     width:88%; max-width:280px;
-    transform: translate(-50%, 0) scale(.55);
+    transform: translate(-50%, -50%) scale(.5);
     opacity:0;
-    background:#fff; border-radius:12px;
+    background:#fff; border-radius:14px;
     box-shadow: 0 18px 40px -12px rgba(0,0,0,.25);
     z-index:3;
-    transition: transform 1.1s cubic-bezier(.22,.85,.3,1) .55s, opacity .5s ease .55s, z-index 0s .55s;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    padding: 1.5rem 1.25rem;
+    transition: top 1.1s cubic-bezier(.22,.85,.3,1) .55s, transform 1.1s cubic-bezier(.22,.85,.3,1) .55s, opacity .5s ease .55s, z-index 0s .55s;
   }
   .envelope.open .envelope-letter{
-    transform: translate(-50%, -270px) scale(1);
+    top:50%;
+    transform: translate(-50%, -50%) scale(1);
     opacity:1;
     z-index:6;
+  }
+
+  /* Une fois le message révélé, l'enveloppe (fond, poche, rabat, cachet) disparaît en fondu */
+  .envelope.faded .envelope-body,
+  .envelope.faded .envelope-pocket,
+  .envelope.faded .envelope-flap{
+    opacity:0;
+    pointer-events:none;
   }
 
   .letter-text{
@@ -329,7 +343,7 @@
       <!-- ⬇⬇ REMPLACE les liens "src" par tes propres photos (mets-les dans le même dossier que ce fichier) ⬇⬇ -->
       <div class="slide active" data-index="0">
         <div class="relative w-full h-full">
-          <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt="Notre histoire">
+          <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=900&q=80" loading="eager" class="w-full h-full object-cover" alt="Notre histoire">
           <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
             <!-- MODIFIABLE : texte du souvenir 1 -->
             <p class="font-script text-xl">Le début de notre histoire...</p>
@@ -338,7 +352,7 @@
       </div>
       <div class="slide" data-index="1">
         <div class="relative w-full h-full">
-          <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt="Nos voyages">
+          <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=900&q=80" loading="lazy" class="w-full h-full object-cover" alt="Nos voyages">
           <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
             <!-- MODIFIABLE : texte du souvenir 2 -->
             <p class="font-script text-xl">Nos plus beaux voyages...</p>
@@ -347,7 +361,7 @@
       </div>
       <div class="slide" data-index="2">
         <div class="relative w-full h-full">
-          <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt="Chaque jour">
+          <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80" loading="lazy" class="w-full h-full object-cover" alt="Chaque jour">
           <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
             <!-- MODIFIABLE : texte du souvenir 3 -->
             <p class="font-script text-xl">Chaque jour de plus à tes côtés...</p>
@@ -356,7 +370,7 @@
       </div>
       <div class="slide" data-index="3">
         <div class="relative w-full h-full">
-          <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt="Nos fous rires">
+          <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=900&q=80" loading="lazy" class="w-full h-full object-cover" alt="Nos fous rires">
           <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
             <!-- MODIFIABLE : texte du souvenir 4 -->
             <p class="font-script text-xl">Nos fous rires, nos petits riens...</p>
@@ -365,7 +379,7 @@
       </div>
       <div class="slide" data-index="4">
         <div class="relative w-full h-full">
-          <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt="Notre avenir">
+          <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
           <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
             <!-- MODIFIABLE : texte du souvenir 5 -->
             <p class="font-script text-xl">Et tant d'autres à venir...</p>
@@ -448,7 +462,7 @@
         <div class="envelope-body"></div>
         <div class="envelope-letter">
           <!-- MODIFIABLE : le message final -->
-          <p id="letterText" class="letter-text text-sm sm:text-base leading-relaxed px-5 py-5" style="color:var(--plum);">
+          <p id="letterText" class="letter-text text-sm sm:text-base leading-relaxed" style="color:var(--plum);">
             Joyeux 3 ans mon amour. Je t'invite à un date ce soir (16/07/2026), suivi d'une nuit magique avec moi.
             Prépare tes affaires, je m'occupe de tout. <span class="font-script text-xl" style="color:var(--red-deep);">❤️</span>
           </p>
@@ -527,7 +541,11 @@ function initNonButton(){
   nonBtn.style.left = (ouiRect.left - arenaRect.left + (ouiRect.width - nonRect.width) / 2) + 'px';
   nonBtn.style.top = (ouiRect.bottom - arenaRect.top + 16) + 'px';
 }
-window.addEventListener('load', initNonButton);
+// Important : on positionne le bouton tout de suite (pas d'attente de "load", qui ne se
+// déclenche qu'après le chargement de TOUTES les images du site, y compris celles du
+// diaporama plus bas dans la page — ce qui pouvait laisser le bouton "Non" invisible
+// ou mal placé pendant plusieurs secondes au premier affichage).
+initNonButton();
 window.addEventListener('resize', initNonButton);
 
 // Le bouton ne se déplace QUE lorsqu'on clique/tape dessus (pas au survol de la souris).
@@ -701,12 +719,19 @@ function launchConfetti(){
    ÉTAPE 5 — OUVERTURE DE LA LETTRE
 ===================================================================== */
 function openEnvelope(){
-  document.getElementById('envelope').classList.add('open');
-  // Le texte apparaît une fois que la lettre est complètement sortie de l'enveloppe
+  const envelope = document.getElementById('envelope');
+  envelope.classList.add('open');
+
+  // Le texte apparaît une fois que la lettre est complètement sortie et centrée
   // (délai .55s + durée 1.1s du déplacement défini en CSS, + petite marge)
   setTimeout(() => {
     document.getElementById('letterText').classList.add('show');
   }, 1750);
+
+  // Puis l'enveloppe (fond, poche, rabat) s'efface en fondu, ne laissant que la lettre
+  setTimeout(() => {
+    envelope.classList.add('faded');
+  }, 2300);
 }
 </script>
 </body>
