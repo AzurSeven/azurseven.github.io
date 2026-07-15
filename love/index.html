@@ -88,8 +88,9 @@
   .pulse{ animation: pulseHeart 1.8s ease-in-out infinite; }
 
   /* ---------- Bouton NON fuyant ---------- */
+  /* Par défaut il reste dans le flux normal (donc toujours visible, sans dépendre du JS).
+     Il ne devient "position:absolute" qu'au premier clic, via JavaScript, pour pouvoir se déplacer. */
   #nonBtn{
-    position:absolute;
     transition: left .35s cubic-bezier(.34,1.56,.64,1), top .35s cubic-bezier(.34,1.56,.64,1), transform .2s ease;
     touch-action: none;
   }
@@ -504,9 +505,22 @@ const escapeMessages = [
   "Le Oui est bien mieux non ?",
 ];
 let escapeCount = 0;
+let nonIsAbsolute = false; // devient true dès le premier clic sur "Non"
 
 function relocateNonButton(){
   const arenaRect = homeArena.getBoundingClientRect();
+
+  // Premier clic : on fige la position actuelle du bouton en "absolute" (sans saut visuel)
+  // avant de calculer sa prochaine position aléatoire.
+  if (!nonIsAbsolute){
+    const currentRect = nonBtn.getBoundingClientRect();
+    nonBtn.style.position = 'absolute';
+    nonBtn.style.left = (currentRect.left - arenaRect.left) + 'px';
+    nonBtn.style.top = (currentRect.top - arenaRect.top) + 'px';
+    nonIsAbsolute = true;
+    void nonBtn.offsetWidth; // force le navigateur à appliquer cette position avant la suite
+  }
+
   const btnW = nonBtn.offsetWidth || 100;
   const btnH = nonBtn.offsetHeight || 50;
   const padding = 16;
@@ -531,26 +545,20 @@ function relocateNonButton(){
   nonMessage._t = setTimeout(() => { nonMessage.style.opacity = 0; }, 1400);
 }
 
-// Position initiale du bouton "Non" : juste en dessous du bouton "Oui" (ordre normal de la page)
-function initNonButton(){
-  const arenaRect = homeArena.getBoundingClientRect();
-  const ouiRect = ouiBtn.getBoundingClientRect();
-  const nonRect = nonBtn.getBoundingClientRect();
-
-  nonBtn.style.position = 'absolute';
-  nonBtn.style.left = (ouiRect.left - arenaRect.left + (ouiRect.width - nonRect.width) / 2) + 'px';
-  nonBtn.style.top = (ouiRect.bottom - arenaRect.top + 16) + 'px';
-}
-// Important : on positionne le bouton tout de suite (pas d'attente de "load", qui ne se
-// déclenche qu'après le chargement de TOUTES les images du site, y compris celles du
-// diaporama plus bas dans la page — ce qui pouvait laisser le bouton "Non" invisible
-// ou mal placé pendant plusieurs secondes au premier affichage).
-initNonButton();
-window.addEventListener('resize', initNonButton);
+// Si l'écran change de taille (rotation du téléphone...), on remet le bouton dans le flux
+// normal de la page : c'est la position la plus sûre, garantie toujours visible.
+window.addEventListener('resize', () => {
+  if (nonIsAbsolute){
+    nonBtn.style.position = '';
+    nonBtn.style.left = '';
+    nonBtn.style.top = '';
+    nonIsAbsolute = false;
+  }
+});
 
 // Le bouton ne se déplace QUE lorsqu'on clique/tape dessus (pas au survol de la souris).
-// relocateNonButton() calcule déjà une position bornée par la taille du cadre "homeArena"
-// (qui a overflow:hidden), donc le bouton ne peut jamais sortir de l'écran.
+// relocateNonButton() borne toujours sa position à la taille du cadre "homeArena"
+// (qui a overflow:hidden), donc il ne peut jamais sortir de l'écran une fois en mouvement.
 nonBtn.addEventListener('click', (e) => { e.preventDefault(); relocateNonButton(); });
 
 // Bouton OUI -> écran suivant
