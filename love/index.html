@@ -149,6 +149,20 @@
   }
   .lock-idle{ animation: lockWiggle 3s ease-in-out infinite; }
 
+  /* ---------- Clavier virtuel du code secret ---------- */
+  .keypad-key{
+    font-family:'Playfair Display', serif;
+    font-size:1.25rem;
+    background: rgba(255,255,255,.7);
+    border: 1px solid rgba(232,98,137,.25);
+    color: var(--plum);
+    border-radius: 14px;
+    padding: .85rem 0;
+    transition: transform .12s ease, background .12s ease;
+  }
+  .keypad-key:active{ transform: scale(.92); background: var(--blush); }
+  .keypad-action{ font-size:1.1rem; }
+
   /* ---------- Confettis coeurs ---------- */
   .confetti-heart{
     position:fixed; top:-40px; z-index:50; pointer-events:none;
@@ -159,15 +173,31 @@
   }
 
   /* ---------- Enveloppe / lettre finale ---------- */
-  .envelope-wrap{ perspective: 1200px; }
+  /* La zone est assez haute pour laisser la lettre s'élever complètement au-dessus
+     de l'enveloppe, sans jamais rester coincée sous le rabat. */
+  .envelope-wrap{
+    perspective: 1200px;
+    position:relative;
+    height: 380px;
+    max-width:320px;
+    margin:0 auto;
+  }
   .envelope{
-    position:relative; width:100%; max-width:320px; aspect-ratio: 3/2; margin:0 auto;
+    position:absolute; left:50%; bottom:0; transform: translateX(-50%);
+    width:100%; aspect-ratio: 3/2;
   }
   .envelope-body{
     position:absolute; inset:0;
     background: linear-gradient(180deg, #fff, var(--blush));
     border-radius: 10px;
     box-shadow: 0 20px 40px -15px rgba(201,24,74,.4);
+    z-index:1;
+  }
+  .envelope-pocket{
+    position:absolute; inset:0;
+    background: linear-gradient(160deg, var(--rose), var(--rose-deep));
+    clip-path: polygon(0 100%, 100% 100%, 50% 35%);
+    z-index:2;
   }
   .envelope-flap{
     position:absolute; top:0; left:0; right:0; height:55%;
@@ -175,31 +205,39 @@
     clip-path: polygon(0 0, 100% 0, 50% 100%);
     transform-origin: top;
     transition: transform 1s cubic-bezier(.6,.05,.4,1);
-    z-index:3;
+    z-index:4;
   }
   .envelope.open .envelope-flap{ transform: rotateX(180deg); }
   .envelope-seal{
-    position:absolute; top:38%; left:50%; transform: translate(-50%,-50%);
+    position:absolute; top:34%; left:50%; transform: translate(-50%,-50%);
     width:46px; height:46px; border-radius:50%;
     background: var(--red-deep); color:#fff; display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 4px 10px rgba(0,0,0,.25); z-index:4;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25); z-index:5;
     transition: opacity .3s ease .4s, transform .3s ease .4s;
   }
   .envelope.open .envelope-seal{ opacity:0; transform: translate(-50%,-50%) scale(0); }
+
+  /* La lettre part cachée derrière l'enveloppe (petite, transparente) puis
+     s'élève entièrement au-dessus, agrandie, avant que le texte n'apparaisse. */
   .envelope-letter{
-    position:absolute; left:6%; right:6%; bottom:4%; top:14%;
-    background:#fff; border-radius:8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,.12);
-    transform: translateY(6%); opacity:0;
-    transition: transform 1s cubic-bezier(.2,.8,.2,1) .5s, opacity .6s ease .5s;
-    z-index:2;
-    display:flex; align-items:center; justify-content:center;
+    position:absolute; left:50%; bottom:6%;
+    width:88%; max-width:280px;
+    transform: translate(-50%, 0) scale(.55);
+    opacity:0;
+    background:#fff; border-radius:12px;
+    box-shadow: 0 18px 40px -12px rgba(0,0,0,.25);
+    z-index:3;
+    transition: transform 1.1s cubic-bezier(.22,.85,.3,1) .55s, opacity .5s ease .55s, z-index 0s .55s;
   }
-  .envelope.open .envelope-letter{ transform: translateY(-46%); opacity:1; }
+  .envelope.open .envelope-letter{
+    transform: translate(-50%, -270px) scale(1);
+    opacity:1;
+    z-index:6;
+  }
 
   .letter-text{
-    opacity:0; transform: translateY(10px);
-    transition: opacity .8s ease .3s, transform .8s ease .3s;
+    opacity:0; transform: translateY(8px);
+    transition: opacity .7s ease, transform .7s ease;
   }
   .letter-text.show{ opacity:1; transform: translateY(0); }
 
@@ -225,7 +263,7 @@
 <!-- ÉTAPE 1 — ACCUEIL : "Est-ce que tu m'aimes ?"                -->
 <!-- ============================================================ -->
 <section id="screen-home" class="screen active">
-  <div id="homeArena" class="relative w-full max-w-md mx-auto glass-card rounded-[28px] p-8 text-center overflow-hidden" style="min-height:420px;">
+  <div id="homeArena" class="relative w-full max-w-md mx-auto glass-card rounded-[28px] p-8 text-center overflow-hidden" style="min-height:480px;">
     <i class="fa-solid fa-heart pulse text-4xl mb-4" style="color:var(--red-deep);"></i>
 
     <!-- MODIFIABLE : la question d'accroche -->
@@ -234,13 +272,14 @@
     </h1>
     <p class="mb-10" style="color:var(--plum-soft);">Réponds sincèrement mon cœur... 😉</p>
 
-    <div class="flex items-center justify-center gap-5 relative" style="height:60px;">
+    <!-- Les deux boutons sont empilés par défaut : Oui au-dessus, Non en dessous -->
+    <div class="flex flex-col items-center gap-4 relative">
       <button id="ouiBtn"
         class="btn-oui text-white font-semibold px-8 py-3 rounded-full text-lg z-10">
         Oui 💖
       </button>
 
-      <!-- Le bouton NON est positionné en absolute et fuit au survol / approche -->
+      <!-- Le bouton NON se déplace uniquement au clic/tap (jamais au survol), et reste toujours dans le cadre -->
       <button id="nonBtn"
         class="bg-gray-300 text-gray-600 font-semibold px-8 py-3 rounded-full text-lg z-10">
         Non
@@ -315,13 +354,36 @@
           </div>
         </div>
       </div>
-      <!-- ⬆⬆ Pour ajouter une slide : copie un bloc .slide entier, incrémente data-index, et ajoute un .dot ci-dessous ⬆⬆ -->
+      <div class="slide" data-index="3">
+        <div class="relative w-full h-full">
+          <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt="Nos fous rires">
+          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+            <!-- MODIFIABLE : texte du souvenir 4 -->
+            <p class="font-script text-xl">Nos fous rires, nos petits riens...</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide" data-index="4">
+        <div class="relative w-full h-full">
+          <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt="Notre avenir">
+          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+            <!-- MODIFIABLE : texte du souvenir 5 -->
+            <p class="font-script text-xl">Et tant d'autres à venir...</p>
+          </div>
+        </div>
+      </div>
+      <!-- ⬆⬆ POUR AJOUTER UNE SLIDE : ⬆⬆
+           1) copie un bloc .slide entier ci-dessus, incrémente data-index (ex: 5)
+           2) ajoute un <span class="dot" data-dot="5"></span> ci-dessous
+           Le JS s'adapte tout seul au nombre de slides, aucune autre modification n'est nécessaire. -->
     </div>
 
-    <div class="flex items-center justify-center gap-2 my-4">
+    <div class="flex items-center justify-center gap-2 my-4 flex-wrap">
       <span class="dot active" data-dot="0"></span>
       <span class="dot" data-dot="1"></span>
       <span class="dot" data-dot="2"></span>
+      <span class="dot" data-dot="3"></span>
+      <span class="dot" data-dot="4"></span>
     </div>
 
     <div class="flex items-center justify-between gap-3">
@@ -347,15 +409,32 @@
     <h2 class="text-2xl font-display font-bold mb-2">Un dernier secret...</h2>
     <p class="mb-6" style="color:var(--plum-soft);">Saisis notre date clé pour débloquer la surprise (format JJMM)</p>
 
-    <input id="codeInput" type="tel" inputmode="numeric" maxlength="4" placeholder="••••"
+    <input id="codeInput" type="text" inputmode="none" readonly maxlength="4" placeholder="••••"
       class="code-input w-full text-2xl py-3 rounded-2xl border-2 mb-3 bg-white/70"
-      style="border-color:var(--rose); color:var(--red-deep);">
+      style="border-color:var(--rose); color:var(--red-deep); caret-color:transparent;">
 
-    <p id="lockMessage" class="text-sm italic mb-4 min-h-[20px]" style="color:var(--red-deep);"></p>
+    <p id="lockMessage" class="text-sm italic mb-3 min-h-[20px]" style="color:var(--red-deep);"></p>
 
-    <button onclick="checkCode()" class="btn-oui text-white font-semibold px-8 py-3 rounded-full w-full">
-      Déverrouiller <i class="fa-solid fa-unlock ml-1"></i>
-    </button>
+    <!-- Clavier virtuel numérique -->
+    <div id="keypad" class="grid grid-cols-3 gap-2 mb-4">
+      <!-- Les chiffres 1 à 9 sont générés dans l'ordre, puis une dernière rangée : effacer / 0 / valider -->
+      <button type="button" class="keypad-key" data-digit="1">1</button>
+      <button type="button" class="keypad-key" data-digit="2">2</button>
+      <button type="button" class="keypad-key" data-digit="3">3</button>
+      <button type="button" class="keypad-key" data-digit="4">4</button>
+      <button type="button" class="keypad-key" data-digit="5">5</button>
+      <button type="button" class="keypad-key" data-digit="6">6</button>
+      <button type="button" class="keypad-key" data-digit="7">7</button>
+      <button type="button" class="keypad-key" data-digit="8">8</button>
+      <button type="button" class="keypad-key" data-digit="9">9</button>
+      <button type="button" id="keypadDelete" class="keypad-key keypad-action">
+        <i class="fa-solid fa-delete-left"></i>
+      </button>
+      <button type="button" class="keypad-key" data-digit="0">0</button>
+      <button type="button" id="keypadValidate" class="keypad-key keypad-action" style="background:linear-gradient(135deg, var(--rose-deep), var(--red-deep)); color:#fff;">
+        <i class="fa-solid fa-check"></i>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -364,16 +443,17 @@
 <!-- ============================================================ -->
 <section id="screen-final" class="screen">
   <div class="w-full max-w-md mx-auto text-center px-2">
-    <div class="envelope-wrap mb-6">
+    <div class="envelope-wrap mb-10">
       <div id="envelope" class="envelope">
         <div class="envelope-body"></div>
         <div class="envelope-letter">
           <!-- MODIFIABLE : le message final -->
-          <p id="letterText" class="letter-text text-sm sm:text-base leading-relaxed px-5 py-4" style="color:var(--plum);">
+          <p id="letterText" class="letter-text text-sm sm:text-base leading-relaxed px-5 py-5" style="color:var(--plum);">
             Joyeux 3 ans mon amour. Je t'invite à un date ce soir (16/07/2026), suivi d'une nuit magique avec moi.
             Prépare tes affaires, je m'occupe de tout. <span class="font-script text-xl" style="color:var(--red-deep);">❤️</span>
           </p>
         </div>
+        <div class="envelope-pocket"></div>
         <div class="envelope-flap"></div>
         <div class="envelope-seal"><i class="fa-solid fa-heart"></i></div>
       </div>
@@ -437,33 +517,22 @@ function relocateNonButton(){
   nonMessage._t = setTimeout(() => { nonMessage.style.opacity = 0; }, 1400);
 }
 
-// Position initiale du bouton "Non" (relatif au conteneur)
+// Position initiale du bouton "Non" : juste en dessous du bouton "Oui" (ordre normal de la page)
 function initNonButton(){
-  nonBtn.style.position = 'absolute';
   const arenaRect = homeArena.getBoundingClientRect();
   const ouiRect = ouiBtn.getBoundingClientRect();
-  nonBtn.style.left = (ouiRect.left - arenaRect.left + ouiRect.width + 20) + 'px';
-  nonBtn.style.top = (ouiRect.top - arenaRect.top) + 'px';
+  const nonRect = nonBtn.getBoundingClientRect();
+
+  nonBtn.style.position = 'absolute';
+  nonBtn.style.left = (ouiRect.left - arenaRect.left + (ouiRect.width - nonRect.width) / 2) + 'px';
+  nonBtn.style.top = (ouiRect.bottom - arenaRect.top + 16) + 'px';
 }
 window.addEventListener('load', initNonButton);
 window.addEventListener('resize', initNonButton);
 
-// Desktop : le bouton fuit au survol
-nonBtn.addEventListener('mouseenter', relocateNonButton);
-
-// Mobile / tactile : fuit dès qu'on le touche, et détecte l'approche du doigt
-nonBtn.addEventListener('touchstart', (e) => { e.preventDefault(); relocateNonButton(); }, { passive:false });
-
-// Détection de "l'approche" du curseur/doigt (souris ET tactile via pointer events)
-homeArena.addEventListener('pointermove', (e) => {
-  const rect = nonBtn.getBoundingClientRect();
-  const cx = rect.left + rect.width/2;
-  const cy = rect.top + rect.height/2;
-  const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-  if(dist < 70){ relocateNonButton(); }
-});
-
-// Sécurité : si jamais le clic aboutissait, on empêche toute navigation et on relocalise
+// Le bouton ne se déplace QUE lorsqu'on clique/tape dessus (pas au survol de la souris).
+// relocateNonButton() calcule déjà une position bornée par la taille du cadre "homeArena"
+// (qui a overflow:hidden), donc le bouton ne peut jamais sortir de l'écran.
 nonBtn.addEventListener('click', (e) => { e.preventDefault(); relocateNonButton(); });
 
 // Bouton OUI -> écran suivant
@@ -573,10 +642,20 @@ let wrongCount = 0;
 const codeInput = document.getElementById('codeInput');
 const lockCard = document.querySelector('#screen-lock > div');
 
-codeInput.addEventListener('input', () => {
-  codeInput.value = codeInput.value.replace(/\D/g,'').slice(0,4);
+// Clavier virtuel : chaque touche chiffre ajoute au code (4 chiffres max)
+document.querySelectorAll('.keypad-key[data-digit]').forEach(key => {
+  key.addEventListener('click', () => {
+    if (codeInput.value.length < 4){
+      codeInput.value += key.dataset.digit;
+    }
+  });
 });
-codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkCode(); });
+
+document.getElementById('keypadDelete').addEventListener('click', () => {
+  codeInput.value = codeInput.value.slice(0, -1);
+});
+
+document.getElementById('keypadValidate').addEventListener('click', checkCode);
 
 function checkCode(){
   if (codeInput.value === SECRET_CODE){
@@ -623,9 +702,11 @@ function launchConfetti(){
 ===================================================================== */
 function openEnvelope(){
   document.getElementById('envelope').classList.add('open');
+  // Le texte apparaît une fois que la lettre est complètement sortie de l'enveloppe
+  // (délai .55s + durée 1.1s du déplacement défini en CSS, + petite marge)
   setTimeout(() => {
     document.getElementById('letterText').classList.add('show');
-  }, 600);
+  }, 1750);
 }
 </script>
 </body>
