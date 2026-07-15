@@ -1,791 +1,702 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>3 ans de bonheur ❤️</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>3 ans de bonheur ❤️</title>
 
-<!-- Tailwind CDN (utilitaires de mise en page / responsive) -->
-<script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CDN (utilitaires de mise en page / responsive) -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- FontAwesome (icônes coeur, cadenas, enveloppe...) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- FontAwesome (icônes coeur, cadenas, enveloppe...) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<!-- Google Fonts : Playfair Display (titres élégants), Quicksand (texte doux), Dancing Script (touche manuscrite) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts : Playfair Display (titres élégants), Quicksand (texte doux), Dancing Script (touche manuscrite) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 
-<style>
-  :root{
-    --cream:#FFFBF8;
-    --blush:#FCE1E9;
-    --rose:#F5A9C0;
-    --rose-deep:#E8628B;
-    --red-deep:#C9184A;
-    --plum:#4A2634;
-    --plum-soft:#7A4C5B;
-    --gold-soft:#F4C9C2;
-  }
+  <style>
+    :root {
+      --cream: #FFFBF8;
+      --blush: #FCE1E9;
+      --rose: #F5A9C0;
+      --rose-deep: #E8628B;
+      --red-deep: #C9184A;
+      --plum: #4A2634;
+      --plum-soft: #7A4C5B;
+      --gold-soft: #F4C9C2;
+    }
 
-  *{ -webkit-tap-highlight-color: transparent; }
+    * { -webkit-tap-highlight-color: transparent; }
 
-  html,body{
-    margin:0; padding:0; height:100%;
-    background: var(--cream);
-    color: var(--plum);
-    font-family:'Quicksand', sans-serif;
-    overflow-x:hidden;
-  }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: var(--cream);
+      color: var(--plum);
+      font-family: 'Quicksand', sans-serif;
+      overflow-x: hidden;
+    }
 
-  h1,h2,h3, .font-display{ font-family:'Playfair Display', serif; }
-  .font-script{ font-family:'Dancing Script', cursive; }
+    h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; }
+    .font-script { font-family: 'Dancing Script', cursive; }
 
-  /* ---------- Fond doux animé (bulles) ---------- */
-  .bg-blob{
-    position:fixed; border-radius:50%; filter:blur(60px); opacity:.55; z-index:0; pointer-events:none;
-    animation: float 14s ease-in-out infinite;
-  }
-  @keyframes float{
-    0%,100%{ transform: translate(0,0) scale(1); }
-    50%{ transform: translate(20px,-30px) scale(1.08); }
-  }
+    /* ---------- Fond doux animé (bulles) ---------- */
+    .bg-blob {
+      position: fixed; border-radius: 50%; filter: blur(60px); opacity: .55; z-index: 0; pointer-events: none;
+      animation: float 14s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(20px, -30px) scale(1.08); }
+    }
 
-  /* ---------- Gestion des écrans (étapes) ---------- */
-  .screen{
-    position:fixed; inset:0; z-index:10;
-    display:flex; align-items:center; justify-content:center;
-    padding:1.5rem;
-    opacity:0; visibility:hidden; pointer-events:none;
-    transform: translateY(24px) scale(.98);
-    transition: opacity .7s ease, transform .7s ease, visibility 0s linear .7s;
-  }
-  .screen.active{
-    opacity:1; visibility:visible; pointer-events:auto;
-    transform: translateY(0) scale(1);
-    transition: opacity .7s ease, transform .7s ease, visibility 0s linear 0s;
-  }
+    /* ---------- Gestion des écrans (étapes) ---------- */
+    .screen {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transform: translateY(24px) scale(.98);
+      transition: opacity .7s ease, transform .7s ease, visibility 0s linear .7s;
+    }
+    .screen.active {
+      opacity: 1; visibility: visible; pointer-events: auto;
+      transform: translateY(0) scale(1);
+      transition: opacity .7s ease, transform .7s ease, visibility 0s linear 0s;
+    }
 
-  .glass-card{
-    background: rgba(255,255,255,.72);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,.6);
-    box-shadow: 0 20px 60px -20px rgba(201,24,74,.25);
-  }
+    .glass-card {
+      background: rgba(255, 255, 255, .72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, .6);
+      box-shadow: 0 20px 60px -20px rgba(201, 24, 74, .25);
+    }
 
-  /* ---------- Bouton OUI ---------- */
-  .btn-oui{
-    background: linear-gradient(135deg, var(--rose-deep), var(--red-deep));
-    box-shadow: 0 12px 30px -8px rgba(201,24,74,.55);
-    transition: transform .25s ease, box-shadow .25s ease;
-  }
-  .btn-oui:hover{ transform: translateY(-3px) scale(1.04); box-shadow: 0 18px 34px -8px rgba(201,24,74,.6); }
-  .btn-oui:active{ transform: scale(.96); }
-  @keyframes pulseHeart{
-    0%,100%{ transform: scale(1); }
-    50%{ transform: scale(1.06); }
-  }
-  .pulse{ animation: pulseHeart 1.8s ease-in-out infinite; }
+    /* ---------- Bouton OUI ---------- */
+    .btn-oui {
+      background: linear-gradient(135deg, var(--rose-deep), var(--red-deep));
+      box-shadow: 0 12px 30px -8px rgba(201, 24, 74, .55);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .btn-oui:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 18px 34px -8px rgba(201, 24, 74, .6); }
+    .btn-oui:active { transform: scale(.96); }
+    @keyframes pulseHeart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .pulse { animation: pulseHeart 1.8s ease-in-out infinite; }
 
-  /* ---------- Bouton NON fuyant ---------- */
-  /* Par défaut il reste dans le flux normal (donc toujours visible, sans dépendre du JS).
-     Il ne devient "position:absolute" qu'au premier clic, via JavaScript, pour pouvoir se déplacer. */
-  #nonBtn{
-    transition: left .35s cubic-bezier(.34,1.56,.64,1), top .35s cubic-bezier(.34,1.56,.64,1), transform .2s ease;
-    touch-action: none;
-  }
-  @keyframes wiggle{
-    0%,100%{ transform: rotate(0deg); }
-    25%{ transform: rotate(-6deg); }
-    75%{ transform: rotate(6deg); }
-  }
-  .wiggle{ animation: wiggle .35s ease; }
+    /* ---------- Bouton NON fuyant ---------- */
+    #nonBtn {
+      transition: left .35s cubic-bezier(.34, 1.56, .64, 1), top .35s cubic-bezier(.34, 1.56, .64, 1), transform .2s ease;
+      touch-action: none;
+    }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-6deg); }
+      75% { transform: rotate(6deg); }
+    }
+    .wiggle { animation: wiggle .35s ease; }
 
-  /* ---------- Compteur ---------- */
-  .time-box{
-    background: rgba(255,255,255,.6);
-    border: 1px solid rgba(232,98,137,.25);
-    border-radius: 18px;
-  }
-  .time-num{
-    font-family:'Playfair Display', serif;
-    font-variant-numeric: tabular-nums;
-  }
+    /* ---------- Compteur ---------- */
+    .time-box {
+      background: rgba(255, 255, 255, .6);
+      border: 1px solid rgba(232, 98, 137, .25);
+      border-radius: 18px;
+    }
+    .time-num {
+      font-family: 'Playfair Display', serif;
+      font-variant-numeric: tabular-nums;
+    }
 
-  /* ---------- Slider photos ---------- */
-  .slide{
-    position:absolute; inset:0;
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; transform: translateX(40px);
-    transition: opacity .6s ease, transform .6s ease;
-    pointer-events:none;
-  }
-  .slide.active{ opacity:1; transform: translateX(0); pointer-events:auto; }
-  .slide.prev{ transform: translateX(-40px); }
+    /* ---------- Slider photos ---------- */
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateX(40px);
+      transition: opacity .6s ease, transform .6s ease;
+      pointer-events: none;
+    }
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    .slide.prev { transform: translateX(-40px); }
 
-  .dot{
-    width:8px; height:8px; border-radius:999px; background: rgba(232,98,137,.3);
-    transition: all .3s ease;
-  }
-  .dot.active{ width:24px; background: var(--red-deep); }
+    .dot {
+      width: 8px; height: 8px; border-radius: 999px; background: rgba(232, 98, 137, .3);
+      transition: all .3s ease;
+    }
+    .dot.active { width: 24px; background: var(--red-deep); }
 
-  /* ---------- Cadenas ---------- */
-  @keyframes shake{
-    10%,90%{ transform: translateX(-2px); }
-    20%,80%{ transform: translateX(4px); }
-    30%,50%,70%{ transform: translateX(-8px); }
-    40%,60%{ transform: translateX(8px); }
-  }
-  .shake{ animation: shake .6s cubic-bezier(.36,.07,.19,.97); }
+    /* ---------- Cadenas ---------- */
+    @keyframes shake {
+      10%, 90% { transform: translateX(-2px); }
+      20%, 80% { transform: translateX(4px); }
+      30%, 50%, 70% { transform: translateX(-8px); }
+      40%, 60% { transform: translateX(8px); }
+    }
+    .shake { animation: shake .6s cubic-bezier(.36, .07, .19, .97); }
 
-  .code-input{
-    letter-spacing: .6em;
-    text-align:center;
-    font-family:'Playfair Display', serif;
-  }
+    .code-input {
+      letter-spacing: .6em;
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+    }
 
-  @keyframes lockWiggle{
-    0%,100%{ transform: rotate(0deg); }
-    50%{ transform: rotate(-4deg); }
-  }
-  .lock-idle{ animation: lockWiggle 3s ease-in-out infinite; }
+    @keyframes lockWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-4deg); }
+    }
+    .lock-idle { animation: lockWiggle 3s ease-in-out infinite; }
 
-  /* ---------- Clavier virtuel du code secret ---------- */
-  .keypad-key{
-    font-family:'Playfair Display', serif;
-    font-size:1.25rem;
-    background: rgba(255,255,255,.7);
-    border: 1px solid rgba(232,98,137,.25);
-    color: var(--plum);
-    border-radius: 14px;
-    padding: .85rem 0;
-    transition: transform .12s ease, background .12s ease;
-  }
-  .keypad-key:active{ transform: scale(.92); background: var(--blush); }
-  .keypad-action{ font-size:1.1rem; }
+    /* ---------- Clavier virtuel du code secret ---------- */
+    .keypad-key {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      background: rgba(255, 255, 255, .7);
+      border: 1px solid rgba(232, 98, 137, .25);
+      color: var(--plum);
+      border-radius: 14px;
+      padding: .85rem 0;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .keypad-key:active { transform: scale(.92); background: var(--blush); }
+    .keypad-action { font-size: 1.1rem; }
 
-  /* ---------- Confettis coeurs ---------- */
-  .confetti-heart{
-    position:fixed; top:-40px; z-index:50; pointer-events:none;
-    animation: fall linear forwards;
-  }
-  @keyframes fall{
-    to{ transform: translateY(110vh) rotate(360deg); opacity:.2; }
-  }
+    /* ---------- Confettis coeurs ---------- */
+    .confetti-heart {
+      position: fixed; top: -40px; z-index: 50; pointer-events: none;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(360deg); opacity: .2; }
+    }
 
-  /* ---------- Enveloppe / lettre finale ---------- */
-  /* La zone est assez haute pour laisser la lettre s'élever complètement au-dessus
-     de l'enveloppe, sans jamais rester coincée sous le rabat. */
-  .envelope-wrap{
-    perspective: 1200px;
-    position:relative;
-    height: 380px;
-    max-width:320px;
-    margin:0 auto;
-  }
-  .envelope{
-    position:absolute; left:50%; bottom:0; transform: translateX(-50%);
-    width:100%; aspect-ratio: 3/2;
-  }
-  .envelope-body{
-    position:absolute; inset:0;
-    background: linear-gradient(180deg, #fff, var(--blush));
-    border-radius: 10px;
-    box-shadow: 0 20px 40px -15px rgba(201,24,74,.4);
-    z-index:1;
-    transition: opacity .6s ease;
-  }
-  .envelope-pocket{
-    position:absolute; inset:0;
-    background: linear-gradient(160deg, var(--rose), var(--rose-deep));
-    clip-path: polygon(0 100%, 100% 100%, 50% 35%);
-    z-index:2;
-    transition: opacity .6s ease;
-  }
-  .envelope-flap{
-    position:absolute; top:0; left:0; right:0; height:55%;
-    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
-    transform-origin: top;
-    transition: transform 1s cubic-bezier(.6,.05,.4,1), opacity .6s ease;
-    z-index:4;
-  }
-  .envelope.open .envelope-flap{ transform: rotateX(180deg); }
-  .envelope-seal{
-    position:absolute; top:34%; left:50%; transform: translate(-50%,-50%);
-    width:46px; height:46px; border-radius:50%;
-    background: var(--red-deep); color:#fff; display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 4px 10px rgba(0,0,0,.25); z-index:5;
-    transition: opacity .3s ease .4s, transform .3s ease .4s;
-  }
-  .envelope.open .envelope-seal{ opacity:0; transform: translate(-50%,-50%) scale(0); }
+    /* ---------- Enveloppe / lettre finale ---------- */
+    .envelope-wrap {
+      perspective: 1200px;
+      position: relative;
+      height: 380px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .envelope {
+      position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+      width: 100%; aspect-ratio: 3/2;
+    }
+    .envelope-body {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, #fff, var(--blush));
+      border-radius: 10px;
+      box-shadow: 0 20px 40px -15px rgba(201, 24, 74, .4);
+      z-index: 1;
+      transition: opacity .6s ease;
+    }
+    .envelope-pocket {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, var(--rose), var(--rose-deep));
+      clip-path: polygon(0 100%, 100% 100%, 50% 35%);
+      z-index: 2;
+      transition: opacity .6s ease;
+    }
+    .envelope-flap {
+      position: absolute; top: 0; left: 0; right: 0; height: 55%;
+      background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top;
+      transition: transform 1s cubic-bezier(.6, .05, .4, 1), opacity .6s ease;
+      z-index: 4;
+    }
+    .envelope.open .envelope-flap { transform: rotateX(180deg); }
+    .envelope-seal {
+      position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%);
+      width: 46px; height: 46px; border-radius: 50%;
+      background: var(--red-deep); color: #fff; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .25); z-index: 5;
+      transition: opacity .3s ease .4s, transform .3s ease .4s;
+    }
+    .envelope.open .envelope-seal { opacity: 0; transform: translate(-50%, -50%) scale(0); }
 
-  /* La lettre part cachée derrière l'enveloppe (petite, transparente), s'élève et se
-     centre dans le cadre, texte centré. Une fois affichée, l'enveloppe s'efface
-     (classe .faded) pour ne laisser que la carte-lettre bien centrée. */
-  .envelope-letter{
-    position:absolute; left:50%; top:88%;
-    width:88%; max-width:280px;
-    transform: translate(-50%, -50%) scale(.5);
-    opacity:0;
-    background:#fff; border-radius:14px;
-    box-shadow: 0 18px 40px -12px rgba(0,0,0,.25);
-    z-index:3;
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    padding: 1.5rem 1.25rem;
-    transition: top 1.1s cubic-bezier(.22,.85,.3,1) .55s, transform 1.1s cubic-bezier(.22,.85,.3,1) .55s, opacity .5s ease .55s, z-index 0s .55s;
-  }
-  .envelope.open .envelope-letter{
-    top:50%;
-    transform: translate(-50%, -50%) scale(1);
-    opacity:1;
-    z-index:6;
-  }
+    .envelope-letter {
+      position: absolute; left: 50%; top: 88%;
+      width: 88%; max-width: 280px;
+      transform: translate(-50%, -50%) scale(.5);
+      opacity: 0;
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 18px 40px -12px rgba(0, 0, 0, .25);
+      z-index: 3;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      padding: 1.5rem 1.25rem;
+      transition: top 1.1s cubic-bezier(.22, .85, .3, 1) .55s, transform 1.1s cubic-bezier(.22, .85, .3, 1) .55s, opacity .5s ease .55s, z-index 0s .55s;
+    }
+    .envelope.open .envelope-letter {
+      top: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      z-index: 6;
+    }
 
-  /* Une fois le message révélé, l'enveloppe (fond, poche, rabat, cachet) disparaît en fondu */
-  .envelope.faded .envelope-body,
-  .envelope.faded .envelope-pocket,
-  .envelope.faded .envelope-flap{
-    opacity:0;
-    pointer-events:none;
-  }
+    .envelope.faded .envelope-body,
+    .envelope.faded .envelope-pocket,
+    .envelope.faded .envelope-flap {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-  .letter-text{
-    opacity:0; transform: translateY(8px);
-    transition: opacity .7s ease, transform .7s ease;
-  }
-  .letter-text.show{ opacity:1; transform: translateY(0); }
+    .letter-text {
+      opacity: 0; transform: translateY(8px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .letter-text.show { opacity: 1; transform: translateY(0); }
 
-  /* ---------- Respect du mouvement réduit ---------- */
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-  }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    }
 
-  /* Focus visible accessibilité */
-  button:focus-visible, input:focus-visible{
-    outline: 3px solid var(--red-deep); outline-offset: 2px;
-  }
-</style>
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid var(--red-deep); outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
 
-<!-- Bulles décoratives de fond -->
-<div class="bg-blob" style="width:280px;height:280px;background:var(--blush);top:-60px;left:-60px;"></div>
-<div class="bg-blob" style="width:220px;height:220px;background:var(--rose);bottom:-40px;right:-40px;animation-delay:2s;"></div>
-<div class="bg-blob" style="width:180px;height:180px;background:var(--gold-soft);top:40%;right:10%;animation-delay:4s;"></div>
+  <!-- Bulles décoratives de fond -->
+  <div class="bg-blob" style="width:280px;height:280px;background:var(--blush);top:-60px;left:-60px;"></div>
+  <div class="bg-blob" style="width:220px;height:220px;background:var(--rose);bottom:-40px;right:-40px;animation-delay:2s;"></div>
+  <div class="bg-blob" style="width:180px;height:180px;background:var(--gold-soft);top:40%;right:10%;animation-delay:4s;"></div>
 
-<!-- ============================================================ -->
-<!-- ÉTAPE 1 — ACCUEIL : "Est-ce que tu m'aimes ?"                -->
-<!-- ============================================================ -->
-<section id="screen-home" class="screen active">
-  <div id="homeArena" class="relative w-full max-w-md mx-auto glass-card rounded-[28px] p-8 text-center overflow-hidden" style="min-height:480px;">
-    <i class="fa-solid fa-heart pulse text-4xl mb-4" style="color:var(--red-deep);"></i>
+  <!-- ÉTAPE 1 — ACCUEIL -->
+  <section id="screen-home" class="screen active">
+    <div id="homeArena" class="relative w-full max-w-md mx-auto glass-card rounded-[28px] p-8 text-center overflow-hidden" style="min-height:480px;">
+      <i class="fa-solid fa-heart pulse text-4xl mb-4" style="color:var(--red-deep);"></i>
+      <h1 class="text-3xl sm:text-4xl font-display font-bold mb-2" style="color:var(--plum);">
+        Est-ce que tu m'aimes ?
+      </h1>
+      <p class="mb-10" style="color:var(--plum-soft);">Réponds sincèrement mon cœur... 😉</p>
 
-    <!-- MODIFIABLE : la question d'accroche -->
-    <h1 class="text-3xl sm:text-4xl font-display font-bold mb-2" style="color:var(--plum);">
-      Est-ce que tu m'aimes ?
-    </h1>
-    <p class="mb-10" style="color:var(--plum-soft);">Réponds sincèrement mon cœur... 😉</p>
+      <div class="flex flex-col items-center gap-4">
+        <button id="ouiBtn" class="btn-oui text-white font-semibold px-8 py-3 rounded-full text-lg z-10">
+          Oui 💖
+        </button>
+        <button id="nonBtn" class="bg-gray-300 text-gray-600 font-semibold px-8 py-3 rounded-full text-lg z-10">
+          Non
+        </button>
+      </div>
+      <p id="nonMessage" class="mt-6 text-sm italic opacity-0 transition-opacity duration-300" style="color:var(--red-deep); min-height:20px;"></p>
+    </div>
+  </section>
 
-    <!-- Les deux boutons sont empilés par défaut : Oui au-dessus, Non en dessous -->
-    <div class="flex flex-col items-center gap-4">
-      <button id="ouiBtn"
-        class="btn-oui text-white font-semibold px-8 py-3 rounded-full text-lg z-10">
-        Oui 💖
+  <!-- ÉTAPE 2 — COMPTEUR D'AMOUR -->
+  <section id="screen-counter" class="screen">
+    <div class="w-full max-w-md mx-auto glass-card rounded-[28px] p-8 text-center">
+      <i class="fa-solid fa-heart-circle-check text-3xl mb-3" style="color:var(--red-deep);"></i>
+      <h2 class="text-2xl sm:text-3xl font-display font-bold mb-1">Depuis le 16 juillet 2023...</h2>
+      <p class="mb-6" style="color:var(--plum-soft);">Nous nous aimons depuis</p>
+
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        <div class="time-box py-3"><div id="c-years" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">ans</div></div>
+        <div class="time-box py-3"><div id="c-months" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">mois</div></div>
+        <div class="time-box py-3"><div id="c-days" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">jours</div></div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mb-6">
+        <div class="time-box py-3"><div id="c-hours" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">heures</div></div>
+        <div class="time-box py-3"><div id="c-minutes" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">min</div></div>
+        <div class="time-box py-3"><div id="c-seconds" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">sec</div></div>
+      </div>
+
+      <p class="mb-6 font-script text-2xl" style="color:var(--red-deep);">... de bonheur à tes côtés ❤️</p>
+      <button onclick="goTo('screen-slider')" class="btn-oui text-white font-semibold px-8 py-3 rounded-full">
+        Continuer <i class="fa-solid fa-arrow-right ml-1"></i>
       </button>
-
-      <!-- Le bouton NON se déplace uniquement au clic/tap (jamais au survol), et reste toujours dans le cadre -->
-      <button id="nonBtn"
-        class="bg-gray-300 text-gray-600 font-semibold px-8 py-3 rounded-full text-lg z-10">
-        Non
-      </button>
     </div>
+  </section>
 
-    <p id="nonMessage" class="mt-6 text-sm italic opacity-0 transition-opacity duration-300" style="color:var(--red-deep); min-height:20px;"></p>
-  </div>
-</section>
+  <!-- ÉTAPE 3 — DIAPORAMA PHOTOS -->
+  <section id="screen-slider" class="screen">
+    <div class="w-full max-w-md mx-auto glass-card rounded-[28px] p-5 sm:p-6 text-center">
+      <h2 class="text-xl sm:text-2xl font-display font-bold mb-4">Nos plus beaux souvenirs</h2>
 
-<!-- ============================================================ -->
-<!-- ÉTAPE 2 — COMPTEUR D'AMOUR                                   -->
-<!-- ============================================================ -->
-<section id="screen-counter" class="screen">
-  <div class="w-full max-w-md mx-auto glass-card rounded-[28px] p-8 text-center">
-    <i class="fa-solid fa-heart-circle-check text-3xl mb-3" style="color:var(--red-deep);"></i>
-    <h2 class="text-2xl sm:text-3xl font-display font-bold mb-1">Depuis le 16 juillet 2023...</h2>
-    <p class="mb-6" style="color:var(--plum-soft);">Nous nous aimons depuis</p>
-
-    <div class="grid grid-cols-3 gap-2 mb-3">
-      <div class="time-box py-3"><div id="c-years" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">ans</div></div>
-      <div class="time-box py-3"><div id="c-months" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">mois</div></div>
-      <div class="time-box py-3"><div id="c-days" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">jours</div></div>
-    </div>
-    <div class="grid grid-cols-3 gap-2 mb-6">
-      <div class="time-box py-3"><div id="c-hours" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">heures</div></div>
-      <div class="time-box py-3"><div id="c-minutes" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">min</div></div>
-      <div class="time-box py-3"><div id="c-seconds" class="time-num text-2xl font-bold">0</div><div class="text-xs" style="color:var(--plum-soft);">sec</div></div>
-    </div>
-
-    <p class="mb-6 font-script text-2xl" style="color:var(--red-deep);">... de bonheur à tes côtés ❤️</p>
-
-    <button onclick="goTo('screen-slider')" class="btn-oui text-white font-semibold px-8 py-3 rounded-full">
-      Continuer <i class="fa-solid fa-arrow-right ml-1"></i>
-    </button>
-  </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- ÉTAPE 3 — DIAPORAMA PHOTOS + MESSAGES                        -->
-<!-- ============================================================ -->
-<section id="screen-slider" class="screen">
-  <div class="w-full max-w-md mx-auto glass-card rounded-[28px] p-5 sm:p-6 text-center">
-    <h2 class="text-xl sm:text-2xl font-display font-bold mb-4">Nos plus beaux souvenirs</h2>
-
-    <div id="sliderTrack" class="relative w-full rounded-2xl overflow-hidden" style="height:320px;">
-      <!-- ⬇⬇ REMPLACE les liens "src" par tes propres photos (mets-les dans le même dossier que ce fichier) ⬇⬇ -->
-      <div class="slide active" data-index="0">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731085_lpdckb.jpg" loading="eager" class="w-full h-full object-cover" alt="Notre histoire">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 1 -->
-            <p class="font-script text-xl">Le premier McDo...</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide" data-index="1">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731090_lqgoc4.jpg" loading="lazy" class="w-full h-full object-cover" alt="Nos voyages">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 2 -->
-            <p class="font-script text-xl">Les restos...</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide" data-index="2">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731093_iigpqo.jpg" loading="lazy" class="w-full h-full object-cover" alt="Chaque jour">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 3 -->
-            <p class="font-script text-xl">Les repas en tête à tête...</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide" data-index="3">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731088_biopd4.jpg" loading="lazy" class="w-full h-full object-cover" alt="Nos fous rires">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 4 -->
-            <p class="font-script text-xl">Ta grosse tête...</p>
-          </div>
-        </div>
-      </div>
-      <div class="slide" data-index="4">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731096_vefdze.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 5 -->
-            <p class="font-script text-xl">Nos moments à deux...</p>
-          </div>
-        </div>
-      </div>
-	        <div class="slide" data-index="5">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731087_ctixgv.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 5 -->
-            <p class="font-script text-xl">BATMAN (oops j'ai révelé ton secret)</p>
-          </div>
-        </div>
-			<div class="slide" data-index="6">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731092_slojqs.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 5 -->
-            <p class="font-script text-xl">Nos nouvels an</p>
-          </div>
-        </div>
-			<div class="slide" data-index="7">
-        <div class="relative w-full h-full">
-          <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731095_rxdsjg.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
-          <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 5 -->
-            <p class="font-script text-xl">Le deuxième amour de ta vie</p>
-          </div>
-        </div>
-		<div class="slide" data-index="8">
-    <!-- J'ai ajouté 'bg-gray-800 flex items-center justify-center' pour donner un fond au texte et le centrer -->
-    <div class="relative w-full h-full bg-gray-800 flex items-center justify-center">
+      <div id="sliderTrack" class="relative w-full rounded-2xl overflow-hidden" style="height:320px;">
         
-        <!-- Le lien (l'image) a été remplacé par le texte ci-dessous -->
-        <p class="text-white text-center p-4 text-lg">
-            Voici le nouveau texte qui remplace le lien de l'image.
-        </p>
-        
-        <!-- Bandeau avec le texte du bas (inchangé) -->
-        <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
-            <!-- MODIFIABLE : texte du souvenir 5 -->
-            <p class="font-script text-xl">Le deuxième amour de ta vie</p>
+        <div class="slide active" data-index="0">
+          <div class="relative w-full h-full">
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731085_lpdckb.jpg" loading="eager" class="w-full h-full object-cover" alt="Notre histoire">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Le premier McDo...</p>
+            </div>
+          </div>
         </div>
-        
-    </div>
-</div>
-      <!-- ⬆⬆ POUR AJOUTER UNE SLIDE : ⬆⬆
-           1) copie un bloc .slide entier ci-dessus, incrémente data-index (ex: 5)
-           2) ajoute un <span class="dot" data-dot="5"></span> ci-dessous
-           Le JS s'adapte tout seul au nombre de slides, aucune autre modification n'est nécessaire. -->
-    </div>
 
-    <div class="flex items-center justify-center gap-2 my-4 flex-wrap">
-      <span class="dot active" data-dot="0"></span>
-      <span class="dot" data-dot="1"></span>
-      <span class="dot" data-dot="2"></span>
-      <span class="dot" data-dot="3"></span>
-      <span class="dot" data-dot="4"></span>
-	  <span class="dot" data-dot="5"></span>
-	  <span class="dot" data-dot="6"></span>
-	  <span class="dot" data-dot="7"></span>
-	  <span class="dot" data-dot="8"></span>
-    </div>
-
-    <div class="flex items-center justify-between gap-3">
-      <button id="prevSlide" onclick="changeSlide(-1)" class="bg-white/70 rounded-full w-11 h-11 flex items-center justify-center shadow" style="color:var(--red-deep);">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-      <button id="nextSlideBtn" onclick="handleNextSlide()" class="btn-oui text-white font-semibold px-6 py-3 rounded-full flex-1">
-        <span id="nextSlideLabel">Suivant</span>
-      </button>
-      <button onclick="changeSlide(1)" class="bg-white/70 rounded-full w-11 h-11 flex items-center justify-center shadow" style="color:var(--red-deep);">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- ÉTAPE 4 — CODE SECRET                                        -->
-<!-- ============================================================ -->
-<section id="screen-lock" class="screen">
-  <div class="w-full max-w-sm mx-auto glass-card rounded-[28px] p-8 text-center">
-    <i id="lockIcon" class="fa-solid fa-lock lock-idle text-5xl mb-4" style="color:var(--red-deep);"></i>
-    <h2 class="text-2xl font-display font-bold mb-2">Un dernier secret...</h2>
-    <p class="mb-6" style="color:var(--plum-soft);">Saisis notre date clé pour débloquer la surprise (format JJMM)</p>
-
-    <input id="codeInput" type="text" inputmode="none" readonly maxlength="4" placeholder="••••"
-      class="code-input w-full text-2xl py-3 rounded-2xl border-2 mb-3 bg-white/70"
-      style="border-color:var(--rose); color:var(--red-deep); caret-color:transparent;">
-
-    <p id="lockMessage" class="text-sm italic mb-3 min-h-[20px]" style="color:var(--red-deep);"></p>
-
-    <!-- Clavier virtuel numérique -->
-    <div id="keypad" class="grid grid-cols-3 gap-2 mb-4">
-      <!-- Les chiffres 1 à 9 sont générés dans l'ordre, puis une dernière rangée : effacer / 0 / valider -->
-      <button type="button" class="keypad-key" data-digit="1">1</button>
-      <button type="button" class="keypad-key" data-digit="2">2</button>
-      <button type="button" class="keypad-key" data-digit="3">3</button>
-      <button type="button" class="keypad-key" data-digit="4">4</button>
-      <button type="button" class="keypad-key" data-digit="5">5</button>
-      <button type="button" class="keypad-key" data-digit="6">6</button>
-      <button type="button" class="keypad-key" data-digit="7">7</button>
-      <button type="button" class="keypad-key" data-digit="8">8</button>
-      <button type="button" class="keypad-key" data-digit="9">9</button>
-      <button type="button" id="keypadDelete" class="keypad-key keypad-action">
-        <i class="fa-solid fa-delete-left"></i>
-      </button>
-      <button type="button" class="keypad-key" data-digit="0">0</button>
-      <button type="button" id="keypadValidate" class="keypad-key keypad-action" style="background:linear-gradient(135deg, var(--rose-deep), var(--red-deep)); color:#fff;">
-        <i class="fa-solid fa-check"></i>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- ÉTAPE 5 — MESSAGE FINAL                                      -->
-<!-- ============================================================ -->
-<section id="screen-final" class="screen">
-  <div class="w-full max-w-md mx-auto text-center px-2">
-    <div class="envelope-wrap mb-10">
-      <div id="envelope" class="envelope">
-        <div class="envelope-body"></div>
-        <div class="envelope-letter">
-          <!-- MODIFIABLE : le message final -->
-          <p id="letterText" class="letter-text text-sm sm:text-base leading-relaxed" style="color:var(--plum);">
-            Joyeux 3 ans mon amour. Je t'invite à un date ce soir 😉, suivi d'une nuit magique avec moi.
-            Prépare tes affaires, je m'occupe de tout. <span class="font-script text-xl" style="color:var(--red-deep);">❤️</span>
-          </p>
+        <div class="slide" data-index="1">
+          <div class="relative w-full h-full">
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731090_lqgoc4.jpg" loading="lazy" class="w-full h-full object-cover" alt="Nos voyages">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Les restos...</p>
+            </div>
+          </div>
         </div>
-        <div class="envelope-pocket"></div>
-        <div class="envelope-flap"></div>
-        <div class="envelope-seal"><i class="fa-solid fa-heart"></i></div>
+
+        <div class="slide" data-index="2">
+          <div class="relative w-full h-full">
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731093_iigpqo.jpg" loading="lazy" class="w-full h-full object-cover" alt="Chaque jour">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Les repas en tête à tête...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" data-index="3">
+          <div class="relative w-full h-full">
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731088_biopd4.jpg" loading="lazy" class="w-full h-full object-cover" alt="Nos fous rires">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Ta grosse tête...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" data-index="4">
+          <div class="relative w-full h-full">
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122874/5962910999683731096_vefdze.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Nos moments à deux...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" data-index="5">
+          <div class="relative w-full h-full">
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731087_ctixgv.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">BATMAN (oops j'ai révélé ton secret)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" data-index="6">
+          <div class="relative w-full h-full">
+            <!-- LE GUILLEMET MANQUANT ETAIT ICI APRES LE .JPG -->
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731092_slojqs.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Nos Nouvel An</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" data-index="7">
+          <div class="relative w-full h-full">
+            <img src="https://res.cloudinary.com/tqoqtog7/image/upload/v1784122875/5962910999683731095_rxdsjg.jpg" loading="lazy" class="w-full h-full object-cover" alt="Notre avenir">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Le deuxième amour de ta vie</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" data-index="8">
+          <div class="relative w-full h-full bg-gray-800 flex items-center justify-center">
+            <p class="text-white text-center p-4 text-lg">
+              Voici le nouveau texte qui remplace le lien de l'image.
+            </p>
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white text-left" style="background:linear-gradient(0deg, rgba(74,38,52,.85), transparent);">
+              <p class="font-script text-xl">Le deuxième amour de ta vie</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex items-center justify-center gap-2 my-4 flex-wrap">
+        <!-- LES POINTS MANQUANTS SONT AJOUTÉS ICI -->
+        <span class="dot active" data-dot="0"></span>
+        <span class="dot" data-dot="1"></span>
+        <span class="dot" data-dot="2"></span>
+        <span class="dot" data-dot="3"></span>
+        <span class="dot" data-dot="4"></span>
+        <span class="dot" data-dot="5"></span>
+        <span class="dot" data-dot="6"></span>
+        <span class="dot" data-dot="7"></span>
+        <span class="dot" data-dot="8"></span>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <button id="prevSlide" onclick="changeSlide(-1)" class="bg-white/70 rounded-full w-11 h-11 flex items-center justify-center shadow" style="color:var(--red-deep);">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button id="nextSlideBtn" onclick="handleNextSlide()" class="btn-oui text-white font-semibold px-6 py-3 rounded-full flex-1">
+          <span id="nextSlideLabel">Suivant</span>
+        </button>
+        <button onclick="changeSlide(1)" class="bg-white/70 rounded-full w-11 h-11 flex items-center justify-center shadow" style="color:var(--red-deep);">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
       </div>
     </div>
-    <h2 class="font-script text-3xl sm:text-4xl" style="color:var(--red-deep);">Je t'aime, mon amour.</h2>
-  </div>
-</section>
+  </section>
 
-<script>
-/* =====================================================================
-   GESTION DES ÉCRANS
-===================================================================== */
-function goTo(id){
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+  <!-- ÉTAPE 4 — CODE SECRET -->
+  <section id="screen-lock" class="screen">
+    <div class="w-full max-w-sm mx-auto glass-card rounded-[28px] p-8 text-center">
+      <i id="lockIcon" class="fa-solid fa-lock lock-idle text-5xl mb-4" style="color:var(--red-deep);"></i>
+      <h2 class="text-2xl font-display font-bold mb-2">Un dernier secret...</h2>
+      <p class="mb-6" style="color:var(--plum-soft);">Saisis notre date clé pour débloquer la surprise (format JJMM)</p>
 
-/* =====================================================================
-   ÉTAPE 1 — BOUTON OUI / NON FUYANT
-===================================================================== */
-const homeArena = document.getElementById('homeArena');
-const nonBtn = document.getElementById('nonBtn');
-const ouiBtn = document.getElementById('ouiBtn');
-const nonMessage = document.getElementById('nonMessage');
+      <input id="codeInput" type="text" inputmode="none" readonly maxlength="4" placeholder="••••"
+        class="code-input w-full text-2xl py-3 rounded-2xl border-2 mb-3 bg-white/70"
+        style="border-color:var(--rose); color:var(--red-deep); caret-color:transparent;">
 
-// MODIFIABLE : messages qui s'affichent quand le bouton "Non" s'échappe
-const escapeMessages = [
-  "Trop lent(e) ! 😄",
-  "Essaie encore...",
-  "Ah non, pas de ça !",
-  "Je préfère le Oui 😏",
-  "Tu ne m'auras pas !",
-  "Nan nan nan 🙅‍♀️",
-  "Le Oui est bien mieux non ?",
-];
-let escapeCount = 0;
-let nonIsAbsolute = false; // devient true dès le premier clic sur "Non"
+      <p id="lockMessage" class="text-sm italic mb-3 min-h-[20px]" style="color:var(--red-deep);"></p>
 
-function relocateNonButton(){
-  const arenaRect = homeArena.getBoundingClientRect();
+      <div id="keypad" class="grid grid-cols-3 gap-2 mb-4">
+        <button type="button" class="keypad-key" data-digit="1">1</button>
+        <button type="button" class="keypad-key" data-digit="2">2</button>
+        <button type="button" class="keypad-key" data-digit="3">3</button>
+        <button type="button" class="keypad-key" data-digit="4">4</button>
+        <button type="button" class="keypad-key" data-digit="5">5</button>
+        <button type="button" class="keypad-key" data-digit="6">6</button>
+        <button type="button" class="keypad-key" data-digit="7">7</button>
+        <button type="button" class="keypad-key" data-digit="8">8</button>
+        <button type="button" class="keypad-key" data-digit="9">9</button>
+        <button type="button" id="keypadDelete" class="keypad-key keypad-action">
+          <i class="fa-solid fa-delete-left"></i>
+        </button>
+        <button type="button" class="keypad-key" data-digit="0">0</button>
+        <button type="button" id="keypadValidate" class="keypad-key keypad-action" style="background:linear-gradient(135deg, var(--rose-deep), var(--red-deep)); color:#fff;">
+          <i class="fa-solid fa-check"></i>
+        </button>
+      </div>
+    </div>
+  </section>
 
-  // Premier clic : on fige la position actuelle du bouton en "absolute" (sans saut visuel)
-  // avant de calculer sa prochaine position aléatoire.
-  if (!nonIsAbsolute){
-    const currentRect = nonBtn.getBoundingClientRect();
-    nonBtn.style.position = 'absolute';
-    nonBtn.style.left = (currentRect.left - arenaRect.left) + 'px';
-    nonBtn.style.top = (currentRect.top - arenaRect.top) + 'px';
-    nonIsAbsolute = true;
-    void nonBtn.offsetWidth; // force le navigateur à appliquer cette position avant la suite
-  }
+  <!-- ÉTAPE 5 — MESSAGE FINAL -->
+  <section id="screen-final" class="screen">
+    <div class="w-full max-w-md mx-auto text-center px-2">
+      <div class="envelope-wrap mb-10">
+        <div id="envelope" class="envelope">
+          <div class="envelope-body"></div>
+          <div class="envelope-letter">
+            <p id="letterText" class="letter-text text-sm sm:text-base leading-relaxed" style="color:var(--plum);">
+              Joyeux 3 ans mon amour. Je t'invite à un date ce soir 😉, suivi d'une nuit magique avec moi.
+              Prépare tes affaires, je m'occupe de tout. <span class="font-script text-xl" style="color:var(--red-deep);">❤️</span>
+            </p>
+          </div>
+          <div class="envelope-pocket"></div>
+          <div class="envelope-flap"></div>
+          <div class="envelope-seal"><i class="fa-solid fa-heart"></i></div>
+        </div>
+      </div>
+      <h2 class="font-script text-3xl sm:text-4xl" style="color:var(--red-deep);">Je t'aime, mon amour.</h2>
+    </div>
+  </section>
 
-  const btnW = nonBtn.offsetWidth || 100;
-  const btnH = nonBtn.offsetHeight || 50;
-  const padding = 16;
-
-  const maxX = Math.max(arenaRect.width - btnW - padding, padding);
-  const maxY = Math.max(arenaRect.height - btnH - padding, padding);
-
-  const newX = Math.random() * maxX;
-  const newY = Math.random() * maxY;
-
-  nonBtn.style.left = newX + 'px';
-  nonBtn.style.top = newY + 'px';
-
-  nonBtn.classList.remove('wiggle');
-  void nonBtn.offsetWidth; // relance l'animation
-  nonBtn.classList.add('wiggle');
-
-  escapeCount++;
-  nonMessage.textContent = escapeMessages[escapeCount % escapeMessages.length];
-  nonMessage.style.opacity = 1;
-  clearTimeout(nonMessage._t);
-  nonMessage._t = setTimeout(() => { nonMessage.style.opacity = 0; }, 1400);
-}
-
-// Si l'écran change de taille (rotation du téléphone...), on remet le bouton dans le flux
-// normal de la page : c'est la position la plus sûre, garantie toujours visible.
-window.addEventListener('resize', () => {
-  if (nonIsAbsolute){
-    nonBtn.style.position = '';
-    nonBtn.style.left = '';
-    nonBtn.style.top = '';
-    nonIsAbsolute = false;
-  }
-});
-
-// Le bouton ne se déplace QUE lorsqu'on clique/tape dessus (pas au survol de la souris).
-// relocateNonButton() borne toujours sa position à la taille du cadre "homeArena"
-// (qui a overflow:hidden), donc il ne peut jamais sortir de l'écran une fois en mouvement.
-nonBtn.addEventListener('click', (e) => { e.preventDefault(); relocateNonButton(); });
-
-// Bouton OUI -> écran suivant
-ouiBtn.addEventListener('click', () => { goTo('screen-counter'); });
-
-/* =====================================================================
-   ÉTAPE 2 — COMPTEUR D'AMOUR EN TEMPS RÉEL
-===================================================================== */
-// MODIFIABLE : date de départ de votre relation
-const startDate = new Date(2023, 6, 16, 0, 0, 0); // 16 juillet 2023 (mois 6 = juillet, index 0)
-
-function getDuration(start, now){
-  let years = now.getFullYear() - start.getFullYear();
-  let months = now.getMonth() - start.getMonth();
-  let days = now.getDate() - start.getDate();
-  let hours = now.getHours() - start.getHours();
-  let minutes = now.getMinutes() - start.getMinutes();
-  let seconds = now.getSeconds() - start.getSeconds();
-
-  if (seconds < 0){ seconds += 60; minutes--; }
-  if (minutes < 0){ minutes += 60; hours--; }
-  if (hours < 0){ hours += 24; days--; }
-  if (days < 0){
-    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-    days += prevMonth.getDate();
-    months--;
-  }
-  if (months < 0){ months += 12; years--; }
-
-  return { years, months, days, hours, minutes, seconds };
-}
-
-function updateCounter(){
-  const d = getDuration(startDate, new Date());
-  document.getElementById('c-years').textContent = d.years;
-  document.getElementById('c-months').textContent = d.months;
-  document.getElementById('c-days').textContent = d.days;
-  document.getElementById('c-hours').textContent = d.hours;
-  document.getElementById('c-minutes').textContent = d.minutes;
-  document.getElementById('c-seconds').textContent = d.seconds;
-}
-updateCounter();
-setInterval(updateCounter, 1000);
-
-/* =====================================================================
-   ÉTAPE 3 — SLIDER PHOTOS
-===================================================================== */
-const slides = document.querySelectorAll('.slide');
-const dots = document.querySelectorAll('.dot');
-let currentSlide = 0;
-
-function renderSlide(){
-  slides.forEach((s, i) => {
-    s.classList.toggle('active', i === currentSlide);
-    s.classList.toggle('prev', i < currentSlide);
-  });
-  dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
-
-  const label = document.getElementById('nextSlideLabel');
-  label.innerHTML = (currentSlide === slides.length - 1)
-    ? 'Découvrir la surprise <i class="fa-solid fa-gift ml-1"></i>'
-    : 'Suivant';
-}
-
-function changeSlide(dir){
-  currentSlide = (currentSlide + dir + slides.length) % slides.length;
-  renderSlide();
-}
-
-function handleNextSlide(){
-  if (currentSlide === slides.length - 1){
-    goTo('screen-lock');
-  } else {
-    currentSlide++;
-    renderSlide();
-  }
-}
-
-// Navigation tactile (swipe) sur le slider
-const sliderTrack = document.getElementById('sliderTrack');
-let touchStartX = 0;
-sliderTrack.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].clientX; }, { passive:true });
-sliderTrack.addEventListener('touchend', (e) => {
-  const diff = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(diff) > 50){
-    diff > 0 ? changeSlide(-1) : handleNextSlide();
-  }
-}, { passive:true });
-
-renderSlide();
-
-/* =====================================================================
-   ÉTAPE 4 — CODE SECRET
-===================================================================== */
-// MODIFIABLE : le code secret à saisir (format JJMM)
-const SECRET_CODE = "1607";
-
-// MODIFIABLE : messages d'erreur mignons
-const wrongMessages = [
-  "Essaye encore, tu connais la réponse !",
-  "Presque... réfléchis à notre date 💭",
-  "Non non, cherche encore un peu !",
-  "Tu es tout proche, courage !",
-];
-let wrongCount = 0;
-
-const codeInput = document.getElementById('codeInput');
-const lockCard = document.querySelector('#screen-lock > div');
-
-// Clavier virtuel : chaque touche chiffre ajoute au code (4 chiffres max)
-document.querySelectorAll('.keypad-key[data-digit]').forEach(key => {
-  key.addEventListener('click', () => {
-    if (codeInput.value.length < 4){
-      codeInput.value += key.dataset.digit;
+  <script>
+    function goTo(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
-  });
-});
 
-document.getElementById('keypadDelete').addEventListener('click', () => {
-  codeInput.value = codeInput.value.slice(0, -1);
-});
+    /* --- ETAPE 1 --- */
+    const homeArena = document.getElementById('homeArena');
+    const nonBtn = document.getElementById('nonBtn');
+    const ouiBtn = document.getElementById('ouiBtn');
+    const nonMessage = document.getElementById('nonMessage');
 
-document.getElementById('keypadValidate').addEventListener('click', checkCode);
+    const escapeMessages = [
+      "Trop lent(e) ! 😄", "Essaie encore...", "Ah non, pas de ça !",
+      "Je préfère le Oui 😏", "Tu ne m'auras pas !", "Nan nan nan 🙅‍♀️", "Le Oui est bien mieux non ?"
+    ];
+    let escapeCount = 0;
+    let nonIsAbsolute = false;
 
-function checkCode(){
-  if (codeInput.value === SECRET_CODE){
-    document.getElementById('lockMessage').textContent = '';
-    launchConfetti();
-    setTimeout(() => {
-      goTo('screen-final');
-      setTimeout(openEnvelope, 500);
-    }, 900);
-  } else {
-    const msg = document.getElementById('lockMessage');
-    msg.textContent = wrongMessages[wrongCount % wrongMessages.length];
-    wrongCount++;
-    lockCard.classList.remove('shake');
-    void lockCard.offsetWidth;
-    lockCard.classList.add('shake');
-  }
-}
+    function relocateNonButton() {
+      const arenaRect = homeArena.getBoundingClientRect();
+      if (!nonIsAbsolute) {
+        const currentRect = nonBtn.getBoundingClientRect();
+        nonBtn.style.position = 'absolute';
+        nonBtn.style.left = (currentRect.left - arenaRect.left) + 'px';
+        nonBtn.style.top = (currentRect.top - arenaRect.top) + 'px';
+        nonIsAbsolute = true;
+        void nonBtn.offsetWidth;
+      }
+      const btnW = nonBtn.offsetWidth || 100;
+      const btnH = nonBtn.offsetHeight || 50;
+      const padding = 16;
+      const maxX = Math.max(arenaRect.width - btnW - padding, padding);
+      const maxY = Math.max(arenaRect.height - btnH - padding, padding);
+      
+      nonBtn.style.left = (Math.random() * maxX) + 'px';
+      nonBtn.style.top = (Math.random() * maxY) + 'px';
+      
+      nonBtn.classList.remove('wiggle');
+      void nonBtn.offsetWidth;
+      nonBtn.classList.add('wiggle');
+      
+      escapeCount++;
+      nonMessage.textContent = escapeMessages[escapeCount % escapeMessages.length];
+      nonMessage.style.opacity = 1;
+      clearTimeout(nonMessage._t);
+      nonMessage._t = setTimeout(() => { nonMessage.style.opacity = 0; }, 1400);
+    }
 
-/* =====================================================================
-   CONFETTIS EN FORME DE COEUR
-===================================================================== */
-function launchConfetti(){
-  const colors = ['#E8628B', '#C9184A', '#F5A9C0', '#F4C9C2'];
-  const total = 40;
-  for (let i = 0; i < total; i++){
-    setTimeout(() => {
-      const heart = document.createElement('i');
-      heart.className = 'fa-solid fa-heart confetti-heart';
-      const size = 14 + Math.random() * 18;
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.fontSize = size + 'px';
-      heart.style.color = colors[Math.floor(Math.random() * colors.length)];
-      heart.style.animationDuration = (2.5 + Math.random() * 2) + 's';
-      heart.style.opacity = 0.85;
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 5000);
-    }, i * 40);
-  }
-}
+    window.addEventListener('resize', () => {
+      if (nonIsAbsolute) {
+        nonBtn.style.position = ''; nonBtn.style.left = ''; nonBtn.style.top = '';
+        nonIsAbsolute = false;
+      }
+    });
 
-/* =====================================================================
-   ÉTAPE 5 — OUVERTURE DE LA LETTRE
-===================================================================== */
-function openEnvelope(){
-  const envelope = document.getElementById('envelope');
-  envelope.classList.add('open');
+    nonBtn.addEventListener('click', (e) => { e.preventDefault(); relocateNonButton(); });
+    ouiBtn.addEventListener('click', () => { goTo('screen-counter'); });
 
-  // Le texte apparaît une fois que la lettre est complètement sortie et centrée
-  // (délai .55s + durée 1.1s du déplacement défini en CSS, + petite marge)
-  setTimeout(() => {
-    document.getElementById('letterText').classList.add('show');
-  }, 1750);
+    /* --- ETAPE 2 --- */
+    const startDate = new Date(2023, 6, 16, 0, 0, 0); // 16 juillet 2023
+    function getDuration(start, now) {
+      let years = now.getFullYear() - start.getFullYear();
+      let months = now.getMonth() - start.getMonth();
+      let days = now.getDate() - start.getDate();
+      let hours = now.getHours() - start.getHours();
+      let minutes = now.getMinutes() - start.getMinutes();
+      let seconds = now.getSeconds() - start.getSeconds();
 
-  // Puis l'enveloppe (fond, poche, rabat) s'efface en fondu, ne laissant que la lettre
-  setTimeout(() => {
-    envelope.classList.add('faded');
-  }, 2300);
-}
-</script>
+      if (seconds < 0) { seconds += 60; minutes--; }
+      if (minutes < 0) { minutes += 60; hours--; }
+      if (hours < 0) { hours += 24; days--; }
+      if (days < 0) {
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate(); months--;
+      }
+      if (months < 0) { months += 12; years--; }
+      return { years, months, days, hours, minutes, seconds };
+    }
+
+    function updateCounter() {
+      const d = getDuration(startDate, new Date());
+      document.getElementById('c-years').textContent = d.years;
+      document.getElementById('c-months').textContent = d.months;
+      document.getElementById('c-days').textContent = d.days;
+      document.getElementById('c-hours').textContent = d.hours;
+      document.getElementById('c-minutes').textContent = d.minutes;
+      document.getElementById('c-seconds').textContent = d.seconds;
+    }
+    updateCounter();
+    setInterval(updateCounter, 1000);
+
+    /* --- ETAPE 3 --- */
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    let currentSlide = 0;
+
+    function renderSlide() {
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', i === currentSlide);
+        s.classList.toggle('prev', i < currentSlide);
+      });
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+
+      const label = document.getElementById('nextSlideLabel');
+      label.innerHTML = (currentSlide === slides.length - 1)
+        ? 'Découvrir la surprise <i class="fa-solid fa-gift ml-1"></i>'
+        : 'Suivant';
+    }
+
+    function changeSlide(dir) {
+      currentSlide = (currentSlide + dir + slides.length) % slides.length;
+      renderSlide();
+    }
+
+    function handleNextSlide() {
+      if (currentSlide === slides.length - 1) {
+        goTo('screen-lock');
+      } else {
+        currentSlide++;
+        renderSlide();
+      }
+    }
+
+    const sliderTrack = document.getElementById('sliderTrack');
+    let touchStartX = 0;
+    sliderTrack.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+    sliderTrack.addEventListener('touchend', (e) => {
+      const diff = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        diff > 0 ? changeSlide(-1) : handleNextSlide();
+      }
+    }, { passive: true });
+
+    renderSlide();
+
+    /* --- ETAPE 4 --- */
+    const SECRET_CODE = "1607";
+    const wrongMessages = [
+      "Essaye encore, tu connais la réponse !",
+      "Presque... réfléchis à notre date 💭",
+      "Non non, cherche encore un peu !",
+      "Tu es tout proche, courage !",
+    ];
+    let wrongCount = 0;
+
+    const codeInput = document.getElementById('codeInput');
+    const lockCard = document.querySelector('#screen-lock > div');
+
+    document.querySelectorAll('.keypad-key[data-digit]').forEach(key => {
+      key.addEventListener('click', () => {
+        if (codeInput.value.length < 4) {
+          codeInput.value += key.dataset.digit;
+        }
+      });
+    });
+
+    document.getElementById('keypadDelete').addEventListener('click', () => {
+      codeInput.value = codeInput.value.slice(0, -1);
+    });
+
+    document.getElementById('keypadValidate').addEventListener('click', checkCode);
+
+    function checkCode() {
+      if (codeInput.value === SECRET_CODE) {
+        document.getElementById('lockMessage').textContent = '';
+        launchConfetti();
+        setTimeout(() => {
+          goTo('screen-final');
+          setTimeout(openEnvelope, 500);
+        }, 900);
+      } else {
+        const msg = document.getElementById('lockMessage');
+        msg.textContent = wrongMessages[wrongCount % wrongMessages.length];
+        wrongCount++;
+        lockCard.classList.remove('shake');
+        void lockCard.offsetWidth;
+        lockCard.classList.add('shake');
+      }
+    }
+
+    /* --- CONFETTIS --- */
+    function launchConfetti() {
+      const colors = ['#E8628B', '#C9184A', '#F5A9C0', '#F4C9C2'];
+      const total = 40;
+      for (let i = 0; i < total; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('i');
+          heart.className = 'fa-solid fa-heart confetti-heart';
+          const size = 14 + Math.random() * 18;
+          heart.style.left = Math.random() * 100 + 'vw';
+          heart.style.fontSize = size + 'px';
+          heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+          heart.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+          heart.style.opacity = 0.85;
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 5000);
+        }, i * 40);
+      }
+    }
+
+    /* --- ETAPE 5 --- */
+    function openEnvelope() {
+      const envelope = document.getElementById('envelope');
+      envelope.classList.add('open');
+      setTimeout(() => {
+        document.getElementById('letterText').classList.add('show');
+      }, 1750);
+      setTimeout(() => {
+        envelope.classList.add('faded');
+      }, 2300);
+    }
+  </script>
 </body>
 </html>
