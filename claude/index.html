@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Street Lifting — Programme 4 séances</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --charcoal: #1c1b1a;
+    --charcoal-2: #242220;
+    --concrete: #8a8680;
+    --concrete-dim: #5c5954;
+    --chalk: #edeae4;
+    --iron-red: #c43b2f;
+    --iron-red-dim: #c43b2f33;
+    --steel-blue: #3e5c76;
+    --steel-blue-dim: #3e5c7633;
+    --plate-yellow: #d9a441;
+    --plate-yellow-dim: #d9a44133;
+    --line: #38352f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--charcoal);
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .display {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  a { color: inherit; }
+
+  /* ---------- HERO ---------- */
+
+  .hero {
+    position: relative;
+    padding: 5rem 6vw 4rem;
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, var(--line) 39px, var(--line) 40px);
+    opacity: 0.35;
+    mask-image: linear-gradient(to bottom, black, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.25em;
+    color: var(--plate-yellow);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 9vw, 7rem);
+    font-weight: 700;
+    line-height: 0.92;
+    color: var(--chalk);
+    position: relative;
+  }
+
+  .hero h1 span {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--chalk);
+  }
+
+  .hero-sub {
+    max-width: 640px;
+    margin-top: 1.6rem;
+    color: var(--concrete);
+    font-size: 1.05rem;
+    position: relative;
+  }
+
+  .hero-sub strong { color: var(--chalk); font-weight: 600; }
+
+  /* ---------- LOAD GAUGE (signature element) ---------- */
+
+  .gauge-wrap {
+    margin-top: 3.5rem;
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(1rem, 4vw, 3rem);
+    position: relative;
+    padding-top: 1rem;
+  }
+
+  .gauge-label-block {
+    padding-bottom: 0.4rem;
+  }
+
+  .gauge-label-block .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--concrete-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+
+  .gauge {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(0.9rem, 2.5vw, 1.8rem);
+  }
+
+  .gauge-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .plate-stack {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 5px;
+    height: 190px;
+    justify-content: flex-start;
+  }
+
+  .plate {
+    width: clamp(46px, 6vw, 64px);
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.25);
+  }
+
+  .plate.filled { }
+
+  .plate.empty {
+    background: transparent;
+    border: 1px dashed var(--line);
+  }
+
+  .gauge-week-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--concrete);
+    letter-spacing: 0.1em;
+  }
+
+  .gauge-rpe-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--chalk);
+  }
+
+  .gauge-rpe-label small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--concrete-dim);
+    font-weight: 500;
+    display: block;
+    letter-spacing: 0.1em;
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+
+  .section-label {
+    padding: 3.5rem 6vw 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-label .num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--plate-yellow);
+    font-size: 0.85rem;
+  }
+
+  .section-label h2 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ---------- SESSION NAV (plate chips) ---------- */
+
+  .session-nav {
+    display: flex;
+    gap: 0.9rem;
+    padding: 1.8rem 6vw 0;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--charcoal-2);
+    border: 1px solid var(--line);
+    color: var(--concrete);
+    padding: 0.7rem 1.3rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.03em;
+  }
+
+  .chip:hover { border-color: var(--concrete); color: var(--chalk); }
+
+  .chip.active {
+    background: var(--chalk);
+    color: var(--charcoal);
+    border-color: var(--chalk);
+    font-weight: 600;
+  }
+
+  /* ---------- SESSION CARDS ---------- */
+
+  .sessions { padding: 2.5rem 6vw 1rem; }
+
+  .session-panel { display: none; }
+  .session-panel.active { display: block; animation: fade 0.35s ease; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .session-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .session-title .duration {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--concrete);
+    text-transform: none;
+    letter-spacing: 0;
+    display: block;
+    margin-top: 0.5rem;
+  }
+
+  .warmup-note {
+    color: var(--concrete);
+    font-size: 0.92rem;
+    margin: 1.2rem 0 2rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--line);
+  }
+
+  .block {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 1.4rem;
+    overflow: hidden;
+    background: var(--charcoal-2);
+  }
+
+  .block-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .block-head-left { display: flex; align-items: center; gap: 0.8rem; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  .block.primaire { border-left: 3px solid var(--iron-red); }
+  .block.secondaire { border-left: 3px solid var(--steel-blue); }
+  .block.renforcement { border-left: 3px solid var(--plate-yellow); }
+
+  .tag.primaire { background: var(--iron-red-dim); color: #e8867c; }
+  .tag.secondaire { background: var(--steel-blue-dim); color: #8fb3d6; }
+  .tag.renforcement { background: var(--plate-yellow-dim); color: var(--plate-yellow); }
+
+  .block-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .block-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--concrete);
+    text-align: right;
+  }
+
+  .block-meta .rpe {
+    color: var(--chalk);
+    font-weight: 700;
+  }
+
+  .block-body { padding: 1.2rem 1.4rem 1.4rem; }
+
+  .block-desc {
+    color: var(--concrete);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  thead th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--concrete-dim);
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  tbody td {
+    padding: 0.65rem 0.3rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--chalk);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  td.num { font-family: 'JetBrains Mono', monospace; color: var(--concrete); }
+
+  /* ---------- RECAP TABLE ---------- */
+
+  .recap-wrap { padding: 3rem 6vw; }
+
+  .recap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .recap-table th, .recap-table td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+
+  .recap-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--concrete-dim);
+    background: var(--charcoal-2);
+  }
+
+  .recap-table td.seance-num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--plate-yellow);
+  }
+
+  .recap-table tr:last-child td { border-bottom: none; }
+
+  /* ---------- NOTES ---------- */
+
+  .notes {
+    padding: 1rem 6vw 5rem;
+  }
+
+  .notes h3 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+    color: var(--plate-yellow);
+  }
+
+  .notes ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .notes li {
+    padding-left: 1.4rem;
+    position: relative;
+    color: var(--concrete);
+    font-size: 0.92rem;
+    max-width: 780px;
+  }
+
+  .notes li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--concrete-dim);
+  }
+
+  .notes li strong { color: var(--chalk); }
+
+  footer {
+    padding: 2rem 6vw 3rem;
+    border-top: 1px solid var(--line);
+    color: var(--concrete-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 3.5rem 5vw 3rem; }
+    .section-label, .session-nav, .sessions, .recap-wrap, .notes, footer { padding-left: 5vw; padding-right: 5vw; }
+    .block-head { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+    .block-meta { text-align: left; }
+    table { font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-eyebrow">Programme 4 séances / semaine — Force &amp; Musculation</div>
+  <h1>STREET<br><span>LIFTING</span></h1>
+  <p class="hero-sub">
+    Muscle Up, Pull Up, Dips et Squat travaillés <strong>2 fois par semaine chacun</strong> —
+    une fois en force pure, une fois en technique/intensité — complétés par un vrai travail
+    de renforcement musculaire. Chaque séance dure moins de <strong>2h</strong>, repos compris.
+  </p>
+
+  <div class="gauge-wrap">
+    <div class="gauge-label-block">
+      <span class="k">Charge du cycle</span>
+    </div>
+    <div class="gauge" id="gauge"></div>
+  </div>
+</section>
+
+<div class="section-label">
+  <span class="num">01</span>
+  <h2>Sélectionne ta séance</h2>
+</div>
+
+<div class="session-nav" id="sessionNav"></div>
+
+<div class="sessions" id="sessions"></div>
+
+<div class="section-label">
+  <span class="num">02</span>
+  <h2>Récapitulatif de la semaine</h2>
+</div>
+
+<div class="recap-wrap">
+  <table class="recap-table">
+    <thead>
+      <tr>
+        <th>Séance</th>
+        <th>Primaire (Force)</th>
+        <th>Secondaire (Technique)</th>
+        <th>Renforcement</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="seance-num">S1</td><td>Pull Up</td><td>Dips</td><td>Dos / Biceps</td></tr>
+      <tr><td class="seance-num">S2</td><td>Muscle Up</td><td>Squat</td><td>Jambes (antérieure)</td></tr>
+      <tr><td class="seance-num">S3</td><td>Dips</td><td>Pull Up</td><td>Pecs / Épaules / Triceps</td></tr>
+      <tr><td class="seance-num">S4</td><td>Squat</td><td>Muscle Up</td><td>Jambes (postérieure)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="notes">
+  <h3>Notes importantes</h3>
+  <ul>
+    <li><strong>Échauffement spécifique</strong> avant chaque exercice primaire : 2-3 séries montantes en charge avant d'attaquer les séries de travail.</li>
+    <li><strong>RPE 9 en semaine 4</strong> signifie qu'il te reste 1 répétition en réserve. Ne descends jamais en dessous de RPE 6, sauf séance de récupération active.</li>
+    <li>Après la semaine 4, prévois idéalement <strong>une semaine de deload</strong> (volume -40 %, RPE 5-6) avant de relancer un nouveau cycle.</li>
+    <li>Priorise la progression du lestage sur les <strong>primaires</strong> ; garde les secondaires plus légers pour préserver la qualité technique.</li>
+    <li>Hydrate-toi et prends 5-10 g de BCAA/EAA si la séance dépasse 1h30, pour limiter la fatigue sur les dernières séries de renforcement.</li>
+  </ul>
+</div>
+
+<footer>PROGRAMME STREET LIFTING — CYCLE DE 4 SEMAINES — RPE 6 → 7 → 8 → 9</footer>
+
+<script>
+const weeks = [
+  { week: 1, rpe: 6 },
+  { week: 2, rpe: 7 },
+  { week: 3, rpe: 8 },
+  { week: 4, rpe: 9 },
+];
+
+const gauge = document.getElementById('gauge');
+const maxPlates = 4;
+weeks.forEach(w => {
+  const filled = w.rpe - 5; // rpe 6 -> 1 plate ... rpe 9 -> 4 plates
+  const col = document.createElement('div');
+  col.className = 'gauge-col';
+  const colorAt = (i) => {
+    // gradient steel blue -> iron red as stack grows
+    const t = i / (maxPlates - 1);
+    const c1 = [62, 92, 118];
+    const c2 = [196, 59, 47];
+    const r = Math.round(c1[0] + (c2[0]-c1[0])*t);
+    const g = Math.round(c1[1] + (c2[1]-c1[1])*t);
+    const b = Math.round(c1[2] + (c2[2]-c1[2])*t);
+    return `rgb(${r},${g},${b})`;
+  };
+  let platesHTML = '<div class="plate-stack">';
+  for (let i = 0; i < maxPlates; i++) {
+    if (i < filled) {
+      platesHTML += `<div class="plate filled" style="height:${190/maxPlates - 4}px; background:${colorAt(i)};"></div>`;
+    } else {
+      platesHTML += `<div class="plate empty" style="height:${190/maxPlates - 4}px;"></div>`;
+    }
+  }
+  platesHTML += '</div>';
+  col.innerHTML = `
+    ${platesHTML}
+    <div class="gauge-rpe-label">RPE ${w.rpe}<small>Semaine ${w.week}</small></div>
+  `;
+  gauge.appendChild(col);
+});
+
+const sessionsData = [
+  {
+    id: 's1',
+    label: 'Séance 1',
+    title: 'Pull Up · Dips · Dos-Biceps',
+    duration: 'Durée estimée : ~1h40 — échauffement 10 min : rotations épaules, scapular pull-ups, 1-2 séries légères de tractions à vide.',
+    blocks: [
+      {
+        type: 'primaire',
+        name: 'Tractions lestées (Pull Up)',
+        desc: 'Focus force pure, ajouter du lest progressivement.',
+        sets: '5 x 1-5', rest: '3-4 min',
+      },
+      {
+        type: 'secondaire',
+        name: 'Dips',
+        desc: 'Lest léger à modéré, cadence contrôlée, focus amplitude complète.',
+        sets: '4 x 6-12', rest: '2-3 min',
+      },
+      {
+        type: 'renforcement',
+        name: 'Dos & Biceps',
+        rows: [
+          ['Tirage horizontal (rowing barre ou machine)', '3 x 8-12', '90 s'],
+          ['Tirage vertical (poulie, prise large)', '3 x 10-15', '90 s'],
+          ['Curl biceps barre EZ', '3 x 8-12', '60 s'],
+          ['Curl incliné haltères', '2 x 12-15', '60 s'],
+        ],
+      },
+    ],
+  },
+  {
+    id: 's2',
+    label: 'Séance 2',
+    title: 'Muscle Up · Squat · Jambes (chaîne antérieure)',
+    duration: 'Durée estimée : ~1h45 — échauffement 10 min : mobilité hanches/chevilles, squats au poids du corps, transitions muscle up douces.',
+    blocks: [
+      {
+        type: 'primaire',
+        name: 'Muscle Up lesté / strict',
+        desc: "Si le muscle up strict n'est pas encore acquis : négatif ou bande d'assistance légère.",
+        sets: '5 x 1-5', rest: '3-4 min',
+      },
+      {
+        type: 'secondaire',
+        name: 'Squat',
+        desc: 'Charge modérée, focus profondeur et vitesse de la phase concentrique.',
+        sets: '4 x 6-12', rest: '2-3 min',
+      },
+      {
+        type: 'renforcement',
+        name: 'Jambes — chaîne antérieure (quadriceps)',
+        rows: [
+          ['Leg press', '3 x 10-15', '90 s'],
+          ['Fentes marchées ou bulgares', '3 x 10-12 /jambe', '90 s'],
+          ['Leg extension', '3 x 15-20', '60 s'],
+        ],
+      },
+    ],
+  },
+  {
+    id: 's3',
+    label: 'Séance 3',
+    title: 'Dips · Pull Up · Pecs-Épaules-Triceps',
+    duration: 'Durée estimée : ~1h40 — échauffement 10 min : rotations épaules, pompes légères, mobilisation poignets/coudes.',
+    blocks: [
+      {
+        type: 'primaire',
+        name: 'Dips lestés',
+        desc: 'Charge de travail principale de la séance.',
+        sets: '5 x 1-5', rest: '3-4 min',
+      },
+      {
+        type: 'secondaire',
+        name: 'Pull Up',
+        desc: 'Focus tempo, variations de prise (pronation/supination) pour la technique.',
+        sets: '4 x 6-12', rest: '2-3 min',
+      },
+      {
+        type: 'renforcement',
+        name: 'Pecs, Épaules, Triceps',
+        rows: [
+          ['Développé couché (bench)', '3 x 8-12', '90 s'],
+          ['Développé militaire (barre ou haltères)', '3 x 8-12', '90 s'],
+          ['Extension triceps à la poulie', '3 x 10-15', '60 s'],
+        ],
+      },
+    ],
+  },
+  {
+    id: 's4',
+    label: 'Séance 4',
+    title: 'Squat · Muscle Up · Jambes (chaîne postérieure)',
+    duration: 'Durée estimée : ~1h45 — échauffement 10 min : mobilité hanches, activation fessiers (band walks), squats à vide.',
+    blocks: [
+      {
+        type: 'primaire',
+        name: 'Squat lesté (back squat)',
+        desc: 'Charge de travail principale de la séance.',
+        sets: '5 x 1-5', rest: '3-4 min',
+      },
+      {
+        type: 'secondaire',
+        name: 'Muscle Up',
+        desc: 'Travail de volume sur la technique, négatif contrôlé possible en fin de série.',
+        sets: '4 x 6-12', rest: '2-3 min',
+      },
+      {
+        type: 'renforcement',
+        name: 'Jambes — chaîne postérieure (ischios/fessiers)',
+        rows: [
+          ['Soulevé de terre roumain (RDL)', '3 x 8-12', '90 s'],
+          ['Leg curl', '3 x 12-15', '90 s'],
+          ['Hip thrust', '3 x 10-15', '90 s'],
+        ],
+      },
+    ],
+  },
+];
+
+const nav = document.getElementById('sessionNav');
+const sessionsEl = document.getElementById('sessions');
+
+const tagLabel = { primaire: 'Primaire — Force', secondaire: 'Secondaire — Technique', renforcement: 'Renforcement' };
+
+sessionsData.forEach((s, idx) => {
+  const chip = document.createElement('button');
+  chip.className = 'chip' + (idx === 0 ? ' active' : '');
+  chip.textContent = s.label;
+  chip.dataset.target = s.id;
+  chip.addEventListener('click', () => showSession(s.id));
+  nav.appendChild(chip);
+
+  const panel = document.createElement('div');
+  panel.className = 'session-panel' + (idx === 0 ? ' active' : '');
+  panel.id = s.id;
+
+  let blocksHTML = '';
+  s.blocks.forEach(b => {
+    if (b.rows) {
+      blocksHTML += `
+      <div class="block ${b.type}">
+        <div class="block-head">
+          <div class="block-head-left">
+            <span class="tag ${b.type}">${tagLabel[b.type]}</span>
+            <span class="block-title">${b.name}</span>
+          </div>
+        </div>
+        <div class="block-body">
+          <table>
+            <thead><tr><th>Exercice</th><th>Séries x Reps</th><th>Repos</th></tr></thead>
+            <tbody>
+              ${b.rows.map(r => `<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+    } else {
+      blocksHTML += `
+      <div class="block ${b.type}">
+        <div class="block-head">
+          <div class="block-head-left">
+            <span class="tag ${b.type}">${tagLabel[b.type]}</span>
+            <span class="block-title">${b.name}</span>
+          </div>
+          <div class="block-meta">
+            <span class="rpe">${b.sets}</span><br>Repos ${b.rest}
+          </div>
+        </div>
+        <div class="block-body">
+          <p class="block-desc">${b.desc}</p>
+        </div>
+      </div>`;
+    }
+  });
+
+  panel.innerHTML = `
+    <div class="session-title">${s.title}<span class="duration">${s.duration}</span></div>
+    ${blocksHTML}
+  `;
+  sessionsEl.appendChild(panel);
+});
+
+function showSession(id) {
+  document.querySelectorAll('.session-panel').forEach(p => p.classList.toggle('active', p.id === id));
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.target === id));
+}
+</script>
+
+</body>
+</html>
