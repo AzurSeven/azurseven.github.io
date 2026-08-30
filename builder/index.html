@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de Matériaux - Litematica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Palette Moderne Noir/Gris & Violet */
+            --bg-color: #09090b; /* Noir profond */
+            --panel-bg: #18181b; /* Gris très sombre */
+            --panel-hover: #27272a; /* Gris sombre au survol */
+            --text-color: #f4f4f5; /* Blanc cassé */
+            --text-muted: #a1a1aa; /* Gris clair */
+            --accent: #8b5cf6; /* Violet moderne */
+            --accent-hover: #7c3aed; /* Violet intense */
+            --accent-glow: rgba(139, 92, 246, 0.25);
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --border: #27272a;
+            
+            --radius-md: 8px;
+            --radius-lg: 14px;
+            --transition: all 0.2s ease-in-out;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 { 
+            color: var(--text-color); 
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        /* Boutons */
+        button {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: 1px solid transparent;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        button:hover { 
+            background-color: var(--accent-hover); 
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px var(--accent-glow);
+        }
+        
+        .btn-danger { 
+            background-color: transparent; 
+            color: var(--danger); 
+            border: 1px solid var(--danger);
+            box-shadow: none;
+        }
+        .btn-danger:hover { 
+            background-color: var(--danger); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+
+        /* Cartes & Conteneurs */
+        .card {
+            background-color: var(--panel-bg);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Vue Accueil */
+        .build-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--panel-bg);
+        }
+        .build-item:hover { 
+            border-color: var(--accent); 
+            background-color: var(--panel-hover);
+        }
+        .build-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* Barres de progression */
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-color);
+            border-radius: 999px;
+            height: 8px;
+            margin-top: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Vue Build */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        th { 
+            color: var(--text-muted); 
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tbody tr { transition: var(--transition); }
+        tbody tr:hover { background-color: var(--panel-hover); }
+        
+        /* Inputs & Checkboxes */
+        input[type="number"] {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            width: 80px;
+            font-family: inherit;
+            transition: var(--transition);
+            outline: none;
+        }
+        input[type="number"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+        
+        input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            background-color: var(--bg-color);
+            cursor: pointer;
+            transition: var(--transition);
+            display: grid;
+            place-content: center;
+        }
+        input[type="checkbox"]::before {
+            content: "";
+            width: 12px;
+            height: 12px;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--accent);
+            background-color: var(--accent);
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        input[type="checkbox"]:checked { border-color: var(--accent); }
+        input[type="checkbox"]:checked::before { transform: scale(1); }
+
+        /* Upload File */
+        input[type="file"] { display: none; }
+        .file-label {
+            background-color: var(--panel-hover);
+            color: var(--text-color);
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .file-label:hover { 
+            background-color: var(--border); 
+            border-color: var(--text-muted);
+        }
+        
+        /* États des lignes */
+        .missing-row { background-color: var(--danger-bg); }
+        .missing-row td:first-child { border-left: 3px solid var(--danger); }
+        
+        .complete-row { background-color: var(--success-bg); }
+        .complete-row td:first-child { border-left: 3px solid var(--success); }
+        .complete-row td { color: var(--text-muted); }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- VUE ACCUEIL -->
+    <div id="view-home">
+        <div class="header-actions">
+            <h1>Mes Builds</h1>
+            <button onclick="createNewBuild()">+ Nouveau Build</button>
+        </div>
+        <div id="builds-list"></div>
+    </div>
+
+    <!-- VUE DETAIL DU BUILD -->
+    <div id="view-build" class="hidden">
+        <div class="header-actions">
+            <button onclick="goHome()" style="background: var(--panel-hover); color: var(--text-color); box-shadow: none;">⬅ Retour</button>
+            <h2 id="build-title">Nom du build</h2>
+            <button class="btn-danger" onclick="deleteCurrentBuild()">Supprimer</button>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="font-size: 1.1rem; font-weight: 500;">
+                    Progression globale : <span id="build-progress-text" style="color: var(--accent);">0%</span>
+                </div>
+                <label class="file-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    Importer JSON
+                    <input type="file" id="json-upload" accept=".json" onchange="handleFileUpload(event)">
+                </label>
+            </div>
+            <div class="progress-container">
+                <div id="build-progress-bar" class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="padding-left: 24px;">Matériau</th>
+                        <th>Requis</th>
+                        <th>Possédé</th>
+                        <th>Manquant</th>
+                        <th style="padding-right: 24px; text-align: center;">Tout avoir</th>
+                    </tr>
+                </thead>
+                <tbody id="materials-list">
+                    <!-- Injection JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let builds = JSON.parse(localStorage.getItem('litematica_builds')) || [];
+    let currentBuildId = null;
+
+    function saveState() {
+        localStorage.setItem('litematica_builds', JSON.stringify(builds));
+    }
+
+    function showView(viewId) {
+        document.getElementById('view-home').classList.add('hidden');
+        document.getElementById('view-build').classList.add('hidden');
+        document.getElementById(viewId).classList.remove('hidden');
+    }
+
+    function goHome() {
+        currentBuildId = null;
+        renderHome();
+        showView('view-home');
+    }
+
+    function renderHome() {
+        const list = document.getElementById('builds-list');
+        list.innerHTML = '';
+        
+        if (builds.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color: var(--text-muted); margin-top: 40px;">Aucun build. Cliquez sur "+ Nouveau Build" pour commencer.</p>';
+            return;
+        }
+
+        builds.forEach(build => {
+            const progress = calculateProgress(build);
+            
+            const div = document.createElement('div');
+            div.className = 'build-item';
+            div.innerHTML = `
+                <div style="width: 100%;">
+                    <h3 style="margin: 0;">${build.name}</h3>
+                    <div class="build-meta">
+                        <span>${build.materials.length} type(s) de blocs</span>
+                        <span style="color: var(--accent); font-weight: 500;">${progress}% complété</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+            `;
+            div.onclick = () => openBuild(build.id);
+            list.appendChild(div);
+        });
+    }
+
+    function createNewBuild() {
+        const name = prompt("Entrez le nom du nouveau build :");
+        if (!name) return;
+
+        const newBuild = {
+            id: Date.now().toString(),
+            name: name,
+            materials: []
+        };
+        builds.push(newBuild);
+        saveState();
+        renderHome();
+    }
+
+    function deleteCurrentBuild() {
+        if (confirm("Voulez-vous vraiment supprimer ce build définitivement ?")) {
+            builds = builds.filter(b => b.id !== currentBuildId);
+            saveState();
+            goHome();
+        }
+    }
+
+    function openBuild(id) {
+        currentBuildId = id;
+        renderBuild();
+        showView('view-build');
+    }
+
+    function getBuild() {
+        return builds.find(b => b.id === currentBuildId);
+    }
+
+    function calculateProgress(build) {
+        if (!build.materials || build.materials.length === 0) return 0;
+        
+        let totalRequired = 0;
+        let totalOwned = 0;
+        
+        build.materials.forEach(mat => {
+            totalRequired += mat.total;
+            totalOwned += Math.min(mat.owned, mat.total);
+        });
+        
+        if (totalRequired === 0) return 0;
+        return Math.round((totalOwned / totalRequired) * 100);
+    }
+
+    function renderBuild() {
+        const build = getBuild();
+        document.getElementById('build-title').innerText = build.name;
+        
+        const progress = calculateProgress(build);
+        document.getElementById('build-progress-text').innerText = `${progress}%`;
+        document.getElementById('build-progress-bar').style.width = `${progress}%`;
+
+        const tbody = document.getElementById('materials-list');
+        tbody.innerHTML = '';
+
+        if (build.materials.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px; color: var(--text-muted);">Aucun matériau. Importez un fichier JSON Litematica.</td></tr>';
+            return;
+        }
+
+        build.materials.forEach((mat, index) => {
+            const missing = Math.max(0, mat.total - mat.owned);
+            const isComplete = missing === 0;
+            const displayName = mat.item.replace('minecraft:', '').replace(/_/g, ' ');
+
+            const tr = document.createElement('tr');
+            tr.className = isComplete ? 'complete-row' : (missing > 0 ? 'missing-row' : '');
+            
+            tr.innerHTML = `
+                <td style="text-transform: capitalize; padding-left: 24px; font-weight: 500;">${displayName}</td>
+                <td>${mat.total}</td>
+                <td>
+                    <input type="number" min="0" value="${mat.owned}" 
+                           onchange="updateOwned(${index}, this.value)">
+                </td>
+                <td style="font-weight: 600; color: ${missing > 0 ? 'var(--danger)' : 'inherit'}">${missing}</td>
+                <td style="padding-right: 24px; text-align: center;">
+                    <input type="checkbox" ${isComplete ? 'checked' : ''} 
+                           onchange="toggleGotAll(${index}, this.checked)">
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateOwned(index, value) {
+        const build = getBuild();
+        let numValue = parseInt(value) || 0;
+        if (numValue < 0) numValue = 0;
+        
+        build.materials[index].owned = numValue;
+        saveState();
+        renderBuild();
+    }
+
+    function toggleGotAll(index, isChecked) {
+        const build = getBuild();
+        if (isChecked) {
+            build.materials[index].owned = build.materials[index].total;
+        } else {
+            build.materials[index].owned = 0;
+        }
+        saveState();
+        renderBuild();
+    }
+
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const json = JSON.parse(e.target.result);
+                if (!json.Materials || !Array.isArray(json.Materials)) {
+                    alert("Format JSON invalide. Le tableau 'Materials' est manquant.");
+                    return;
+                }
+
+                const build = getBuild();
+                
+                json.Materials.forEach(newMat => {
+                    const existingMat = build.materials.find(m => m.item === newMat.Item);
+                    if (existingMat) {
+                        existingMat.total = newMat.Total;
+                    } else {
+                        build.materials.push({
+                            item: newMat.Item,
+                            total: newMat.Total,
+                            owned: 0
+                        });
+                    }
+                });
+                
+                build.materials.sort((a, b) => a.item.localeCompare(b.item));
+
+                saveState();
+                renderBuild();
+            } catch (err) {
+                alert("Erreur lors de la lecture du fichier JSON.");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    renderHome();
+</script>
+</body>
+</html>
