@@ -40,6 +40,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-of
 .day .t{font-size:10px;color:var(--mut)}
 .day.g{background:var(--gainbg)}.day.g .v,.day.g .p{color:var(--gain)}
 .day.l{background:var(--lossbg)}.day.l .v,.day.l .p{color:var(--loss)}
+.day.c{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--line) 6px 7px)}
+.day.c .v{color:var(--mut);font-weight:600;font-size:12px}
+.tools{display:flex;gap:8px;margin-bottom:10px}
+.tools button{font-size:13px;padding:6px 10px}
+.chk{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin:12px 0 0}
+.chk input{width:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .day.today .n{color:var(--today);font-weight:800}
 .day.today{border-color:var(--today)}
 svg{width:100%;height:auto;display:block}
@@ -73,6 +80,7 @@ input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);bord
     <span class="sum" id="mSum"></span>
     <button id="next" aria-label="Mois suivant">›</button>
   </div>
+  <div class="tools"><button id="wk">Marquer les week-ends du mois comme fermés</button></div>
   <div class="grid" id="cal"></div>
 </section>
 
@@ -83,9 +91,16 @@ input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);bord
 
 <dialog id="dayDlg">
   <h3 id="dTitle"></h3>
+  <label class="chk"><input type="checkbox" id="fClosed"> Marché fermé</label>
+  <div id="openBox">
   <label for="fPnl">Bénéfice du jour (USC, négatif si perte)</label>
   <input id="fPnl" inputmode="decimal" placeholder="0">
   <div class="hint" id="hPnl"></div>
+  <div class="two">
+    <div><label for="fFrom">Bot actif de</label><input id="fFrom" type="time"></div>
+    <div><label for="fTo">jusqu'à</label><input id="fTo" type="time"></div>
+  </div>
+  </div>
   <label for="fDep">Dépôt (USC)</label>
   <input id="fDep" inputmode="decimal" placeholder="0">
   <div class="hint" id="hDep"></div>
@@ -130,21 +145,23 @@ const num=s=>{const v=parseFloat(String(s).replace(/\s/g,'').replace(',','.'));r
 const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 
 /* ---------- calculs ---------- */
+const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
 function calc(){
   const ds=Object.keys(data.entries).sort();
-  let bal=0,dep=0,wd=0,pnl=0,twr=1,wins=0,days=0,best=null,worst=null;
+  let hrs=0,bal=0,dep=0,wd=0,pnl=0,twr=1,wins=0,days=0,best=null,worst=null;
   const rows={},series=[];
   for(const d of ds){
     const e=data.entries[d],p=+e.pnl||0,de=+e.dep||0,w=+e.wd||0;
     const start=bal,base=start+de,pct=base>0?p/base*100:0;
     bal=start+de-w+p;
     rows[d]={p,de,w,pct,end:bal};
+    if(e.from&&e.to){let m=toMin(e.to)-toMin(e.from);if(m<=0)m+=1440;hrs+=m/60;}
     dep+=de;wd+=w;pnl+=p;
     if(p!==0||e.pnl!==undefined){days++;twr*=1+pct/100;if(p>0)wins++;
       if(!best||p>best.p)best={d,p};if(!worst||p<worst.p)worst={d,p};}
     series.push([d,bal]);
   }
-  return{rows,series,bal,dep,wd,pnl,twr:(twr-1)*100,wins,days,best,worst};
+  return{hrs,rows,series,bal,dep,wd,pnl,twr:(twr-1)*100,wins,days,best,worst};
 }
 
 /* ---------- rendu ---------- */
@@ -163,7 +180,8 @@ function render(){
     mk('Moyenne / jour',susd(avg),cls(avg))+
     mk('Jours gagnants',c.days?nf(c.wins/c.days*100,0)+' % ('+c.wins+'/'+c.days+')':'–')+
     mk('Meilleur jour',c.best?susd(c.best.p):'–',cls(c.best?c.best.p:0))+
-    mk('Pire jour',c.worst?susd(c.worst.p):'–',cls(c.worst?c.worst.p:0));
+    mk('Pire jour',c.worst?susd(c.worst.p):'–',cls(c.worst?c.worst.p:0))+
+    mk('Heures d\'activité',nf(c.hrs,1)+' h');
   renderCal(c);renderChart(c);
   $('save').classList.toggle('dirty',dirty);
 }
@@ -179,7 +197,10 @@ function renderCal(c){
     const k=key(new Date(y,m,d)),r=c.rows[k];
     let inner=`<span class="n">${d}</span>`,cl='';
     if(r){
-      if(data.entries[k].pnl!==undefined||r.p){mp+=r.p;mf*=1+r.pct/100;cl=r.p>0?'g':r.p<0?'l':'';
+      const E=data.entries[k];
+      if(E.closed){cl='c';inner+='<span class="v">Marché fermé</span>';}
+      if(E.from&&E.to)inner+=`<span class="t">${E.from}–${E.to}</span>`;
+      if(E.pnl!==undefined||r.p){mp+=r.p;mf*=1+r.pct/100;cl=r.p>0?'g':r.p<0?'l':'';
         inner+=`<span class="v">${susd(r.p)}</span><span class="p">${spct(r.pct)}</span>`;}
       if(r.de)inner+=`<span class="t">Dépôt ${usd(r.de)}</span>`;
       if(r.w)inner+=`<span class="t">Retrait ${usd(r.w)}</span>`;
@@ -213,13 +234,26 @@ $('cal').addEventListener('click',e=>{
   selDate=b.dataset.d;const e0=data.entries[selDate]||{};
   $('dTitle').textContent=new Date(selDate+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $('fPnl').value=e0.pnl!==undefined?e0.pnl:'';$('fDep').value=e0.dep||'';$('fWd').value=e0.wd||'';
+  $('fClosed').checked=!!e0.closed;$('fFrom').value=e0.from||'';$('fTo').value=e0.to||'';toggleClosed();
   $('dDel').style.display=data.entries[selDate]?'':'none';
   hints();$('dayDlg').showModal();$('fPnl').focus();
 });
+function toggleClosed(){$('openBox').style.display=$('fClosed').checked?'none':'';}
+$('fClosed').addEventListener('change',toggleClosed);
+$('wk').onclick=()=>{
+  const y=cur.getFullYear(),m=cur.getMonth(),nd=new Date(y,m+1,0).getDate();let n=0;
+  for(let d=1;d<=nd;d++){const dt=new Date(y,m,d),g=dt.getDay();
+    if((g===0||g===6)&&!data.entries[key(dt)]){data.entries[key(dt)]={closed:true};n++;}}
+  if(n){changed();toast(n+' jour(s) de week-end marqué(s) fermé(s)');}else toast('Aucun week-end libre à marquer ce mois-ci');
+};
 $('dCancel').onclick=()=>$('dayDlg').close();
 $('dOk').onclick=()=>{
   const e={};
-  if($('fPnl').value.trim()!=='')e.pnl=num($('fPnl').value);
+  if($('fClosed').checked)e.closed=true;
+  else{
+    if($('fPnl').value.trim()!=='')e.pnl=num($('fPnl').value);
+    if($('fFrom').value&&$('fTo').value){e.from=$('fFrom').value;e.to=$('fTo').value;}
+  }
   if(num($('fDep').value))e.dep=num($('fDep').value);
   if(num($('fWd').value))e.wd=num($('fWd').value);
   if(Object.keys(e).length)data.entries[selDate]=e;else delete data.entries[selDate];
@@ -259,7 +293,7 @@ async function load(){
       else if(r.ok){const j=await r.json();remote=JSON.parse(dec(j.content));}
       else throw new Error('GitHub '+r.status);
     }else{
-      const r=await fetch((cfg.path||'data.json')+'?t='+Date.now(),{cache:'no-store'});
+      const r=await fetch((cfg.path||'data.json').split('/').pop()+'?t='+Date.now(),{cache:'no-store'});
       if(r.ok)remote=await r.json();
     }
     if(remote&&remote.entries){
