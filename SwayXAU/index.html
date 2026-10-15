@@ -42,16 +42,26 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-of
 .day.l{background:var(--lossbg)}.day.l .v,.day.l .p{color:var(--loss)}
 .day.c{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--line) 6px 7px)}
 .day.c .v{color:var(--mut);font-weight:600;font-size:12px}
-.tools{display:flex;gap:8px;margin-bottom:10px}
+.tools{display:flex;gap:8px 14px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.tools input{width:auto;padding:5px 8px}
+.sch{display:flex;gap:6px;align-items:center;font-size:13px;flex-wrap:wrap}
 .tools button{font-size:13px;padding:6px 10px}
 .chk{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin:12px 0 0}
 .chk input{width:auto}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+[hidden]{display:none!important}
+.per{display:flex;gap:6px;align-items:center;margin-top:6px}.per input{flex:1;width:auto}.per button{padding:4px 9px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+th{color:var(--mut);font-weight:600}
 .day.today .n{color:var(--today);font-weight:800}
 .day.today{border-color:var(--today)}
 svg{width:100%;height:auto;display:block}
 h3{margin:0 0 8px;font-size:15px}
-dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:18px;width:min(380px,92vw)}
+dialog{max-height:92vh;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:18px;width:min(380px,92vw)}
 dialog::backdrop{background:rgba(5,12,22,.55)}
 label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
 input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
@@ -71,6 +81,8 @@ input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);bord
   <button id="cfgBtn" aria-label="Réglages GitHub">Réglages</button>
 </header>
 
+<nav class="tabs"><button id="tHist" aria-selected="true">Historique</button><button id="tLive" aria-selected="false">Live</button></nav>
+<div id="hist">
 <section class="stats" id="stats"></section>
 
 <section class="panel">
@@ -80,7 +92,10 @@ input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);bord
     <span class="sum" id="mSum"></span>
     <button id="next" aria-label="Mois suivant">›</button>
   </div>
-  <div class="tools"><button id="wk">Marquer les week-ends du mois comme fermés</button></div>
+  <div class="tools"><button id="wk">Marquer les week-ends du mois comme fermés</button>
+    <span class="sch">Horaires du bot <input type="time" id="sFrom" aria-label="Début"> → <input type="time" id="sTo" aria-label="Fin"> <button id="sApply">Appliquer aux jours ouvrés du mois</button></span>
+  </div>
+  <div class="hint" style="margin:-4px 0 8px">Trades dans chaque case : ouverts / fermés.</div>
   <div class="grid" id="cal"></div>
 </section>
 
@@ -88,18 +103,42 @@ input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);bord
   <h3>Évolution du solde</h3>
   <div id="chart"></div>
 </section>
+</div>
+
+<div id="live" hidden>
+  <section class="stats" id="lStats"></section>
+  <section class="panel">
+    <div class="calhead"><h2>Positions ouvertes</h2>
+      <label for="lInt" style="margin:0">Actualisation</label>
+      <select id="lInt"><option value="5">5 s</option><option value="10" selected>10 s</option><option value="30">30 s</option></select></div>
+    <div class="tools">
+      <button id="bOn">Allumer le bot</button>
+      <button id="bOff">Éteindre le bot</button>
+      <button id="bOffClose">Éteindre et tout clore</button>
+      <button id="bClose">Clore toutes les positions</button>
+    </div>
+    <div style="overflow-x:auto"><table id="lTab"></table></div>
+    <div class="hint" id="lState"></div>
+  </section>
+</div>
 
 <dialog id="dayDlg">
   <h3 id="dTitle"></h3>
   <label class="chk"><input type="checkbox" id="fClosed"> Marché fermé</label>
   <div id="openBox">
+  <div class="hint" id="hAuto"></div>
   <label for="fPnl">Bénéfice du jour (USC, négatif si perte)</label>
   <input id="fPnl" inputmode="decimal" placeholder="0">
   <div class="hint" id="hPnl"></div>
   <div class="two">
-    <div><label for="fFrom">Bot actif de</label><input id="fFrom" type="time"></div>
-    <div><label for="fTo">jusqu'à</label><input id="fTo" type="time"></div>
+    <div><label for="fBo">Buy ouverts</label><input id="fBo" inputmode="numeric" placeholder="0"></div>
+    <div><label for="fBc">Buy fermés</label><input id="fBc" inputmode="numeric" placeholder="0"></div>
+    <div><label for="fSo">Sell ouverts</label><input id="fSo" inputmode="numeric" placeholder="0"></div>
+    <div><label for="fSc">Sell fermés</label><input id="fSc" inputmode="numeric" placeholder="0"></div>
   </div>
+  <label>Périodes d'activité du bot</label>
+  <div id="pers"></div>
+  <button type="button" id="addPer" style="margin-top:6px;font-size:13px;padding:5px 10px">+ Ajouter une période</button>
   </div>
   <label for="fDep">Dépôt (USC)</label>
   <input id="fDep" inputmode="decimal" placeholder="0">
@@ -115,7 +154,7 @@ input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);bord
 </dialog>
 
 <dialog id="cfgDlg">
-  <h3>Réglages GitHub</h3>
+  <h3>Réglages</h3>
   <label for="cUser">Pseudo GitHub</label><input id="cUser" autocomplete="off">
   <label for="cRepo">Nom du dépôt</label><input id="cRepo" autocomplete="off">
   <label for="cBranch">Branche</label><input id="cBranch" value="main">
@@ -123,6 +162,8 @@ input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);bord
   <label for="cToken">Token d'accès (fine-grained, Contents : lecture/écriture)</label>
   <input id="cToken" type="password" autocomplete="off">
   <div class="hint">Le token reste dans ce navigateur uniquement. À saisir une fois par appareil.</div>
+  <label for="cBridge">Adresse du pont MT5 (https://…), pour la page Live</label><input id="cBridge" autocomplete="off">
+  <label for="cBT">Mot de passe du pont</label><input id="cBT" type="password" autocomplete="off">
   <div class="row"><button id="cCancel">Fermer</button><button id="cOk" style="background:var(--acc);border-color:var(--acc);color:#fff">Enregistrer les réglages</button></div>
 </dialog>
 
@@ -133,7 +174,10 @@ const $=id=>document.getElementById(id);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let data={entries:{}}, cfg=JSON.parse(store.get('tb_cfg')||'{}'), dirty=store.get('tb_dirty')==='1';
 let cur=new Date(); cur.setDate(1);
-let selDate=null;
+let selDate=null,auto={};
+try{auto=JSON.parse(store.get('tb_auto')||'{}')}catch(e){}
+const pers=e=>e.periods&&e.periods.length?e.periods:(e.from&&e.to?[{from:e.from,to:e.to}]:[]);
+function eff(){const o={};for(const k of new Set([...Object.keys(auto),...Object.keys(data.entries)]))o[k]=Object.assign({},auto[k],data.entries[k]);return o;}
 
 /* ---------- formats ---------- */
 const nf=(n,d=2)=>n.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -147,21 +191,22 @@ const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+Stri
 /* ---------- calculs ---------- */
 const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
 function calc(){
-  const ds=Object.keys(data.entries).sort();
+  const EF=eff(),ds=Object.keys(EF).sort(),tk=key(new Date()),tr={bo:0,bc:0,so:0,sc:0};
   let hrs=0,bal=0,dep=0,wd=0,pnl=0,twr=1,wins=0,days=0,best=null,worst=null;
   const rows={},series=[];
   for(const d of ds){
-    const e=data.entries[d],p=+e.pnl||0,de=+e.dep||0,w=+e.wd||0;
+    const e=EF[d],p=+e.pnl||0,de=+e.dep||0,w=+e.wd||0;
     const start=bal,base=start+de,pct=base>0?p/base*100:0;
     bal=start+de-w+p;
     rows[d]={p,de,w,pct,end:bal};
-    if(e.from&&e.to){let m=toMin(e.to)-toMin(e.from);if(m<=0)m+=1440;hrs+=m/60;}
+    for(const q in tr)tr[q]+=+e[q]||0;
+    if(d<=tk)for(const x of pers(e)){let m=toMin(x.to)-toMin(x.from);if(m<=0)m+=1440;hrs+=m/60;}
     dep+=de;wd+=w;pnl+=p;
     if(p!==0||e.pnl!==undefined){days++;twr*=1+pct/100;if(p>0)wins++;
       if(!best||p>best.p)best={d,p};if(!worst||p<worst.p)worst={d,p};}
     series.push([d,bal]);
   }
-  return{hrs,rows,series,bal,dep,wd,pnl,twr:(twr-1)*100,wins,days,best,worst};
+  return{tr,ent:EF,hrs,rows,series,bal,dep,wd,pnl,twr:(twr-1)*100,wins,days,best,worst};
 }
 
 /* ---------- rendu ---------- */
@@ -181,8 +226,11 @@ function render(){
     mk('Jours gagnants',c.days?nf(c.wins/c.days*100,0)+' % ('+c.wins+'/'+c.days+')':'–')+
     mk('Meilleur jour',c.best?susd(c.best.p):'–',cls(c.best?c.best.p:0))+
     mk('Pire jour',c.worst?susd(c.worst.p):'–',cls(c.worst?c.worst.p:0))+
-    mk('Heures d\'activité',nf(c.hrs,1)+' h');
+    mk('Heures d\'activité',nf(c.hrs,1)+' h')+
+    mk('Buy ouverts / fermés',c.tr.bo+' / '+c.tr.bc)+
+    mk('Sell ouverts / fermés',c.tr.so+' / '+c.tr.sc);
   renderCal(c);renderChart(c);
+  if(data.sched&&!$('sFrom').value){$('sFrom').value=data.sched.from;$('sTo').value=data.sched.to;}
   $('save').classList.toggle('dirty',dirty);
 }
 
@@ -197,11 +245,12 @@ function renderCal(c){
     const k=key(new Date(y,m,d)),r=c.rows[k];
     let inner=`<span class="n">${d}</span>`,cl='';
     if(r){
-      const E=data.entries[k];
+      const E=c.ent[k];
       if(E.closed){cl='c';inner+='<span class="v">Marché fermé</span>';}
-      if(E.from&&E.to)inner+=`<span class="t">${E.from}–${E.to}</span>`;
+      const pr=pers(E);if(pr.length)inner+=`<span class="t">${pr.map(x=>x.from+'–'+x.to).join(' · ')}</span>`;
       if(E.pnl!==undefined||r.p){mp+=r.p;mf*=1+r.pct/100;cl=r.p>0?'g':r.p<0?'l':'';
         inner+=`<span class="v">${susd(r.p)}</span><span class="p">${spct(r.pct)}</span>`;}
+      if(['bo','bc','so','sc'].some(q=>E[q]!==undefined))inner+=`<span class="t">Buy ${E.bo||0}/${E.bc||0} · Sell ${E.so||0}/${E.sc||0}</span>`;
       if(r.de)inner+=`<span class="t">Dépôt ${usd(r.de)}</span>`;
       if(r.w)inner+=`<span class="t">Retrait ${usd(r.w)}</span>`;
     }
@@ -234,10 +283,18 @@ $('cal').addEventListener('click',e=>{
   selDate=b.dataset.d;const e0=data.entries[selDate]||{};
   $('dTitle').textContent=new Date(selDate+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $('fPnl').value=e0.pnl!==undefined?e0.pnl:'';$('fDep').value=e0.dep||'';$('fWd').value=e0.wd||'';
-  $('fClosed').checked=!!e0.closed;$('fFrom').value=e0.from||'';$('fTo').value=e0.to||'';toggleClosed();
+  $('fClosed').checked=!!e0.closed;$('pers').innerHTML='';pers(e0).forEach(x=>addPer(x.from,x.to));toggleClosed();
+  const a=auto[selDate]||{};
+  [['bo','fBo'],['bc','fBc'],['so','fSo'],['sc','fSc']].forEach(([q,i])=>{$(i).value=e0[q]!==undefined?e0[q]:'';$(i).placeholder=a[q]!==undefined?'auto : '+a[q]:'0';});
+  $('fPnl').placeholder=a.pnl!==undefined?'auto : '+a.pnl:'0';
+  $('hAuto').textContent=Object.keys(a).length?'Données MT5 reçues pour ce jour. Les champs vides les utilisent ; ce que tu saisis les remplace.':'';
   $('dDel').style.display=data.entries[selDate]?'':'none';
   hints();$('dayDlg').showModal();$('fPnl').focus();
 });
+function addPer(f='',t=''){const d=document.createElement('div');d.className='per';
+  d.innerHTML='<input type="time" value="'+f+'"> → <input type="time" value="'+t+'"><button type="button" aria-label="Retirer la période">✕</button>';
+  d.querySelector('button').onclick=()=>d.remove();$('pers').appendChild(d);}
+$('addPer').onclick=()=>addPer();
 function toggleClosed(){$('openBox').style.display=$('fClosed').checked?'none':'';}
 $('fClosed').addEventListener('change',toggleClosed);
 $('wk').onclick=()=>{
@@ -246,13 +303,27 @@ $('wk').onclick=()=>{
     if((g===0||g===6)&&!data.entries[key(dt)]){data.entries[key(dt)]={closed:true};n++;}}
   if(n){changed();toast(n+' jour(s) de week-end marqué(s) fermé(s)');}else toast('Aucun week-end libre à marquer ce mois-ci');
 };
+$('sApply').onclick=()=>{
+  const f=$('sFrom').value,t=$('sTo').value;
+  if(!f||!t){toast('Renseigne l\'heure de début et de fin');return;}
+  data.sched={from:f,to:t};
+  const y=cur.getFullYear(),m=cur.getMonth(),nd=new Date(y,m+1,0).getDate();let n=0;
+  for(let d=1;d<=nd;d++){const dt=new Date(y,m,d),g=dt.getDay(),k=key(dt);
+    if(g===0||g===6)continue;
+    const e=data.entries[k]||{};
+    if(e.closed||pers(e).length)continue;
+    e.periods=[{from:f,to:t}];data.entries[k]=e;n++;}
+  changed();toast(n+' jour(s) programmé(s) de '+f+' à '+t);
+};
 $('dCancel').onclick=()=>$('dayDlg').close();
 $('dOk').onclick=()=>{
   const e={};
   if($('fClosed').checked)e.closed=true;
   else{
     if($('fPnl').value.trim()!=='')e.pnl=num($('fPnl').value);
-    if($('fFrom').value&&$('fTo').value){e.from=$('fFrom').value;e.to=$('fTo').value;}
+    const ps=[...$('pers').children].map(r=>{const i=r.querySelectorAll('input');return{from:i[0].value,to:i[1].value}}).filter(x=>x.from&&x.to);
+    if(ps.length)e.periods=ps;
+    [['bo','fBo'],['bc','fBc'],['so','fSo'],['sc','fSc']].forEach(([q,i])=>{if($(i).value.trim()!=='')e[q]=Math.max(0,Math.round(num($(i).value)));});
   }
   if(num($('fDep').value))e.dep=num($('fDep').value);
   if(num($('fWd').value))e.wd=num($('fWd').value);
@@ -268,13 +339,13 @@ $('next').onclick=()=>{cur.setMonth(cur.getMonth()+1);render();};
 /* ---------- réglages ---------- */
 $('cfgBtn').onclick=()=>{
   $('cUser').value=cfg.user||'';$('cRepo').value=cfg.repo||'';$('cBranch').value=cfg.branch||'main';
-  $('cPath').value=cfg.path||'data.json';$('cToken').value=cfg.token||'';$('cfgDlg').showModal();
+  $('cPath').value=cfg.path||'data.json';$('cToken').value=cfg.token||'';$('cBridge').value=cfg.bridge||'';$('cBT').value=cfg.btoken||'';$('cfgDlg').showModal();
 };
 $('cCancel').onclick=()=>$('cfgDlg').close();
 $('cOk').onclick=()=>{
   cfg={user:$('cUser').value.trim(),repo:$('cRepo').value.trim(),branch:$('cBranch').value.trim()||'main',
-       path:$('cPath').value.trim()||'data.json',token:$('cToken').value.trim()};
-  store.set('tb_cfg',JSON.stringify(cfg));$('cfgDlg').close();toast('Réglages enregistrés');load();
+       path:$('cPath').value.trim()||'data.json',token:$('cToken').value.trim(),bridge:$('cBridge').value.trim().replace(/\/$/,''),btoken:$('cBT').value.trim()};
+  store.set('tb_cfg',JSON.stringify(cfg));$('cfgDlg').close();toast('Réglages enregistrés');load();schedulePoll();
 };
 
 /* ---------- GitHub ---------- */
@@ -284,18 +355,21 @@ const ready=()=>cfg.user&&cfg.repo&&cfg.token;
 const apiUrl=()=>`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${cfg.path||'data.json'}`;
 const hdr=()=>({Authorization:'Bearer '+cfg.token,Accept:'application/vnd.github+json'});
 
+const sib=n=>{const p=(cfg.path||'data.json').split('/');p[p.length-1]=n;return p.join('/')};
+async function getRemote(path){
+  if(ready()){
+    const r=await fetch(`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${path}?ref=${cfg.branch||'main'}&t=${Date.now()}`,{headers:hdr(),cache:'no-store'});
+    if(r.status===404)return null;
+    if(!r.ok)throw new Error('GitHub '+r.status);
+    return JSON.parse(dec((await r.json()).content));
+  }
+  const r=await fetch(path.split('/').pop()+'?t='+Date.now(),{cache:'no-store'});
+  return r.ok?await r.json():null;
+}
 async function load(){
   try{
-    let remote=null;
-    if(ready()){
-      const r=await fetch(apiUrl()+'?ref='+(cfg.branch||'main')+'&t='+Date.now(),{headers:hdr(),cache:'no-store'});
-      if(r.status===404)remote={entries:{}};
-      else if(r.ok){const j=await r.json();remote=JSON.parse(dec(j.content));}
-      else throw new Error('GitHub '+r.status);
-    }else{
-      const r=await fetch((cfg.path||'data.json').split('/').pop()+'?t='+Date.now(),{cache:'no-store'});
-      if(r.ok)remote=await r.json();
-    }
+    let remote=await getRemote(cfg.path||'data.json');
+    if(remote===null&&ready())remote={entries:{}};
     if(remote&&remote.entries){
       if(dirty)toast('Modifications locales non enregistrées : appuie sur Enregistrer');
       else{data=remote;store.set('tb_data',JSON.stringify(data));}
@@ -305,6 +379,8 @@ async function load(){
     toast('Import impossible, données locales affichées');
   }
   if(dirty){const c=store.get('tb_data');if(c)data=JSON.parse(c);}
+  try{const t=await getRemote(sib('trades.json'));auto=(t&&t.days)||{};store.set('tb_auto',JSON.stringify(auto));}
+  catch(e){try{auto=JSON.parse(store.get('tb_auto')||'{}')}catch(_){auto={}}}
   render();
 }
 
@@ -327,7 +403,51 @@ $('save').onclick=async()=>{
 
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3500);}
 
-render();load();
+/* ---------- Live ---------- */
+let page='hist',lt=null,busy=false;
+const esc=x=>String(x).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
+const mkS=(l,v,k='',big='')=>`<div class="stat ${big}"><small>${l}</small><b class="${k}">${v}</b></div>`;
+async function api(path,body){
+  const r=await fetch(cfg.bridge+path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+cfg.btoken,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  if(!r.ok)throw new Error(r.status===401?'mot de passe refusé':'erreur '+r.status);
+  return r.json();
+}
+function renderLive(d){
+  const pos=d.positions||[],nb=pos.filter(x=>x.type==='buy').length,pr=d.profit||0,pct=d.balance>0?pr/d.balance*100:0;
+  $('lStats').innerHTML=mkS('Bot',d.bot?'Allumé':'Éteint',d.bot?'pos':'neg')+
+    mkS('Profit en direct',susd(pr)+' ('+spct(pct)+')',cls(pr),'big')+
+    mkS('Équité',usd(d.equity))+mkS('Solde',usd(d.balance))+
+    mkS('Positions',pos.length+' ('+nb+' buy / '+(pos.length-nb)+' sell)');
+  $('lTab').innerHTML=pos.length?'<tr><th>Ticket</th><th>Symbole</th><th>Type</th><th>Lots</th><th>Ouverture</th><th>Actuel</th><th>Profit</th><th></th></tr>'+
+    pos.map(x=>`<tr><td>${x.ticket}</td><td>${esc(x.symbol)}</td><td>${x.type==='buy'?'Buy':'Sell'}</td><td>${x.volume}</td><td>${x.open}</td><td>${x.cur}</td><td class="${cls(x.profit)}">${susd(x.profit)}</td><td><button data-t="${x.ticket}">Clore</button></td></tr>`).join(''):
+    '<tr><td style="text-align:left;color:var(--mut)">Aucune position ouverte.</td></tr>';
+}
+async function poll(){
+  if(!cfg.bridge||!cfg.btoken){$('lState').textContent="Renseigne l'adresse et le mot de passe du pont dans Réglages.";return;}
+  if(busy)return;busy=true;
+  try{renderLive(await api('/live'));$('lState').textContent='Mis à jour à '+new Date().toLocaleTimeString('fr-FR');}
+  catch(e){$('lState').textContent='Pont injoignable : '+e.message;}
+  busy=false;
+}
+function schedulePoll(){clearInterval(lt);lt=null;if(page==='live'&&!document.hidden){poll();lt=setInterval(poll,+$('lInt').value*1000);}}
+function show(p){page=p;$('hist').hidden=p!=='hist';$('live').hidden=p!=='live';
+  $('tHist').setAttribute('aria-selected',p==='hist');$('tLive').setAttribute('aria-selected',p==='live');
+  history.replaceState(null,'','#'+p);schedulePoll();}
+$('tHist').onclick=()=>show('hist');$('tLive').onclick=()=>show('live');
+$('lInt').onchange=schedulePoll;
+document.addEventListener('visibilitychange',schedulePoll);
+async function act(label,path,body,conf){
+  if(conf&&!confirm(conf))return;
+  try{const r=await api(path,body);toast(label+' : '+r.msg);}catch(e){toast('Échec : '+e.message);}
+  poll();
+}
+$('bOn').onclick=()=>act('Bot','/bot',{on:true});
+$('bOff').onclick=()=>act('Bot','/bot',{on:false},'Éteindre le bot ? Les positions ouvertes restent ouvertes.');
+$('bOffClose').onclick=()=>act('Extinction','/bot',{on:false,close:true},'Éteindre le bot ET clore toutes les positions ouvertes ?');
+$('bClose').onclick=()=>act('Clôture','/close_all',{},'Clore TOUTES les positions ouvertes ?');
+$('lTab').addEventListener('click',e=>{const t=e.target.dataset.t;if(t)act('Clôture','/close',{ticket:+t},'Clore la position '+t+' ?');});
+
+render();load();show(location.hash==='#live'?'live':'hist');
 </script>
 </body>
 </html>
