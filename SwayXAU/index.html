@@ -1,453 +1,654 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Suivi du bot</title>
+<title>Suivi du bot · compte USC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{--bg:#f3f6fa;--card:#fff;--ink:#14202e;--mut:#6b7a8c;--line:#dde4ec;--gain:#0f9d75;--gainbg:#dff5ec;--loss:#d6452f;--lossbg:#fbe4df;--acc:#1f5eff;--today:#1f5eff}
-@media(prefers-color-scheme:dark){:root{--bg:#0d1825;--card:#14243a;--ink:#e8eef6;--mut:#8a9bb0;--line:#223552;--gain:#3ed3a3;--gainbg:#12382f;--loss:#ff7b66;--lossbg:#41211f;--acc:#5b8cff;--today:#5b8cff}}
-*{box-sizing:border-box}
-html,body{margin:0}
-body{font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:0 16px 40px;max-width:1100px;margin-inline:auto;font-variant-numeric:tabular-nums}
-header{display:flex;align-items:center;gap:12px;padding:16px 0}
-header h1{font-size:18px;font-weight:800;margin:0;flex:1;text-align:center}
-button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 14px;font-weight:600}
-button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-#save{background:var(--acc);border-color:var(--acc);color:#fff}
-#save.dirty::after{content:" •"}
-#save:disabled{opacity:.6}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-.stat small{display:block;color:var(--mut);font-size:12px;margin-bottom:4px}
-.stat b{font-size:20px;font-weight:800}
-.stat.big{grid-column:span 2}
-.stat.big b{font-size:28px}
-.pos{color:var(--gain)}.neg{color:var(--loss)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
-.calhead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.calhead h2{flex:1;margin:0;font-size:17px;text-transform:capitalize}
-.calhead .sum{font-size:14px;font-weight:600}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.dow{font-size:12px;color:var(--mut);text-align:center;padding:4px 0}
-.day{min-height:78px;border:1px solid var(--line);border-radius:8px;padding:5px 6px;text-align:left;display:flex;flex-direction:column;gap:2px;background:transparent;font-weight:400;overflow:hidden}
-.day.empty{border:none;cursor:default}
-.day .n{font-size:12px;color:var(--mut)}
-.day .v{font-size:13px;font-weight:800;line-height:1.1}
-.day .p{font-size:11px;font-weight:600}
-.day .t{font-size:10px;color:var(--mut)}
-.day.g{background:var(--gainbg)}.day.g .v,.day.g .p{color:var(--gain)}
-.day.l{background:var(--lossbg)}.day.l .v,.day.l .p{color:var(--loss)}
-.day.c{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--line) 6px 7px)}
-.day.c .v{color:var(--mut);font-weight:600;font-size:12px}
-.tools{display:flex;gap:8px 14px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
-.tools input{width:auto;padding:5px 8px}
-.sch{display:flex;gap:6px;align-items:center;font-size:13px;flex-wrap:wrap}
-.tools button{font-size:13px;padding:6px 10px}
-.chk{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin:12px 0 0}
-.chk input{width:auto}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tabs{display:flex;gap:6px;margin-bottom:14px}
-.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-[hidden]{display:none!important}
-.per{display:flex;gap:6px;align-items:center;margin-top:6px}.per input{flex:1;width:auto}.per button{padding:4px 9px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
-th{color:var(--mut);font-weight:600}
-.day.today .n{color:var(--today);font-weight:800}
-.day.today{border-color:var(--today)}
-svg{width:100%;height:auto;display:block}
-h3{margin:0 0 8px;font-size:15px}
-dialog{max-height:92vh;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:18px;width:min(380px,92vw)}
-dialog::backdrop{background:rgba(5,12,22,.55)}
-label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
-input{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
-.hint{font-size:12px;color:var(--mut);margin-top:3px;min-height:15px}
-.row{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
-.row .del{margin-right:auto;color:var(--loss)}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
-#toast.show{opacity:1}
-@media(max-width:600px){.day{min-height:62px;padding:3px}.day .t{display:none}.day .v{font-size:11px}.stat.big{grid-column:span 1}}
-@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+  :root { --bg:#0a1322; --rail:#0d1729; --card:#121e36; --line:#1f2e4d; --cell:#101b30; --txt:#e6ecf7; --mut:#8394b3; --green:#34d399; --red:#f87171; --blue:#5b8def; }
+  html, body { background: var(--bg); color: var(--txt); font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  input, select { color-scheme: dark; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: .9rem; }
+  .pos { color: var(--green); } .neg { color: var(--red); }
+
+  /* Cartes de statistiques */
+  .stat { padding: .85rem 1rem; min-width: 0; }
+  .stat .l { font-size: .78rem; color: var(--mut); font-weight: 500; }
+  .stat .v { font-weight: 800; font-size: 1.3rem; margin-top: .3rem; line-height: 1.2; }
+  .stat.big .v { font-size: 2rem; }
+  .stat .sub { font-size: .72rem; color: var(--mut); font-weight: 700; margin-left: .4rem; }
+
+  /* Boutons & champs */
+  .btn { background: var(--card); border: 1px solid var(--line); border-radius: .6rem; padding: .45rem .8rem; font-size: .8rem; font-weight: 700; color: var(--txt); transition: .15s; }
+  .btn:hover { border-color: #34507f; background: #16264a; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .field { width: 100%; background: #0b1527; border: 1px solid var(--line); border-radius: .55rem; padding: .5rem .7rem; font-size: .875rem; font-weight: 600; color: var(--txt); outline: none; transition: .15s; font-family: inherit; }
+  .field:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(91,141,239,.25); }
+  .field:disabled { opacity: .35; cursor: not-allowed; }
+  .lbl { display: block; font-size: .75rem; color: var(--mut); font-weight: 600; }
+  .lbl > .field { margin-top: .3rem; }
+
+  /* Barre latérale */
+  .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem; flex: 1; font-size: 11px; font-weight: 700; color: var(--mut); transition: .15s; cursor: pointer; }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item small { font-size: 9px; color: #f5b94c; line-height: 1; }
+  .nav-item:hover { color: #fff; }
+  .nav-item.active { color: #fff; background: #17264a; }
+  @media (min-width: 768px) { .nav-item { flex: none; padding: .8rem 0; margin: 0 .5rem; border-radius: .8rem; } }
+
+  /* Calendrier */
+  .dow { text-align: center; font-size: .78rem; color: var(--mut); font-weight: 600; }
+  .cell { display: block; width: 100%; text-align: left; background: var(--cell); border: 1px solid var(--line); border-radius: .55rem; padding: .5rem .6rem; min-height: 84px; cursor: pointer; transition: .12s; font-family: inherit; color: var(--txt); }
+  .cell:hover { border-color: #3a5a92; transform: translateY(-1px); }
+  .cell .dn { font-size: .8rem; color: #9fb0cc; font-weight: 600; }
+  .cell .hrs, .cell .sub { font-size: 10.5px; color: #8fa3c4; font-weight: 500; line-height: 1.4; }
+  .cell .pv { font-size: .85rem; font-weight: 800; margin-top: .15rem; line-height: 1.25; }
+  .cell .pp { font-size: .7rem; font-weight: 700; }
+  .cell .mf { font-size: .78rem; font-weight: 700; color: #8fa3c4; margin-top: .1rem; }
+  .cell.win { background: #133a33; border-color: #1c5a48; } .cell.win .pv, .cell.win .pp { color: var(--green); }
+  .cell.loss { background: #3a1a26; border-color: #6b2b3a; } .cell.loss .pv, .cell.loss .pp { color: var(--red); }
+  .cell.closed { background: repeating-linear-gradient(135deg, rgba(131,148,179,.10) 0 2px, transparent 2px 9px), #0f192d; }
+  .cell.today { border-color: var(--blue); box-shadow: 0 0 0 1px rgba(91,141,239,.45); }
+  .cell.today .dn { color: var(--blue); font-weight: 800; }
+  @media (max-width: 639px) { .cal-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; } .dow-row, .empty-cell { display: none; } }
+
+  /* Interrupteur */
+  .sw { position: absolute; opacity: 0; }
+  .track { position: relative; width: 38px; height: 20px; background: #26385e; border-radius: 999px; transition: .15s; flex-shrink: 0; }
+  .track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #cbd5e1; transition: .15s; }
+  .sw:checked + .track { background: #ef4444; } .sw:checked + .track::after { transform: translateX(18px); background: #fff; }
+
+  @keyframes slidein { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .toast { animation: slidein .2s ease-out; }
 </style>
 </head>
-<body>
-<header>
-  <button id="save" title="Enregistrer les données sur GitHub">Enregistrer</button>
-  <h1>Suivi du bot · compte USC</h1>
-  <button id="cfgBtn" aria-label="Réglages GitHub">Réglages</button>
-</header>
+<body class="min-h-screen">
 
-<nav class="tabs"><button id="tHist" aria-selected="true">Historique</button><button id="tLive" aria-selected="false">Live</button></nav>
-<div id="hist">
-<section class="stats" id="stats"></section>
+<div id="toasts" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-[90vw] sm:max-w-sm"></div>
 
-<section class="panel">
-  <div class="calhead">
-    <button id="prev" aria-label="Mois précédent">‹</button>
-    <h2 id="mTitle"></h2>
-    <span class="sum" id="mSum"></span>
-    <button id="next" aria-label="Mois suivant">›</button>
-  </div>
-  <div class="tools"><button id="wk">Marquer les week-ends du mois comme fermés</button>
-    <span class="sch">Horaires du bot <input type="time" id="sFrom" aria-label="Début"> → <input type="time" id="sTo" aria-label="Fin"> <button id="sApply">Appliquer aux jours ouvrés du mois</button></span>
-  </div>
-  <div class="hint" style="margin:-4px 0 8px">Trades dans chaque case : ouverts / fermés.</div>
-  <div class="grid" id="cal"></div>
-</section>
+<!-- ============ BARRE LATÉRALE ============ -->
+<nav id="nav" class="fixed z-30 bottom-0 inset-x-0 h-16 md:h-auto md:inset-y-0 md:right-auto md:w-[84px] flex md:flex-col items-stretch md:items-stretch md:justify-start md:pt-5 md:gap-2 border-t md:border-t-0 md:border-r" style="background:var(--rail);border-color:var(--line)">
+  <button class="nav-item" data-nav="history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span>Historique</span>
+  </button>
+  <button class="nav-item" data-nav="live">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    <span>Live</span><small>bientôt</small>
+  </button>
+  <button class="nav-item" data-nav="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+    <span>Réglages</span>
+  </button>
+</nav>
 
-<section class="panel">
-  <h3>Évolution du solde</h3>
-  <div id="chart"></div>
-</section>
-</div>
+<div class="md:pl-[84px] pb-24 md:pb-8">
+<div class="max-w-[1120px] mx-auto px-3 sm:px-6 pt-4">
 
-<div id="live" hidden>
-  <section class="stats" id="lStats"></section>
-  <section class="panel">
-    <div class="calhead"><h2>Positions ouvertes</h2>
-      <label for="lInt" style="margin:0">Actualisation</label>
-      <select id="lInt"><option value="5">5 s</option><option value="10" selected>10 s</option><option value="30">30 s</option></select></div>
-    <div class="tools">
-      <button id="bOn">Allumer le bot</button>
-      <button id="bOff">Éteindre le bot</button>
-      <button id="bOffClose">Éteindre et tout clore</button>
-      <button id="bClose">Clore toutes les positions</button>
+  <!-- ============ EN-TÊTE (commun) ============ -->
+  <header class="flex flex-wrap items-center gap-x-4 gap-y-2 mb-5">
+    <div class="relative">
+      <div class="inline-flex rounded-lg overflow-hidden shadow-lg shadow-blue-500/20" style="background:var(--blue)">
+        <button id="btn-save" class="px-4 py-2 font-bold text-sm text-white hover:brightness-110 flex items-center gap-2">
+          <span id="save-spin" class="hidden animate-spin">◌</span><span>Enregistrer</span>
+        </button>
+        <button id="btn-menu" class="px-2.5 border-l border-white/25 text-white hover:brightness-110" aria-label="Plus d'options">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+      </div>
+      <div id="menu" class="hidden absolute left-0 mt-2 w-64 card p-1 z-40 shadow-2xl text-sm font-semibold">
+        <button data-act="save" class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/5">Enregistrer les données (GitHub)</button>
+        <button data-act="load" class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/5">Recharger depuis GitHub</button>
+        <button data-act="export" class="w-full text-left px-3 py-2 rounded-lg hover:bg-white/5">Exporter en JSON</button>
+      </div>
     </div>
-    <div style="overflow-x:auto"><table id="lTab"></table></div>
-    <div class="hint" id="lState"></div>
+    <h1 class="flex-1 text-center text-lg font-extrabold tracking-tight">Suivi du bot · compte USC</h1>
+    <div class="w-full lg:w-auto lg:max-w-[270px] text-xs text-right leading-snug" style="color:var(--mut)">
+      🔄 Synchronisation GitHub active - Données chargées automatiquement à l'ouverture
+      <div id="sync-status" class="font-bold"></div>
+    </div>
+  </header>
+
+  <!-- ============ SECTION HISTORIQUE ============ -->
+  <section id="sec-history" class="space-y-3">
+    <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+      <div class="card stat big col-span-2"><div class="l">Solde actuel</div><div class="v"><span id="st-bal">0,00 $</span><span id="st-bal-usc" class="sub">(0 USC)</span></div></div>
+      <div class="card stat big col-span-2"><div class="l">Bénéfice total</div><div id="st-profit" class="v">0,00 $</div></div>
+      <div class="card stat"><div class="l">Rendement sur dépôts</div><div id="st-ret" class="v">0,00 %</div></div>
+      <div class="card stat"><div class="l">Rendement composé</div><div id="st-comp" class="v">0,00 %</div></div>
+
+      <div class="card stat"><div class="l">Total déposé</div><div id="st-dep" class="v">0,00 $</div></div>
+      <div class="card stat"><div class="l">Total retiré</div><div id="st-wd" class="v">0,00 $</div></div>
+      <div class="card stat"><div class="l">Moyenne / jour</div><div id="st-avg" class="v">0,00 $</div></div>
+      <div class="card stat"><div class="l">Jours gagnants</div><div id="st-win" class="v">—</div></div>
+      <div class="card stat"><div class="l">Meilleur jour</div><div id="st-best" class="v">—</div></div>
+      <div class="card stat"><div class="l">Pire jour</div><div id="st-worst" class="v">—</div></div>
+
+      <div class="card stat"><div class="l">Heures d'activité</div><div id="st-hours" class="v">0,0 h</div></div>
+      <div class="card stat"><div class="l">Buy ouverts / fermés</div><div id="st-buy" class="v">0 / 0</div></div>
+      <div class="card stat"><div class="l">Sell ouverts / fermés</div><div id="st-sell" class="v">0 / 0</div></div>
+    </div>
+
+    <!-- Calendrier -->
+    <div class="card p-3 sm:p-4">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <button id="prev" class="btn !px-2.5 !py-2" aria-label="Mois précédent"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="flex-1 flex flex-wrap items-center justify-between gap-x-4">
+          <h2 id="month-title" class="text-lg font-extrabold"></h2>
+          <span id="month-sum" class="text-sm font-bold"></span>
+        </div>
+        <button id="next" class="btn !px-2.5 !py-2" aria-label="Mois suivant"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 mb-2">
+        <button id="btn-wk" class="btn">Marquer les week-ends du mois comme fermés</button>
+        <span class="text-xs font-semibold ml-1" style="color:var(--mut)">Horaires du bot</span>
+        <input id="bot-start" type="time" step="60" class="field !w-auto !py-1.5">
+        <span>→</span>
+        <input id="bot-end" type="time" step="60" class="field !w-auto !py-1.5">
+        <button id="btn-apply" class="btn">Appliquer aux jours ouvrés du mois</button>
+        <button id="btn-add" class="btn sm:ml-auto" style="border-color:#2f4f8f;color:#9dbcff">+ Dépôt / Retrait</button>
+      </div>
+      <p class="text-xs mb-3" style="color:var(--mut)">Trades dans chaque case : ouverts / fermés. Cliquez sur un jour pour le modifier.</p>
+
+      <div class="grid grid-cols-7 gap-2 mb-2 dow-row">
+        <div class="dow">L</div><div class="dow">M</div><div class="dow">M</div><div class="dow">J</div><div class="dow">V</div><div class="dow">S</div><div class="dow">D</div>
+      </div>
+      <div id="grid" class="grid grid-cols-7 gap-2 cal-grid"></div>
+    </div>
   </section>
+
+  <!-- ============ SECTION LIVE ============ -->
+  <section id="sec-live" class="hidden">
+    <div class="card p-8 sm:p-12 text-center max-w-2xl mx-auto mt-6">
+      <div class="mx-auto w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style="background:#17264a;color:var(--blue)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <h2 class="text-xl font-extrabold mb-2">Live — bientôt disponible</h2>
+      <p class="text-sm" style="color:var(--mut)">Le suivi en temps réel de votre bot sera mis en place prochainement : positions ouvertes, bénéfice du jour, état du bot.</p>
+      <div class="grid grid-cols-3 gap-3 mt-6 opacity-50">
+        <div class="card stat"><div class="l">Positions</div><div class="v">—</div></div>
+        <div class="card stat"><div class="l">Bénéfice du jour</div><div class="v">—</div></div>
+        <div class="card stat"><div class="l">État du bot</div><div class="v">—</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION RÉGLAGES ============ -->
+  <section id="sec-settings" class="hidden">
+    <div class="card p-5 sm:p-6 max-w-xl mx-auto mt-2">
+      <h2 class="text-xl font-extrabold mb-1">Réglages</h2>
+      <p class="text-xs mb-5" style="color:var(--mut)">Synchronisation GitHub — les réglages sont enregistrés automatiquement dans ce navigateur.</p>
+      <div class="space-y-3.5">
+        <label class="lbl">Pseudo GitHub<input id="s-user" class="field" placeholder="AzurSeven" autocomplete="off"></label>
+        <label class="lbl">Nom du dépôt<input id="s-repo" class="field" placeholder="azurseven.github.io" autocomplete="off"></label>
+        <label class="lbl">Branche<input id="s-branch" class="field" placeholder="main" autocomplete="off"></label>
+        <label class="lbl">Fichier de données<input id="s-file" class="field" placeholder="SwayXAU/data.json" autocomplete="off"></label>
+        <label class="lbl">Token d'accès (fine-grained, Contents : lecture/écriture)
+          <div class="relative">
+            <input id="s-token" type="password" class="field !pr-24" placeholder="github_pat_…" autocomplete="off">
+            <button type="button" id="tok-eye" class="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold px-2 py-1 rounded-md hover:bg-white/10" style="color:var(--mut);margin-top:.15rem">Afficher</button>
+          </div>
+        </label>
+        <p class="text-xs" style="color:var(--mut)">Le token reste dans ce navigateur uniquement. À saisir une fois par appareil.</p>
+        <div class="flex flex-wrap gap-2 pt-1">
+          <button id="btn-load" class="btn">↓ Recharger depuis GitHub</button>
+          <button id="btn-save2" class="btn" style="border-color:#2f4f8f;color:#9dbcff">↑ Enregistrer sur GitHub</button>
+        </div>
+        <p class="text-xs pt-2 border-t" style="color:var(--mut);border-color:var(--line)">Conversion : 100 USC = 1 $.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
 </div>
 
-<dialog id="dayDlg">
-  <h3 id="dTitle"></h3>
-  <label class="chk"><input type="checkbox" id="fClosed"> Marché fermé</label>
-  <div id="openBox">
-  <div class="hint" id="hAuto"></div>
-  <label for="fPnl">Bénéfice du jour (USC, négatif si perte)</label>
-  <input id="fPnl" inputmode="decimal" placeholder="0">
-  <div class="hint" id="hPnl"></div>
-  <div class="two">
-    <div><label for="fBo">Buy ouverts</label><input id="fBo" inputmode="numeric" placeholder="0"></div>
-    <div><label for="fBc">Buy fermés</label><input id="fBc" inputmode="numeric" placeholder="0"></div>
-    <div><label for="fSo">Sell ouverts</label><input id="fSo" inputmode="numeric" placeholder="0"></div>
-    <div><label for="fSc">Sell fermés</label><input id="fSc" inputmode="numeric" placeholder="0"></div>
-  </div>
-  <label>Périodes d'activité du bot</label>
-  <div id="pers"></div>
-  <button type="button" id="addPer" style="margin-top:6px;font-size:13px;padding:5px 10px">+ Ajouter une période</button>
-  </div>
-  <label for="fDep">Dépôt (USC)</label>
-  <input id="fDep" inputmode="decimal" placeholder="0">
-  <div class="hint" id="hDep"></div>
-  <label for="fWd">Retrait (USC)</label>
-  <input id="fWd" inputmode="decimal" placeholder="0">
-  <div class="hint" id="hWd"></div>
-  <div class="row">
-    <button class="del" id="dDel">Supprimer</button>
-    <button id="dCancel">Annuler</button>
-    <button id="dOk" style="background:var(--acc);border-color:var(--acc);color:#fff">Valider</button>
-  </div>
-</dialog>
+<!-- ============ MODALE : MODIFIER UN JOUR ============ -->
+<div id="day-modal" class="hidden fixed inset-0 z-40 bg-black/65 flex items-center justify-center p-3 overflow-y-auto">
+  <form id="day-form" class="card p-5 w-full max-w-md space-y-3.5 my-auto">
+    <div class="flex items-start justify-between gap-3">
+      <h3 id="d-title" class="text-lg font-extrabold capitalize"></h3>
+      <button type="button" id="d-x" class="text-xl leading-none px-1" style="color:var(--mut)" aria-label="Fermer">×</button>
+    </div>
+    <label class="flex items-center gap-3 cursor-pointer select-none">
+      <input id="d-closed" type="checkbox" class="sw"><span class="track"></span>
+      <span id="d-closed-lbl" class="text-sm font-bold">Marché ouvert</span>
+    </label>
+    <div>
+      <label class="lbl">Bénéfice (USC)<input id="d-profit" type="number" step="any" inputmode="decimal" class="field" placeholder="ex : 506"></label>
+      <div id="d-prev" class="text-sm font-bold mt-1.5 min-h-[1.25rem]"></div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="lbl">Dépôt ($)<input id="d-dep" type="number" min="0" step="any" inputmode="decimal" class="field" placeholder="0"></label>
+      <label class="lbl">Retrait ($)<input id="d-wd" type="number" min="0" step="any" inputmode="decimal" class="field" placeholder="0"></label>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="lbl">Début d'activité<input id="d-start" type="time" step="60" class="field"></label>
+      <label class="lbl">Fin d'activité<input id="d-end" type="time" step="60" class="field"></label>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="lbl">Buy ouverts<input id="d-bo" type="number" min="0" step="1" class="field" placeholder="0"></label>
+      <label class="lbl">Buy fermés<input id="d-bc" type="number" min="0" step="1" class="field" placeholder="0"></label>
+      <label class="lbl">Sell ouverts<input id="d-so" type="number" min="0" step="1" class="field" placeholder="0"></label>
+      <label class="lbl">Sell fermés<input id="d-sc" type="number" min="0" step="1" class="field" placeholder="0"></label>
+    </div>
+    <div class="flex flex-wrap gap-2 pt-1">
+      <button type="button" id="d-clear" class="btn !text-red-300">Effacer le jour</button>
+      <button type="button" id="d-cancel" class="btn ml-auto">Annuler</button>
+      <button class="rounded-lg px-4 py-2 text-sm font-bold text-white hover:brightness-110" style="background:var(--blue)">Valider</button>
+    </div>
+  </form>
+</div>
 
-<dialog id="cfgDlg">
-  <h3>Réglages</h3>
-  <label for="cUser">Pseudo GitHub</label><input id="cUser" autocomplete="off">
-  <label for="cRepo">Nom du dépôt</label><input id="cRepo" autocomplete="off">
-  <label for="cBranch">Branche</label><input id="cBranch" value="main">
-  <label for="cPath">Fichier de données</label><input id="cPath" value="data.json">
-  <label for="cToken">Token d'accès (fine-grained, Contents : lecture/écriture)</label>
-  <input id="cToken" type="password" autocomplete="off">
-  <div class="hint">Le token reste dans ce navigateur uniquement. À saisir une fois par appareil.</div>
-  <label for="cBridge">Adresse du pont MT5 (https://…), pour la page Live</label><input id="cBridge" autocomplete="off">
-  <label for="cBT">Mot de passe du pont</label><input id="cBT" type="password" autocomplete="off">
-  <div class="row"><button id="cCancel">Fermer</button><button id="cOk" style="background:var(--acc);border-color:var(--acc);color:#fff">Enregistrer les réglages</button></div>
-</dialog>
-
-<div id="toast" role="status"></div>
+<!-- ============ MODALE : AJOUT DÉPÔT / RETRAIT ============ -->
+<div id="modal" class="hidden fixed inset-0 z-40 bg-black/65 flex items-center justify-center p-4">
+  <form id="modal-form" class="card p-5 w-full max-w-sm space-y-3">
+    <h3 class="text-lg font-extrabold">Ajouter un dépôt / retrait</h3>
+    <label class="lbl">Date<input id="m-date" type="date" class="field" required></label>
+    <label class="lbl">Type
+      <select id="m-type" class="field"><option value="deposit">Dépôt</option><option value="withdraw">Retrait</option></select></label>
+    <label class="lbl">Montant ($)<input id="m-amount" type="number" min="0" step="0.01" class="field" required></label>
+    <div class="flex gap-2 pt-1">
+      <button type="button" id="m-cancel" class="btn flex-1">Annuler</button>
+      <button class="flex-1 rounded-lg py-2 text-sm font-bold text-white hover:brightness-110" style="background:var(--blue)">Ajouter</button>
+    </div>
+  </form>
+</div>
 
 <script>
-const $=id=>document.getElementById(id);
-const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let data={entries:{}}, cfg=JSON.parse(store.get('tb_cfg')||'{}'), dirty=store.get('tb_dirty')==='1';
-let cur=new Date(); cur.setDate(1);
-let selDate=null,auto={};
-try{auto=JSON.parse(store.get('tb_auto')||'{}')}catch(e){}
-const pers=e=>e.periods&&e.periods.length?e.periods:(e.from&&e.to?[{from:e.from,to:e.to}]:[]);
-function eff(){const o={};for(const k of new Set([...Object.keys(auto),...Object.keys(data.entries)]))o[k]=Object.assign({},auto[k],data.entries[k]);return o;}
+/* =====================================================================
+   Suivi du bot · compte USC — JavaScript natif (aucune dépendance)
+   ===================================================================== */
+const SETTINGS_KEY = 'tb_github_settings_v1';
+const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const WD_SHORT = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const USC = 100;                                   // 100 USC = 1 $
+const DEF_HOURS = { start: '08:00', end: '20:00' };
 
-/* ---------- formats ---------- */
-const nf=(n,d=2)=>n.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d});
-const usd=u=>nf(u/100)+' $';
-const susd=u=>(u>0?'+':u<0?'−':'')+nf(Math.abs(u)/100)+' $';
-const spct=p=>(p>0?'+':p<0?'−':'')+nf(Math.abs(p))+' %';
-const cls=n=>n>0?'pos':n<0?'neg':'';
-const num=s=>{const v=parseFloat(String(s).replace(/\s/g,'').replace(',','.'));return isFinite(v)?v:0};
-const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-
-/* ---------- calculs ---------- */
-const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
-function calc(){
-  const EF=eff(),ds=Object.keys(EF).sort(),tk=key(new Date()),tr={bo:0,bc:0,so:0,sc:0};
-  let hrs=0,bal=0,dep=0,wd=0,pnl=0,twr=1,wins=0,days=0,best=null,worst=null;
-  const rows={},series=[];
-  for(const d of ds){
-    const e=EF[d],p=+e.pnl||0,de=+e.dep||0,w=+e.wd||0;
-    const start=bal,base=start+de,pct=base>0?p/base*100:0;
-    bal=start+de-w+p;
-    rows[d]={p,de,w,pct,end:bal};
-    for(const q in tr)tr[q]+=+e[q]||0;
-    if(d<=tk)for(const x of pers(e)){let m=toMin(x.to)-toMin(x.from);if(m<=0)m+=1440;hrs+=m/60;}
-    dep+=de;wd+=w;pnl+=p;
-    if(p!==0||e.pnl!==undefined){days++;twr*=1+pct/100;if(p>0)wins++;
-      if(!best||p>best.p)best={d,p};if(!worst||p<worst.p)worst={d,p};}
-    series.push([d,bal]);
-  }
-  return{tr,ent:EF,hrs,rows,series,bal,dep,wd,pnl,twr:(twr-1)*100,wins,days,best,worst};
-}
-
-/* ---------- rendu ---------- */
-function render(){
-  const c=calc();
-  const roi=c.dep>0?c.pnl/c.dep*100:0;
-  const avg=c.days?c.pnl/c.days:0;
-  const mk=(l,v,k='',big='')=>`<div class="stat ${big}"><small>${l}</small><b class="${k}">${v}</b></div>`;
-  $('stats').innerHTML=
-    mk('Solde actuel',usd(c.bal)+` <small style="display:inline">(${nf(c.bal,0)} USC)</small>`,'','big')+
-    mk('Bénéfice total',susd(c.pnl),cls(c.pnl),'big')+
-    mk('Rendement sur dépôts',spct(roi),cls(roi))+
-    mk('Rendement composé',spct(c.twr),cls(c.twr))+
-    mk('Total déposé',usd(c.dep))+
-    mk('Total retiré',usd(c.wd))+
-    mk('Moyenne / jour',susd(avg),cls(avg))+
-    mk('Jours gagnants',c.days?nf(c.wins/c.days*100,0)+' % ('+c.wins+'/'+c.days+')':'–')+
-    mk('Meilleur jour',c.best?susd(c.best.p):'–',cls(c.best?c.best.p:0))+
-    mk('Pire jour',c.worst?susd(c.worst.p):'–',cls(c.worst?c.worst.p:0))+
-    mk('Heures d\'activité',nf(c.hrs,1)+' h')+
-    mk('Buy ouverts / fermés',c.tr.bo+' / '+c.tr.bc)+
-    mk('Sell ouverts / fermés',c.tr.so+' / '+c.tr.sc);
-  renderCal(c);renderChart(c);
-  if(data.sched&&!$('sFrom').value){$('sFrom').value=data.sched.from;$('sTo').value=data.sched.to;}
-  $('save').classList.toggle('dirty',dirty);
-}
-
-function renderCal(c){
-  const y=cur.getFullYear(),m=cur.getMonth();
-  $('mTitle').textContent=cur.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
-  const first=(new Date(y,m,1).getDay()+6)%7,nd=new Date(y,m+1,0).getDate();
-  let h=['L','M','M','J','V','S','D'].map(x=>`<div class="dow">${x}</div>`).join('');
-  for(let i=0;i<first;i++)h+='<div class="day empty"></div>';
-  let mp=0,mf=1,todayK=key(new Date());
-  for(let d=1;d<=nd;d++){
-    const k=key(new Date(y,m,d)),r=c.rows[k];
-    let inner=`<span class="n">${d}</span>`,cl='';
-    if(r){
-      const E=c.ent[k];
-      if(E.closed){cl='c';inner+='<span class="v">Marché fermé</span>';}
-      const pr=pers(E);if(pr.length)inner+=`<span class="t">${pr.map(x=>x.from+'–'+x.to).join(' · ')}</span>`;
-      if(E.pnl!==undefined||r.p){mp+=r.p;mf*=1+r.pct/100;cl=r.p>0?'g':r.p<0?'l':'';
-        inner+=`<span class="v">${susd(r.p)}</span><span class="p">${spct(r.pct)}</span>`;}
-      if(['bo','bc','so','sc'].some(q=>E[q]!==undefined))inner+=`<span class="t">Buy ${E.bo||0}/${E.bc||0} · Sell ${E.so||0}/${E.sc||0}</span>`;
-      if(r.de)inner+=`<span class="t">Dépôt ${usd(r.de)}</span>`;
-      if(r.w)inner+=`<span class="t">Retrait ${usd(r.w)}</span>`;
+/* ---------- Fausse base de données par défaut (démo) ---------- */
+function defaultData() {
+  return {
+    version: 2, updatedAt: null, botHours: { ...DEF_HOURS },
+    days: {
+      '2026-10-05': { profit: null, deposit: 250.02 },
+      '2026-10-06': { profit: 506 }, '2026-10-07': { profit: 573 },
+      '2026-10-08': { profit: 721 }, '2026-10-09': { profit: 11 },
+      '2026-10-12': { profit: 203 }, '2026-10-13': { profit: 316 },
+      '2026-10-14': { profit: 541 }, '2026-10-15': { profit: 367 }
     }
-    h+=`<button class="day ${cl} ${k===todayK?'today':''}" data-d="${k}">${inner}</button>`;
+  };
+}
+function normalize(d) {
+  d.botHours = { ...DEF_HOURS, ...(d.botHours || {}) };
+  if (!d.days || typeof d.days !== 'object') d.days = {};
+  return d;
+}
+
+let data = defaultData();
+let sha = null;                // SHA du fichier distant (requis pour le PUT)
+let dirty = false;
+let view = (() => { const t = new Date(); return { y: t.getFullYear(), m: t.getMonth() }; })();
+let editKey = null;            // jour en cours d'édition dans la modale
+
+/* ---------- Utilitaires ---------- */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const ymd = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+const todayKey = (() => { const t = new Date(); return ymd(t.getFullYear(), t.getMonth(), t.getDate()); })();
+const fmt = (n, dec = 2) => n.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+const sgn = n => (n > 0 ? '+' : n < 0 ? '-' : '');
+const money = n => `${fmt(n)} $`;
+const smoney = n => `${sgn(n)}${fmt(Math.abs(n))} $`;
+const spct = n => `${sgn(n)}${fmt(Math.abs(n))} %`;
+const cls = n => (n > 0 ? 'pos' : n < 0 ? 'neg' : '');
+const isWeekend = (y, m, d) => [0, 6].includes(new Date(y, m, d).getDay());
+const toNum = v => { const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) ? n : null; };
+const hasProfit = d => d && d.profit !== null && d.profit !== undefined && d.profit !== '' && isFinite(+d.profit);
+const hoursBetween = (a, b) => {
+  const [h1, m1] = a.split(':').map(Number), [h2, m2] = b.split(':').map(Number);
+  let diff = (h2 * 60 + m2) - (h1 * 60 + m1); if (diff < 0) diff += 1440; return diff / 60;
+};
+
+function toast(msg, type = 'info') {
+  const colors = { success: 'border-emerald-500 text-emerald-300', error: 'border-red-500 text-red-300', info: 'border-blue-500 text-blue-300' };
+  const el = document.createElement('div');
+  el.className = `toast card px-4 py-3 text-sm font-semibold border-l-4 shadow-xl ${colors[type]}`;
+  el.textContent = msg; $('toasts').appendChild(el);
+  setTimeout(() => el.remove(), type === 'error' ? 6500 : 3500);
+  (type === 'error' ? console.error : console.log)('[Bot]', msg);
+}
+function setDirty(v) {
+  dirty = v;
+  $('sync-status').textContent = v ? '● Modifications non enregistrées' : '';
+  $('sync-status').style.color = v ? '#fbbf24' : '';
+}
+
+function isClosed(key, day = data.days[key]) {
+  if (day && typeof day.closed === 'boolean') return day.closed;   // choix explicite
+  const [y, m, d] = key.split('-').map(Number);
+  return isWeekend(y, m - 1, d);                                   // sinon : week-end fermé par défaut
+}
+function ensureDay(key) { if (!data.days[key]) data.days[key] = {}; return data.days[key]; }
+function cleanDay(key) {                                           // supprime les jours vides du JSON
+  const d = data.days[key]; if (!d) return;
+  const [y, m, dd] = key.split('-').map(Number);
+  const empty = !hasProfit(d) && !(+d.deposit) && !(+d.withdraw) && !d.buyOpen && !d.buyClosed && !d.sellOpen && !d.sellClosed
+    && !d.start && !d.end && (d.closed === undefined || d.closed === isWeekend(y, m - 1, dd));
+  if (empty) delete data.days[key];
+}
+
+/* ---------- Calculs ---------- */
+function compute(days = data.days) {
+  const keys = Object.keys(days).sort();
+  let running = 0, totalProfit = 0, totalDep = 0, totalWd = 0, compound = 1;
+  const perDay = {}, profits = [];
+  keys.forEach(k => {
+    const d = days[k];
+    const dep = +d.deposit || 0, wd = +d.withdraw || 0;
+    const has = !isClosed(k, d) && hasProfit(d);
+    const profit = has ? +d.profit : 0;
+    const opening = running + (dep - wd) * USC;                    // solde de départ du jour
+    const pct = has && opening > 0 ? (profit / opening) * 100 : null;
+    if (pct !== null) compound *= 1 + pct / 100;
+    perDay[k] = { usd: profit / USC, pct, has };
+    running = opening + profit;
+    totalProfit += profit; totalDep += dep; totalWd += wd;
+    if (has) profits.push(profit);
+  });
+  return { perDay, profits, totalProfit, totalDep, totalWd, compound, balance: totalDep * USC - totalWd * USC + totalProfit };
+}
+
+function activityHours() {
+  const keys = Object.keys(data.days).sort(); if (!keys.length) return 0;
+  const end = new Date(todayKey + 'T00:00:00'); let h = 0;
+  for (let d = new Date(keys[0] + 'T00:00:00'); d <= end; d.setDate(d.getDate() + 1)) {
+    const k = ymd(d.getFullYear(), d.getMonth(), d.getDate());
+    if (isClosed(k)) continue;
+    const day = data.days[k] || {};
+    h += hoursBetween(day.start || data.botHours.start, day.end || data.botHours.end);
   }
-  $('cal').innerHTML=h;
-  $('mSum').innerHTML=`<span class="${cls(mp)}">${susd(mp)} · ${spct((mf-1)*100)}</span>`;
+  return h;
 }
 
-function renderChart(c){
-  const s=c.series;
-  if(s.length<2){$('chart').innerHTML='<div class="hint">Ajoute au moins deux jours pour voir la courbe.</div>';return;}
-  const W=700,H=170,P=8,vals=s.map(x=>x[1]/100),mn=Math.min(...vals),mx=Math.max(...vals),rg=(mx-mn)||1;
-  const pts=vals.map((v,i)=>[P+i*(W-2*P)/(vals.length-1),H-P-(v-mn)/rg*(H-2*P)]);
-  const line=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-  $('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Courbe du solde">
-  <polygon points="${P},${H-P} ${line} ${W-P},${H-P}" fill="var(--acc)" opacity=".12"/>
-  <polyline points="${line}" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linejoin="round"/></svg>
-  <div class="hint">${s[0][0]} → ${s[s.length-1][0]} · min ${nf(mn)} $ · max ${nf(mx)} $</div>`;
+function setVal(id, text, c = '') {
+  const el = $(id); el.textContent = text; el.classList.remove('pos', 'neg'); if (c) el.classList.add(c);
 }
 
-/* ---------- jour ---------- */
-function hints(){
-  [['fPnl','hPnl'],['fDep','hDep'],['fWd','hWd']].forEach(([i,h])=>{
-    const v=num($(i).value);$(h).textContent=$(i).value?`= ${nf(v/100)} $`:'';});
+function paintStats(c) {
+  const usd = c.totalProfit / USC, n = c.profits.length;
+  setVal('st-bal', money(c.balance / USC));
+  $('st-bal-usc').textContent = `(${fmt(c.balance, 0)} USC)`;
+  setVal('st-profit', smoney(usd), cls(usd));
+  const ret = c.totalDep > 0 ? (usd / c.totalDep) * 100 : 0, comp = (c.compound - 1) * 100;
+  setVal('st-ret', spct(ret), cls(ret));
+  setVal('st-comp', spct(comp), cls(comp));
+  setVal('st-dep', money(c.totalDep));
+  setVal('st-wd', money(c.totalWd));
+  const avg = n ? usd / n : 0;
+  setVal('st-avg', smoney(avg), cls(avg));
+  const w = c.profits.filter(p => p > 0).length;
+  setVal('st-win', n ? `${Math.round((w / n) * 100)} % (${w}/${n})` : '—');
+  if (n) {
+    const best = Math.max(...c.profits) / USC, worst = Math.min(...c.profits) / USC;
+    setVal('st-best', smoney(best), cls(best)); setVal('st-worst', smoney(worst), cls(worst));
+  } else { setVal('st-best', '—'); setVal('st-worst', '—'); }
+  setVal('st-hours', `${fmt(activityHours(), 1)} h`);
+  let bo = 0, bc = 0, so = 0, sc = 0;
+  Object.values(data.days).forEach(d => { bo += +d.buyOpen || 0; bc += +d.buyClosed || 0; so += +d.sellOpen || 0; sc += +d.sellClosed || 0; });
+  setVal('st-buy', `${bo} / ${bc}`); setVal('st-sell', `${so} / ${sc}`);
 }
-['fPnl','fDep','fWd'].forEach(i=>$(i).addEventListener('input',hints));
-$('cal').addEventListener('click',e=>{
-  const b=e.target.closest('.day[data-d]');if(!b)return;
-  selDate=b.dataset.d;const e0=data.entries[selDate]||{};
-  $('dTitle').textContent=new Date(selDate+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  $('fPnl').value=e0.pnl!==undefined?e0.pnl:'';$('fDep').value=e0.dep||'';$('fWd').value=e0.wd||'';
-  $('fClosed').checked=!!e0.closed;$('pers').innerHTML='';pers(e0).forEach(x=>addPer(x.from,x.to));toggleClosed();
-  const a=auto[selDate]||{};
-  [['bo','fBo'],['bc','fBc'],['so','fSo'],['sc','fSc']].forEach(([q,i])=>{$(i).value=e0[q]!==undefined?e0[q]:'';$(i).placeholder=a[q]!==undefined?'auto : '+a[q]:'0';});
-  $('fPnl').placeholder=a.pnl!==undefined?'auto : '+a.pnl:'0';
-  $('hAuto').textContent=Object.keys(a).length?'Données MT5 reçues pour ce jour. Les champs vides les utilisent ; ce que tu saisis les remplace.':'';
-  $('dDel').style.display=data.entries[selDate]?'':'none';
-  hints();$('dayDlg').showModal();$('fPnl').focus();
+
+/* ---------- Calendrier ---------- */
+function renderCalendar() {
+  const c = compute();
+  paintStats(c);
+  $('month-title').textContent = `${MONTHS[view.m]} ${view.y}`;
+  $('bot-start').value = data.botHours.start; $('bot-end').value = data.botHours.end;
+
+  // Résumé du mois : bénéfice + rendement composé du mois
+  const prefix = `${view.y}-${pad(view.m + 1)}-`;
+  let mUsd = 0, mComp = 1;
+  Object.keys(c.perDay).filter(k => k.startsWith(prefix)).forEach(k => {
+    const p = c.perDay[k]; mUsd += p.usd; if (p.pct !== null) mComp *= 1 + p.pct / 100;
+  });
+  const mPct = (mComp - 1) * 100;
+  $('month-sum').textContent = `${smoney(mUsd)} · ${spct(mPct)}`;
+  $('month-sum').className = `text-sm font-bold ${cls(mUsd)}`;
+
+  const grid = $('grid'); grid.innerHTML = '';
+  const offset = (new Date(view.y, view.m, 1).getDay() + 6) % 7;   // Lundi = 0
+  const nb = new Date(view.y, view.m + 1, 0).getDate();
+  for (let i = 0; i < offset; i++) { const e = document.createElement('div'); e.className = 'empty-cell'; grid.appendChild(e); }
+
+  for (let d = 1; d <= nb; d++) {
+    const k = ymd(view.y, view.m, d), day = data.days[k] || {}, p = c.perDay[k];
+    const closed = isClosed(k), dep = +day.deposit || 0, wd = +day.withdraw || 0;
+    const wdName = WD_SHORT[new Date(view.y, view.m, d).getDay()];
+    const hasTrades = day.buyOpen || day.buyClosed || day.sellOpen || day.sellClosed;
+    let state = '';
+    if (closed) state = 'closed'; else if (p && p.has) state = p.usd > 0 ? 'win' : p.usd < 0 ? 'loss' : '';
+
+    const el = document.createElement('button');
+    el.type = 'button'; el.dataset.day = k;
+    el.className = `cell ${state} ${k === todayKey ? 'today' : ''}`;
+    el.innerHTML = `
+      <div class="flex justify-between items-baseline"><span class="dn">${d}</span><span class="text-[10px] sm:hidden" style="color:var(--mut)">${wdName}</span></div>
+      ${closed ? '<div class="mf">Marché fermé</div>' : `<div class="hrs">${day.start || data.botHours.start}-${day.end || data.botHours.end}</div>`}
+      ${dep ? `<div class="sub">Dépôt ${money(dep)}</div>` : ''}
+      ${wd ? `<div class="sub">Retrait ${money(wd)}</div>` : ''}
+      ${!closed && hasTrades ? `<div class="sub">B ${day.buyOpen || 0}/${day.buyClosed || 0} · S ${day.sellOpen || 0}/${day.sellClosed || 0}</div>` : ''}
+      ${p && p.has ? `<div class="pv">${smoney(p.usd)}</div>${p.pct !== null ? `<div class="pp">${spct(p.pct)}</div>` : ''}` : ''}`;
+    grid.appendChild(el);
+  }
+}
+
+$('grid').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) openDay(b.dataset.day); });
+function shiftMonth(n) { const d = new Date(view.y, view.m + n, 1); view = { y: d.getFullYear(), m: d.getMonth() }; renderCalendar(); }
+$('prev').onclick = () => shiftMonth(-1);
+$('next').onclick = () => shiftMonth(1);
+
+/* Barre d'outils du calendrier */
+$('btn-wk').onclick = () => {
+  const nb = new Date(view.y, view.m + 1, 0).getDate();
+  for (let d = 1; d <= nb; d++) if (isWeekend(view.y, view.m, d)) ensureDay(ymd(view.y, view.m, d)).closed = true;
+  setDirty(true); renderCalendar(); toast('Week-ends du mois marqués comme fermés.', 'success');
+};
+['bot-start', 'bot-end'].forEach(id => $(id).addEventListener('change', () => {
+  if (!$('bot-start').value || !$('bot-end').value) return;
+  data.botHours = { start: $('bot-start').value, end: $('bot-end').value };
+  setDirty(true); renderCalendar();
+}));
+$('btn-apply').onclick = () => {
+  const nb = new Date(view.y, view.m + 1, 0).getDate(); let n = 0;
+  for (let d = 1; d <= nb; d++) {
+    const k = ymd(view.y, view.m, d);
+    if (!isClosed(k) && data.days[k]) { delete data.days[k].start; delete data.days[k].end; n++; }
+  }
+  Object.keys(data.days).forEach(cleanDay);
+  setDirty(true); renderCalendar(); toast(`Horaires ${data.botHours.start}-${data.botHours.end} appliqués aux jours ouvrés du mois.`, 'success');
+};
+
+/* ---------- Modale d'édition d'un jour ---------- */
+const DF = { closed: 'd-closed', profit: 'd-profit', dep: 'd-dep', wd: 'd-wd', start: 'd-start', end: 'd-end', bo: 'd-bo', bc: 'd-bc', so: 'd-so', sc: 'd-sc' };
+
+function openDay(key) {
+  editKey = key; const d = data.days[key] || {}, [y, m, dd] = key.split('-').map(Number);
+  $('d-title').textContent = new Date(y, m - 1, dd).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  $('d-closed').checked = isClosed(key);
+  $('d-profit').value = hasProfit(d) ? d.profit : '';
+  $('d-dep').value = d.deposit || ''; $('d-wd').value = d.withdraw || '';
+  $('d-start').value = d.start || data.botHours.start; $('d-end').value = d.end || data.botHours.end;
+  $('d-bo').value = d.buyOpen || ''; $('d-bc').value = d.buyClosed || ''; $('d-so').value = d.sellOpen || ''; $('d-sc').value = d.sellClosed || '';
+  syncDayModal(); $('day-modal').classList.remove('hidden');
+}
+function readDraft() {
+  const iv = id => Math.max(0, Math.floor(toNum($(id).value) || 0));
+  return {
+    closed: $('d-closed').checked, profit: toNum($('d-profit').value),
+    deposit: Math.max(0, toNum($('d-dep').value) || 0), withdraw: Math.max(0, toNum($('d-wd').value) || 0),
+    start: $('d-start').value, end: $('d-end').value,
+    buyOpen: iv('d-bo'), buyClosed: iv('d-bc'), sellOpen: iv('d-so'), sellClosed: iv('d-sc')
+  };
+}
+function syncDayModal() {
+  const dr = readDraft();
+  ['d-profit', 'd-start', 'd-end', 'd-bo', 'd-bc', 'd-so', 'd-sc'].forEach(id => $(id).disabled = dr.closed);
+  const lbl = $('d-closed-lbl'); lbl.textContent = dr.closed ? 'Marché fermé (WK)' : 'Marché ouvert';
+  lbl.style.color = dr.closed ? 'var(--red)' : '';
+  // Aperçu en temps réel ($ et % du jour)
+  const p = compute({ ...data.days, [editKey]: dr }).perDay[editKey], pv = $('d-prev');
+  if (p && p.has) {
+    pv.className = `text-sm font-bold mt-1.5 min-h-[1.25rem] ${cls(p.usd)}`;
+    pv.textContent = `${smoney(p.usd)}${p.pct !== null ? ' · ' + spct(p.pct) : ''}`;
+  } else { pv.className = 'text-sm font-bold mt-1.5 min-h-[1.25rem]'; pv.style.color = 'var(--mut)'; pv.textContent = dr.closed ? '' : '—'; }
+}
+Object.values(DF).forEach(id => $(id).addEventListener('input', syncDayModal));
+$('d-closed').addEventListener('change', syncDayModal);
+
+const closeDay = () => { $('day-modal').classList.add('hidden'); editKey = null; };
+$('d-x').onclick = closeDay; $('d-cancel').onclick = closeDay;
+$('day-modal').addEventListener('click', e => { if (e.target.id === 'day-modal') closeDay(); });
+$('d-clear').onclick = () => { delete data.days[editKey]; setDirty(true); closeDay(); renderCalendar(); toast('Jour effacé.', 'info'); };
+$('day-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const dr = readDraft(), day = ensureDay(editKey);
+  Object.assign(day, { closed: dr.closed, profit: dr.profit, deposit: dr.deposit, withdraw: dr.withdraw,
+    buyOpen: dr.buyOpen, buyClosed: dr.buyClosed, sellOpen: dr.sellOpen, sellClosed: dr.sellClosed });
+  // Horaires : stockés uniquement s'ils diffèrent des horaires par défaut du bot
+  if (dr.start && dr.start !== data.botHours.start) day.start = dr.start; else delete day.start;
+  if (dr.end && dr.end !== data.botHours.end) day.end = dr.end; else delete day.end;
+  cleanDay(editKey); setDirty(true); closeDay(); renderCalendar();
 });
-function addPer(f='',t=''){const d=document.createElement('div');d.className='per';
-  d.innerHTML='<input type="time" value="'+f+'"> → <input type="time" value="'+t+'"><button type="button" aria-label="Retirer la période">✕</button>';
-  d.querySelector('button').onclick=()=>d.remove();$('pers').appendChild(d);}
-$('addPer').onclick=()=>addPer();
-function toggleClosed(){$('openBox').style.display=$('fClosed').checked?'none':'';}
-$('fClosed').addEventListener('change',toggleClosed);
-$('wk').onclick=()=>{
-  const y=cur.getFullYear(),m=cur.getMonth(),nd=new Date(y,m+1,0).getDate();let n=0;
-  for(let d=1;d<=nd;d++){const dt=new Date(y,m,d),g=dt.getDay();
-    if((g===0||g===6)&&!data.entries[key(dt)]){data.entries[key(dt)]={closed:true};n++;}}
-  if(n){changed();toast(n+' jour(s) de week-end marqué(s) fermé(s)');}else toast('Aucun week-end libre à marquer ce mois-ci');
-};
-$('sApply').onclick=()=>{
-  const f=$('sFrom').value,t=$('sTo').value;
-  if(!f||!t){toast('Renseigne l\'heure de début et de fin');return;}
-  data.sched={from:f,to:t};
-  const y=cur.getFullYear(),m=cur.getMonth(),nd=new Date(y,m+1,0).getDate();let n=0;
-  for(let d=1;d<=nd;d++){const dt=new Date(y,m,d),g=dt.getDay(),k=key(dt);
-    if(g===0||g===6)continue;
-    const e=data.entries[k]||{};
-    if(e.closed||pers(e).length)continue;
-    e.periods=[{from:f,to:t}];data.entries[k]=e;n++;}
-  changed();toast(n+' jour(s) programmé(s) de '+f+' à '+t);
-};
-$('dCancel').onclick=()=>$('dayDlg').close();
-$('dOk').onclick=()=>{
-  const e={};
-  if($('fClosed').checked)e.closed=true;
-  else{
-    if($('fPnl').value.trim()!=='')e.pnl=num($('fPnl').value);
-    const ps=[...$('pers').children].map(r=>{const i=r.querySelectorAll('input');return{from:i[0].value,to:i[1].value}}).filter(x=>x.from&&x.to);
-    if(ps.length)e.periods=ps;
-    [['bo','fBo'],['bc','fBc'],['so','fSo'],['sc','fSc']].forEach(([q,i])=>{if($(i).value.trim()!=='')e[q]=Math.max(0,Math.round(num($(i).value)));});
-  }
-  if(num($('fDep').value))e.dep=num($('fDep').value);
-  if(num($('fWd').value))e.wd=num($('fWd').value);
-  if(Object.keys(e).length)data.entries[selDate]=e;else delete data.entries[selDate];
-  changed();$('dayDlg').close();
-};
-$('dDel').onclick=()=>{delete data.entries[selDate];changed();$('dayDlg').close();};
-function changed(){dirty=true;store.set('tb_dirty','1');store.set('tb_data',JSON.stringify(data));render();}
 
-$('prev').onclick=()=>{cur.setMonth(cur.getMonth()-1);render();};
-$('next').onclick=()=>{cur.setMonth(cur.getMonth()+1);render();};
+/* ---------- Modale : ajout rapide dépôt / retrait ---------- */
+$('btn-add').onclick = () => { $('m-date').value = todayKey; $('m-amount').value = ''; $('modal').classList.remove('hidden'); };
+$('m-cancel').onclick = () => $('modal').classList.add('hidden');
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal') $('modal').classList.add('hidden'); });
+$('modal-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const amount = toNum($('m-amount').value), date = $('m-date').value;
+  if (!date || !amount || amount <= 0) return toast('Montant ou date invalide.', 'error');
+  const day = ensureDay(date), f = $('m-type').value;
+  day[f] = (+day[f] || 0) + amount;
+  const [y, m] = date.split('-').map(Number); view = { y, m: m - 1 };
+  $('modal').classList.add('hidden'); setDirty(true); renderCalendar();
+  toast(`${f === 'deposit' ? 'Dépôt' : 'Retrait'} de ${money(amount)} ajouté au ${date}.`, 'success');
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDay(); $('modal').classList.add('hidden'); $('menu').classList.add('hidden'); } });
 
-/* ---------- réglages ---------- */
-$('cfgBtn').onclick=()=>{
-  $('cUser').value=cfg.user||'';$('cRepo').value=cfg.repo||'';$('cBranch').value=cfg.branch||'main';
-  $('cPath').value=cfg.path||'data.json';$('cToken').value=cfg.token||'';$('cBridge').value=cfg.bridge||'';$('cBT').value=cfg.btoken||'';$('cfgDlg').showModal();
-};
-$('cCancel').onclick=()=>$('cfgDlg').close();
-$('cOk').onclick=()=>{
-  cfg={user:$('cUser').value.trim(),repo:$('cRepo').value.trim(),branch:$('cBranch').value.trim()||'main',
-       path:$('cPath').value.trim()||'data.json',token:$('cToken').value.trim(),bridge:$('cBridge').value.trim().replace(/\/$/,''),btoken:$('cBT').value.trim()};
-  store.set('tb_cfg',JSON.stringify(cfg));$('cfgDlg').close();toast('Réglages enregistrés');load();schedulePoll();
-};
-
-/* ---------- GitHub ---------- */
-const enc=s=>btoa(unescape(encodeURIComponent(s)));
-const dec=s=>decodeURIComponent(escape(atob(s.replace(/\n/g,''))));
-const ready=()=>cfg.user&&cfg.repo&&cfg.token;
-const apiUrl=()=>`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${cfg.path||'data.json'}`;
-const hdr=()=>({Authorization:'Bearer '+cfg.token,Accept:'application/vnd.github+json'});
-
-const sib=n=>{const p=(cfg.path||'data.json').split('/');p[p.length-1]=n;return p.join('/')};
-async function getRemote(path){
-  if(ready()){
-    const r=await fetch(`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${path}?ref=${cfg.branch||'main'}&t=${Date.now()}`,{headers:hdr(),cache:'no-store'});
-    if(r.status===404)return null;
-    if(!r.ok)throw new Error('GitHub '+r.status);
-    return JSON.parse(dec((await r.json()).content));
-  }
-  const r=await fetch(path.split('/').pop()+'?t='+Date.now(),{cache:'no-store'});
-  return r.ok?await r.json():null;
+/* ---------- Navigation latérale ---------- */
+function showSection(name) {
+  if (!['history', 'live', 'settings'].includes(name)) name = 'history';
+  ['history', 'live', 'settings'].forEach(s => $('sec-' + s).classList.toggle('hidden', s !== name));
+  document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === name));
+  try { history.replaceState(null, '', '#' + name); } catch {}
+  window.scrollTo({ top: 0 });
 }
-async function load(){
-  try{
-    let remote=await getRemote(cfg.path||'data.json');
-    if(remote===null&&ready())remote={entries:{}};
-    if(remote&&remote.entries){
-      if(dirty)toast('Modifications locales non enregistrées : appuie sur Enregistrer');
-      else{data=remote;store.set('tb_data',JSON.stringify(data));}
-    }
-  }catch(err){
-    const c=store.get('tb_data');if(c&&!dirty)data=JSON.parse(c);
-    toast('Import impossible, données locales affichées');
-  }
-  if(dirty){const c=store.get('tb_data');if(c)data=JSON.parse(c);}
-  try{const t=await getRemote(sib('trades.json'));auto=(t&&t.days)||{};store.set('tb_auto',JSON.stringify(auto));}
-  catch(e){try{auto=JSON.parse(store.get('tb_auto')||'{}')}catch(_){auto={}}}
-  render();
+document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => showSection(b.dataset.nav));
+
+/* ---------- Réglages (localStorage) ---------- */
+const FIELDS = { user: 's-user', repo: 's-repo', branch: 's-branch', file: 's-file', token: 's-token' };
+function loadSettings() { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; } catch { return {}; } }
+function getSettings() {
+  const s = {}; for (const k in FIELDS) s[k] = $(FIELDS[k]).value.trim();
+  if (!s.branch) s.branch = 'main'; return s;
+}
+function saveSettings() {
+  const s = {}; for (const k in FIELDS) s[k] = $(FIELDS[k]).value.trim();
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch { toast('Impossible d’enregistrer les réglages localement.', 'error'); }
+}
+function initSettings() {
+  const s = loadSettings();
+  for (const k in FIELDS) { $(FIELDS[k]).value = s[k] || ''; $(FIELDS[k]).addEventListener('input', saveSettings); }
+  $('tok-eye').onclick = () => {
+    const t = $('s-token'), hide = t.type === 'password';
+    t.type = hide ? 'text' : 'password'; $('tok-eye').textContent = hide ? 'Masquer' : 'Afficher';
+  };
+}
+const configured = s => s.user && s.repo && s.file;
+
+/* ---------- API GitHub ---------- */
+function apiUrl(s) {
+  const path = s.file.split('/').filter(Boolean).map(encodeURIComponent).join('/');
+  return `https://api.github.com/repos/${encodeURIComponent(s.user)}/${encodeURIComponent(s.repo)}/contents/${path}`;
+}
+function headers(s) {
+  const h = { 'Accept': 'application/vnd.github+json' };
+  if (s.token) h['Authorization'] = 'Bearer ' + s.token; return h;
+}
+const b64decode = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\n/g, '')), c => c.charCodeAt(0)));
+const b64encode = str => { let bin = ''; new TextEncoder().encode(str).forEach(b => bin += String.fromCharCode(b)); return btoa(bin); };
+
+async function loadFromGitHub(silent = false) {
+  const s = getSettings();
+  if (!configured(s)) { if (!silent) toast('Veuillez remplir les réglages GitHub (pseudo, dépôt, fichier).', 'info'); return false; }
+  try {
+    const r = await fetch(`${apiUrl(s)}?ref=${encodeURIComponent(s.branch)}&_=${Date.now()}`, { headers: headers(s), cache: 'no-store' });
+    if (r.status === 404) { sha = null; toast('Fichier introuvable sur GitHub : il sera créé à l’enregistrement.', 'info'); return false; }
+    if (r.status === 401 || r.status === 403) throw new Error('Accès refusé (token invalide ou droits insuffisants).');
+    if (!r.ok) throw new Error(`Erreur GitHub ${r.status}`);
+    const j = await r.json(), parsed = JSON.parse(b64decode(j.content));
+    if (!parsed || typeof parsed.days !== 'object') throw new Error('Format de fichier JSON invalide.');
+    data = normalize(parsed); sha = j.sha; setDirty(false); renderCalendar();
+    toast('Données chargées depuis GitHub ✔', 'success'); return true;
+  } catch (e) { toast('Échec du chargement : ' + e.message, 'error'); return false; }
 }
 
-$('save').onclick=async()=>{
-  if(!ready()){toast('Renseigne d\'abord les réglages GitHub');$('cfgBtn').click();return;}
-  const b=$('save');b.disabled=true;
-  try{
-    let sha;
-    const g=await fetch(apiUrl()+'?ref='+(cfg.branch||'main')+'&t='+Date.now(),{headers:hdr(),cache:'no-store'});
-    if(g.ok)sha=(await g.json()).sha;else if(g.status!==404)throw new Error('GitHub '+g.status);
-    const body={message:'Mise à jour des données '+new Date().toISOString().slice(0,16).replace('T',' '),
-      content:enc(JSON.stringify(data,null,1)),branch:cfg.branch||'main'};
-    if(sha)body.sha=sha;
-    const p=await fetch(apiUrl(),{method:'PUT',headers:hdr(),body:JSON.stringify(body)});
-    if(!p.ok)throw new Error('GitHub '+p.status);
-    dirty=false;store.set('tb_dirty','0');render();toast('Données enregistrées sur GitHub');
-  }catch(err){toast('Échec de l\'enregistrement : '+err.message);}
-  b.disabled=false;
-};
+async function saveToGitHub(retry = true) {
+  const s = getSettings();
+  if (!configured(s)) return toast('Réglages GitHub incomplets : ouvrez la section Réglages.', 'error');
+  if (!s.token) return toast('Le token d’accès est requis pour enregistrer.', 'error');
+  $('btn-save').disabled = true; $('save-spin').classList.remove('hidden');
+  try {
+    // SHA le plus récent pour écraser proprement le fichier
+    const g = await fetch(`${apiUrl(s)}?ref=${encodeURIComponent(s.branch)}&_=${Date.now()}`, { headers: headers(s), cache: 'no-store' });
+    if (g.ok) sha = (await g.json()).sha; else if (g.status === 404) sha = null;
+    else if (g.status === 401 || g.status === 403) throw new Error('Accès refusé (vérifiez le token : Contents lecture/écriture).');
 
-let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3500);}
+    data.updatedAt = new Date().toISOString();
+    const body = { message: `Mise à jour des données du bot (${new Date().toLocaleString('fr-FR')})`, content: b64encode(JSON.stringify(data, null, 2)), branch: s.branch };
+    if (sha) body.sha = sha;
+    const r = await fetch(apiUrl(s), { method: 'PUT', headers: { ...headers(s), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (r.status === 409 || r.status === 422) { if (retry) return saveToGitHub(false); throw new Error('Conflit de version : rechargez les données puis réessayez.'); }
+    if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.message || `Erreur GitHub ${r.status}`); }
+    sha = (await r.json()).content.sha; setDirty(false);
+    toast('Données enregistrées sur GitHub ✔', 'success');
+  } catch (e) { toast('Échec de l’enregistrement : ' + e.message, 'error'); }
+  finally { $('btn-save').disabled = false; $('save-spin').classList.add('hidden'); }
+}
 
-/* ---------- Live ---------- */
-let page='hist',lt=null,busy=false;
-const esc=x=>String(x).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
-const mkS=(l,v,k='',big='')=>`<div class="stat ${big}"><small>${l}</small><b class="${k}">${v}</b></div>`;
-async function api(path,body){
-  const r=await fetch(cfg.bridge+path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+cfg.btoken,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
-  if(!r.ok)throw new Error(r.status===401?'mot de passe refusé':'erreur '+r.status);
-  return r.json();
+function exportJson() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'data.json'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
-function renderLive(d){
-  const pos=d.positions||[],nb=pos.filter(x=>x.type==='buy').length,pr=d.profit||0,pct=d.balance>0?pr/d.balance*100:0;
-  $('lStats').innerHTML=mkS('Bot',d.bot?'Allumé':'Éteint',d.bot?'pos':'neg')+
-    mkS('Profit en direct',susd(pr)+' ('+spct(pct)+')',cls(pr),'big')+
-    mkS('Équité',usd(d.equity))+mkS('Solde',usd(d.balance))+
-    mkS('Positions',pos.length+' ('+nb+' buy / '+(pos.length-nb)+' sell)');
-  $('lTab').innerHTML=pos.length?'<tr><th>Ticket</th><th>Symbole</th><th>Type</th><th>Lots</th><th>Ouverture</th><th>Actuel</th><th>Profit</th><th></th></tr>'+
-    pos.map(x=>`<tr><td>${x.ticket}</td><td>${esc(x.symbol)}</td><td>${x.type==='buy'?'Buy':'Sell'}</td><td>${x.volume}</td><td>${x.open}</td><td>${x.cur}</td><td class="${cls(x.profit)}">${susd(x.profit)}</td><td><button data-t="${x.ticket}">Clore</button></td></tr>`).join(''):
-    '<tr><td style="text-align:left;color:var(--mut)">Aucune position ouverte.</td></tr>';
-}
-async function poll(){
-  if(!cfg.bridge||!cfg.btoken){$('lState').textContent="Renseigne l'adresse et le mot de passe du pont dans Réglages.";return;}
-  if(busy)return;busy=true;
-  try{renderLive(await api('/live'));$('lState').textContent='Mis à jour à '+new Date().toLocaleTimeString('fr-FR');}
-  catch(e){$('lState').textContent='Pont injoignable : '+e.message;}
-  busy=false;
-}
-function schedulePoll(){clearInterval(lt);lt=null;if(page==='live'&&!document.hidden){poll();lt=setInterval(poll,+$('lInt').value*1000);}}
-function show(p){page=p;$('hist').hidden=p!=='hist';$('live').hidden=p!=='live';
-  $('tHist').setAttribute('aria-selected',p==='hist');$('tLive').setAttribute('aria-selected',p==='live');
-  history.replaceState(null,'','#'+p);schedulePoll();}
-$('tHist').onclick=()=>show('hist');$('tLive').onclick=()=>show('live');
-$('lInt').onchange=schedulePoll;
-document.addEventListener('visibilitychange',schedulePoll);
-async function act(label,path,body,conf){
-  if(conf&&!confirm(conf))return;
-  try{const r=await api(path,body);toast(label+' : '+r.msg);}catch(e){toast('Échec : '+e.message);}
-  poll();
-}
-$('bOn').onclick=()=>act('Bot','/bot',{on:true});
-$('bOff').onclick=()=>act('Bot','/bot',{on:false},'Éteindre le bot ? Les positions ouvertes restent ouvertes.');
-$('bOffClose').onclick=()=>act('Extinction','/bot',{on:false,close:true},'Éteindre le bot ET clore toutes les positions ouvertes ?');
-$('bClose').onclick=()=>act('Clôture','/close_all',{},'Clore TOUTES les positions ouvertes ?');
-$('lTab').addEventListener('click',e=>{const t=e.target.dataset.t;if(t)act('Clôture','/close',{ticket:+t},'Clore la position '+t+' ?');});
+function reload() { if (dirty && !confirm('Des modifications non enregistrées seront écrasées. Continuer ?')) return; loadFromGitHub(); }
 
-render();load();show(location.hash==='#live'?'live':'hist');
+/* Bouton « Enregistrer » + menu déroulant */
+$('btn-save').onclick = () => saveToGitHub();
+$('btn-save2').onclick = () => saveToGitHub();
+$('btn-load').onclick = reload;
+$('btn-menu').onclick = e => { e.stopPropagation(); $('menu').classList.toggle('hidden'); };
+$('menu').addEventListener('click', e => {
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  $('menu').classList.add('hidden');
+  ({ save: () => saveToGitHub(), load: reload, export: exportJson })[a.dataset.act]();
+});
+document.addEventListener('click', e => { if (!e.target.closest('#menu')) $('menu').classList.add('hidden'); });
+window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- Démarrage ---------- */
+initSettings();
+showSection((location.hash || '').replace('#', ''));
+renderCalendar();
+(async () => {
+  const ok = await loadFromGitHub(true);
+  if (!ok && !configured(getSettings())) toast('GitHub non configuré : renseignez la section Réglages pour synchroniser. Données de démonstration affichées.', 'info');
+})();
 </script>
 </body>
 </html>
